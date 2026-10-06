@@ -15,21 +15,24 @@ export class WorldScene extends Phaser.Scene {
     coverBg(this, 'world', false);
     vignette(this, 0.4);
     this.cameras.main.fadeIn(400);
-    const cw = width / 4, ch = (height - 40) / 4;
+    // regions sit on the island itself (bounds measured from the map by tools/place_spots.py)
+    const wb = (maps() as any)._world ?? { x0: 0, x1: 1, y0: 0.06, y1: 1 };
+    const ox = wb.x0 * width, oy = wb.y0 * height;
+    const cw = ((wb.x1 - wb.x0) * width) / 4, ch = ((wb.y1 - wb.y0) * height) / 4;
     const cur = data().regions.find((r) => r.id === S.location.region)!;
     for (const r of data().regions) {
-      const x = r.x * cw, y = 40 + r.y * ch;
+      const x = ox + r.x * cw, y = oy + r.y * ch;
       const visited = S.visited.includes(r.id);
       const adjacent = Math.abs(r.x - cur.x) + Math.abs(r.y - cur.y) === 1;
       const here = r.id === cur.id;
-      const rect = this.add.rectangle(x + cw / 2, y + ch / 2, cw - 6, ch - 6, here ? 0xf6c453 : 0x0b1020, here ? 0.18 : visited ? 0.05 : 0.38)
+      const rect = this.add.rectangle(x + cw / 2, y + ch / 2, cw - 4, ch - 4, here ? 0xf6c453 : 0x0b1020, here ? 0.22 : visited ? 0.01 : 0.3)
         .setStrokeStyle(2, here ? 0xf6c453 : 0xffffff, here ? 0.9 : 0.25).setInteractive({ useHandCursor: true });
-      const t = this.add.text(x + cw / 2, y + ch / 2 - 12, r.name, { fontFamily: 'Cinzel, serif', fontSize: '24px', color: here ? '#ffe9a8' : '#ffffff', stroke: '#000', strokeThickness: 5 }).setOrigin(0.5);
-      this.add.text(x + cw / 2, y + ch / 2 + 18, `Lv ${r.levels[0]}–${r.levels[1]}${r.towns.length ? ' · ' + r.towns.join(', ') : ''}`, { fontFamily: 'Nunito', fontSize: '15px', color: '#dfe6ff', stroke: '#000', strokeThickness: 4 }).setOrigin(0.5);
+      const t = this.add.text(x + cw / 2, y + ch / 2 - 10, r.name, { fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold', fontSize: '19px', color: here ? '#ffe9a8' : '#ffffff', stroke: '#000', strokeThickness: 5 }).setOrigin(0.5);
+      this.add.text(x + cw / 2, y + ch / 2 + 14, `Lv ${r.levels[0]}–${r.levels[1]}${r.towns.length ? ' · ' + r.towns.join(', ') : ''}`, { fontFamily: 'Arial, Helvetica, sans-serif', fontSize: '13px', color: '#ffffff', stroke: '#000', strokeThickness: 4 }).setOrigin(0.5);
       const done = r.overlords.filter((o) => S.overlords.includes(o)).length;
       if (r.overlords.length) this.add.text(x + cw - 12, y + 10, done ? '🐲✔' : '🐲', { fontSize: '20px' }).setOrigin(1, 0);
       rect.on('pointerover', () => { rect.setFillStyle(0xf6c453, 0.22); t.setScale(1.06); });
-      rect.on('pointerout', () => { rect.setFillStyle(here ? 0xf6c453 : 0x0b1020, here ? 0.18 : visited ? 0.05 : 0.38); t.setScale(1); });
+      rect.on('pointerout', () => { rect.setFillStyle(here ? 0xf6c453 : 0x0b1020, here ? 0.22 : visited ? 0.01 : 0.3); t.setScale(1); });
       rect.on('pointerdown', () => {
         if (here) return toRegion();
         if (!visited && !adjacent) return toast('Travel overland through neighbouring regions to reach this area.');

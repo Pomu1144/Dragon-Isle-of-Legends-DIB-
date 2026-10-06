@@ -60,14 +60,22 @@ export class RegionScene extends Phaser.Scene {
       const p = P(s);
       const c = this.add.container(p.x, p.y).setDepth(3);
       const defeatedOverlord = s.kind === 'overlord' && s.ref && S.overlords.includes(s.ref);
-      const ring = this.add.circle(0, 0, s.kind === 'field' ? 11 : 17, st.color, defeatedOverlord ? 0.35 : 0.9).setStrokeStyle(3, 0xffffff, 0.95);
-      c.add(this.add.ellipse(2, 6, 34, 14, 0x000000, 0.35));
+      const field = s.kind === 'field';
+      const ring = this.add.circle(0, 0, field ? 11 : 30, st.color, field ? (defeatedOverlord ? 0.35 : 0.9) : 0.001);
+      if (field) ring.setStrokeStyle(3, 0xffffff, 0.95);
+      c.add(this.add.ellipse(2, field ? 6 : 14, field ? 34 : 70, field ? 14 : 22, 0x000000, field ? 0.35 : 0.22));
       c.add(ring);
+      // towns, dungeons, overlords and roads use the original game's map art instead of plain markers
+      const art = (key: string, sc: number, x = 0, y = 0) => { const im = this.add.image(x, y, key).setScale(sc).setOrigin(0.5, 0.85); c.add(im); return im; };
+      if (s.kind === 'town') { art('town_house_a', 0.32, -26, 6); art('town_house_b', 0.3, 26, 2); art('town_warp_house', 0.3, 0, 22); }
+      if (s.kind === 'dungeon') { const v = art('bk_fx_web', 0.42, 0, 14); this.tweens.add({ targets: v, angle: 360, duration: 12000, repeat: -1 }); v.setOrigin(0.5); }
+      if (s.kind === 'overlord') { const e = art('town_warp_emblem', 0.42, 0, 10); if (defeatedOverlord) e.setAlpha(0.45).setTint(0x888888); }
+      if (s.kind === 'exit') art('town_signpost', 0.38, 0, 14);
       if (s.kind === 'field') {
         const flag = this.add.text(-2, -30, '⚑', { fontSize: '26px', color: '#3bdc6a', stroke: '#063', strokeThickness: 3 }).setOrigin(0.5);
         c.add(flag);
         this.tweens.add({ targets: flag, angle: { from: -6, to: 6 }, duration: 900 + (s.id % 5) * 120, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
-      } else c.add(this.add.text(0, -1, st.icon, { fontSize: '20px' }).setOrigin(0.5));
+      }
       if (questSpots.has(s.id)) {
         const q = this.add.text(0, -40, '⚔', { fontSize: '28px', color: '#ff5050', stroke: '#000', strokeThickness: 5 }).setOrigin(0.5);
         c.add(q);
@@ -75,7 +83,7 @@ export class RegionScene extends Phaser.Scene {
       }
       if (s.kind !== 'field') {
         const label = s.kind === 'exit' ? `→ ${region(s.ref!).name}` : s.ref!;
-        c.add(this.add.text(0, 26, label, { fontFamily: 'Nunito', fontStyle: 'bold', fontSize: '15px', color: '#fff', stroke: '#000', strokeThickness: 4 }).setOrigin(0.5, 0));
+        c.add(this.add.text(0, 28, label, { fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold', fontSize: '15px', color: '#fff', stroke: '#000', strokeThickness: 4 }).setOrigin(0.5, 0));
       }
       ring.setInteractive({ useHandCursor: true }).on('pointerdown', () => this.clickSpot(s));
       ring.on('pointerover', () => c.setScale(1.15)).on('pointerout', () => c.setScale(1));

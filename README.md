@@ -2,7 +2,7 @@
 
 A from-scratch browser rebuild of the 2012 mobile monster-taming RPG **Dragon Island Blue**.
 The game data and monster art come from a scrape of the [Dragon Island Blue Fandom wiki](https://dragonislandblue.fandom.com).
-All maps, battle backdrops, the town scene and the title art were painted with **Higgsfield** (FLUX.2).
+The world map and the 16 region maps were painted with **Higgsfield** (FLUX 3), using the original game's town screen (`tools/ref_ui/map_style_reference.jpg`) as the style reference. Battle backdrops and title art were also made with Higgsfield (FLUX.2).
 
 ![stack](https://img.shields.io/badge/Phaser-3.90-blue) ![ts](https://img.shields.io/badge/TypeScript-strict-3178c6) ![vite](https://img.shields.io/badge/Vite-8-646cff)
 

@@ -84,20 +84,17 @@ def place(region, mask, rng):
     return {"spots": spots, "edges": sorted(edges)}
 
 
-ANCHORS = {
-    "southern_alvalon": {"Corova": (0.2, 0.55), "No Man's Castle": (0.84, 0.24)},
-    "northern_alvalon": {"Westguard": (0.5, 0.36)},
-    "applefield": {"Sanctuary": (0.27, 0.27), "Olympia": (0.66, 0.68)},
-    "swinedene": {"Unknown Relic": (0.82, 0.3), "Pirate's Cave": (0.36, 0.86)},
-    "ringfeld": {"Lighthouse": (0.17, 0.2)},
-    "south_earlsome": {"Longdale": (0.72, 0.6)},
-    "north_earlsome": {"Cave of Earlsome": (0.62, 0.47)},
-    "eastern_gracia": {"Igneous Passage": (0.4, 0.2)},
-    "endergate": {"Cave of Endergate": (0.3, 0.38)},
-}
+# The maps are pure terrain (towns are drawn on top as building sprites), so no landmark anchors.
+ANCHORS: dict = {}
 out = {}
 for r in gd["regions"]:
     rng = random.Random(r["id"])
     out[r["id"]] = place(r, land_mask(os.path.join(ASSETS, "maps", r["id"] + ".jpg")), rng)
+# bounding box of the island on the world map, so the 4x4 region grid can sit on the land
+wm = land_mask(os.path.join(ASSETS, "maps", "world.jpg"))
+cols = [x for x in range(GW) if sum(wm[y][x] for y in range(GH)) > GH * 0.25]
+rows = [y for y in range(GH) if sum(wm[y][x] for x in range(GW)) > GW * 0.2]
+out["_world"] = {"x0": round(min(cols) / GW, 3), "x1": round((max(cols) + 1) / GW, 3), "y0": round(min(rows) / GH, 3), "y1": round((max(rows) + 1) / GH, 3)}
+print("world island", out["_world"])
 json.dump(out, open(os.path.join(DATA, "maps.json"), "w"), separators=(",", ":"))
-print({k: [s["kind"][0] for s in v["spots"]] for k, v in out.items()})
+print({k: [s["kind"][0] for s in v["spots"]] for k, v in out.items() if not k.startswith("_")})
