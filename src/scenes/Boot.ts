@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { data } from '../core/data';
 import { setGame, go } from '../nav';
+import { hideLoadingScreen } from '../ui/loading';
 
 export const BGS = ['abyss', 'arena', 'beach', 'castle', 'cave', 'forest', 'lighthouse', 'magma', 'meadow', 'mountain', 'piratecave', 'river', 'ruins', 'sanctuary', 'snow', 'swamp', 'title', 'town', 'volcano', 'glacier', 'hell', 'graveyard', 'deepforest'];
 
@@ -8,11 +9,7 @@ export class BootScene extends Phaser.Scene {
   constructor() { super('Boot'); }
   preload() {
     setGame(this.game);
-    const { width, height } = this.scale;
-    const bar = this.add.rectangle(width / 2 - 300, height / 2 + 40, 4, 14, 0xf6c453).setOrigin(0, 0.5);
-    this.add.rectangle(width / 2, height / 2 + 40, 604, 18).setStrokeStyle(2, 0xf6c453, 0.6);
-    this.add.text(width / 2, height / 2 - 20, 'DRAGON ISLE OF LEGENDS', { fontFamily: 'Cinzel, serif', fontSize: '40px', color: '#ffe2a0' }).setOrigin(0.5);
-    this.load.on('progress', (p: number) => (bar.width = 600 * p));
+    // the HTML loading screen (index.html) stays up while these load
     this.load.image('title', 'assets/bg/title.jpg');
     for (const b of BGS) this.load.image(`bg_${b}`, `assets/bg/${b}.jpg`);
     // original-game UI pieces (tools/ref_ui/slice_town_battle.py)
@@ -41,7 +38,10 @@ export class BootScene extends Phaser.Scene {
     g.generateTexture('spark', 12, 12);
     g.destroy();
   }
-  create() { go('Title'); }
+  create() {
+    go('Title');
+    hideLoadingScreen();
+  }
 }
 
 /** Ensure monster sprites are loaded before use. */

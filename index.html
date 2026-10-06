@@ -8,11 +8,39 @@
     <link rel="icon" type="image/png" href="assets/sprites/001.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Crimson+Pro:wght@700;800&family=Nunito:wght@500;700;800&display=swap" rel="stylesheet" />
+    <style>
+      /* loading screen: plain HTML so it is on screen before the game's scripts arrive (art: tools/ref_ui/slice_loading.py) */
+      #loading-screen { position: fixed; inset: 0; z-index: 1000; overflow: hidden; background: #2d6476; transition: opacity .5s; }
+      #loading-screen.done { opacity: 0; pointer-events: none; }
+      #loading-screen .ls-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+      #loading-screen .ls-art { position: absolute; left: 50%; top: 50%; width: min(125vw, 133.33vh); aspect-ratio: 4 / 3; transform: translate(-50%, -50%); }
+      #loading-screen .ls-m { position: absolute; left: calc(var(--x) * 1%); bottom: calc(var(--b) * 1%); height: calc(var(--h) * 1%);
+        transform: translateX(-50%); filter: drop-shadow(0 .5vmin .6vmin rgba(0, 0, 0, .45)); }
+      #loading-screen .ls-plaque { position: absolute; left: 51.5%; top: 33%; width: 49%; transform: translateX(-50%);
+        filter: drop-shadow(0 .6vmin .8vmin rgba(0, 0, 0, .5)); }
+      #loading-screen .ls-text { position: absolute; left: 0; right: 0; bottom: 1.4vh; text-align: center; color: #fff;
+        font: bold clamp(13px, 2.1vh, 24px) Arial, Helvetica, sans-serif; text-shadow: 0 0 2px #000, 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000; }
+    </style>
   </head>
   <body>
     <div id="stage">
       <div id="game"></div>
       <div id="ui"></div>
+    </div>
+    <div id="loading-screen" role="status" aria-label="Loading">
+      <img class="ls-bg" src="assets/loading/bg.jpg" alt="" />
+      <div class="ls-art">
+        <img class="ls-m" src="assets/sprites/144.webp" alt="" style="--x:36.3;--b:59.0;--h:22.8" />
+        <img class="ls-m" src="assets/sprites/008.webp" alt="" style="--x:52.0;--b:31.4;--h:41.7" />
+        <img class="ls-m" src="assets/sprites/046.webp" alt="" style="--x:65.6;--b:59.4;--h:23.2" />
+        <img class="ls-plaque" src="assets/loading/plaque.webp" alt="Dragon Isle of Legends" />
+        <img class="ls-m" src="assets/sprites/047.webp" alt="" style="--x:77.6;--b:55.1;--h:11.2" />
+        <img class="ls-m" src="assets/sprites/026.webp" alt="" style="--x:31.4;--b:21.6;--h:25.4" />
+        <img class="ls-m" src="assets/sprites/025.webp" alt="" style="--x:44.1;--b:22.3;--h:15.4" />
+        <img class="ls-m" src="assets/sprites/005.webp" alt="" style="--x:55.3;--b:22.3;--h:15.9" />
+        <img class="ls-m" src="assets/sprites/006.webp" alt="" style="--x:75.4;--b:20.3;--h:24.7" />
+      </div>
+      <div class="ls-text">Loading Please Wait..</div>
     </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
