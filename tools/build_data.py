@@ -453,11 +453,16 @@ REGIONS = [  # 4x4 grid exactly as on the in-game world map, with progression ti
     ("Ringfeld", 0, 1, 2), ("Safaris", 1, 1, 5), ("South Earlsome", 2, 1, 8), ("Endergate", 3, 1, 12),
     ("Northern Alvalon", 0, 2, 1), ("Greater Wesing", 1, 2, 4), ("Wesburn", 2, 2, 9), ("Saintspring", 3, 2, 13),
     ("Southern Alvalon", 0, 3, 0), ("Western Gracia", 1, 3, 7), ("Eastern Gracia", 2, 3, 11), ("Applefield", 3, 3, 14),
+    # the Underworld is not on the island grid: it lies across the sea east of Saintspring and is
+    # reached by boat from the Saintspring dock (or through the Unknown Relic, as in the original)
+    ("Underworld", 4, 2, 16),
 ]
+SEA_REGIONS = {"Underworld"}
 TERRAIN = {"Forest of Mangal": "forest", "Norwoods": "mountain", "North Earlsome": "snow", "Swinedene": "beach",
            "Ringfeld": "meadow", "Safaris": "meadow", "South Earlsome": "mountain", "Endergate": "river",
            "Northern Alvalon": "beach", "Greater Wesing": "meadow", "Wesburn": "mountain", "Saintspring": "river",
-           "Southern Alvalon": "meadow", "Western Gracia": "forest", "Eastern Gracia": "volcano", "Applefield": "meadow"}
+           "Southern Alvalon": "meadow", "Western Gracia": "forest", "Eastern Gracia": "volcano", "Applefield": "meadow",
+           "Underworld": "underworld"}
 
 
 def monsters_in(text):
@@ -487,7 +492,7 @@ def locate(text):
     return None
 
 
-TOWN_REGION_FALLBACK = {"Dundean": "Endergate", "Lorensia": "Western Gracia", "Ilios": "Saintspring", "Wesing": "Greater Wesing",
+TOWN_REGION_FALLBACK = {"Dundean": "Endergate", "Lorensia": "Western Gracia", "Ilios": "Underworld", "Wesing": "Greater Wesing",
                         "Longdale": "South Earlsome", "Olympia": "Applefield", "Corova": "Southern Alvalon", "Westguard": "Northern Alvalon"}
 for t in sorted(set(town_titles)):
     text = page(t)
@@ -503,7 +508,7 @@ for t in sorted(set(town_titles)):
     towns[t] = {"name": t, "region": region, "quests": quests, "about": strip(text.split("==")[0])[:300],
                 "arena": "License Test" in text, "tournament": t in ("Westguard", "Ilios")}
 
-DUNGEON_REGION_FALLBACK = {"Lighthouse": "Ringfeld", "Holy Cave": "Saintspring", "Ruins": "Safaris", "Giant Mangal": "Forest of Mangal",
+DUNGEON_REGION_FALLBACK = {"Lighthouse": "Ringfeld", "Holy Cave": "Saintspring", "Ruins": "Underworld", "Giant Mangal": "Forest of Mangal",
                            "North Cave": "Norwoods", "Pirate's Cave": "Swinedene", "Igneous Passage": "Eastern Gracia",
                            "No Man's Castle": "Southern Alvalon", "Cave of Endergate": "Endergate", "Cave of Earlsome": "North Earlsome",
                            "Sanctuary": "Applefield", "The Abyss": "Wesburn", "Unknown Relic": "Swinedene"}
@@ -569,7 +574,7 @@ for name, x, y, tier in REGIONS:
     rdung = [d for d, v in dungeons.items() if v["region"] == name]
     rover = [o for o, v in overlords.items() if v["region"] == name]
     lo = 2 + round(tier ** 1.45 * 1.9)
-    regions.append({"name": name, "id": slug(name), "x": x, "y": y, "tier": tier, "levels": [lo, lo + 3 + tier],
+    regions.append({"name": name, "id": slug(name), "x": x, "y": y, "tier": tier, "levels": [lo, lo + 3 + tier], "sea": name in SEA_REGIONS,
                     "terrain": TERRAIN[name], "monsters": pool, "towns": rtowns, "dungeons": rdung, "overlords": rover,
                     "about": strip(text.split("==")[0])[:300]})
 

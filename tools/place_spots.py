@@ -55,12 +55,25 @@ def place(region, mask, rng):
     # exits toward neighbouring regions
     for dx, dy, key in [(-1, 0, "W"), (1, 0, "E"), (0, -1, "N"), (0, 1, "S")]:
         nb = next((r for r in gd["regions"] if r["x"] == region["x"] + dx and r["y"] == region["y"] + dy), None)
-        if not nb:
-            continue
+        if not nb or nb.get("sea") or region.get("sea"):
+            continue  # sea regions are reached by boat, not by road
         score = {"W": lambda s: s["x"], "E": lambda s: -s["x"], "N": lambda s: s["y"], "S": lambda s: -s["y"]}[key]
         free = [s for s in spots if s["kind"] == "field"]
         s = min(free, key=score)
         s["kind"], s["exit"], s["ref"] = "exit", key, nb["id"]
+    # docks: the free spot closest to open water becomes the pier for each sea route
+    for a, b in SEA_ROUTES:
+        if region["id"] not in (a, b):
+            continue
+        other = b if region["id"] == a else a
+        water = [(x, y) for y in range(GH) for x in range(GW) if not mask[y][x]]
+        free = [s for s in spots if s["kind"] == "field"]
+        if water and free:
+            def coast(sp):
+                px, py = sp["x"] * GW, sp["y"] * GH
+                return min((px - x) ** 2 + (py - y) ** 2 for x, y in water[::3])
+            d = min(free, key=coast)
+            d["kind"], d["ref"] = "dock", other
     # special locations claim the most central remaining spots, in order
     cx = lambda s: (s["x"] - 0.5) ** 2 + (s["y"] - 0.5) ** 2
     specials = [("town", t) for t in region["towns"]] + [("dungeon", d_) for d_ in region["dungeons"]] + \
@@ -86,6 +99,7 @@ def place(region, mask, rng):
 
 # The maps are pure terrain (towns are drawn on top as building sprites), so no landmark anchors.
 ANCHORS: dict = {}
+SEA_ROUTES = [("saintspring", "underworld")]  # dock <-> dock boat connections
 out = {}
 for r in gd["regions"]:
     rng = random.Random(r["id"])

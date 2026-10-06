@@ -54,7 +54,7 @@ export interface Species {
 }
 
 export interface Region {
-  name: string; id: string; x: number; y: number; tier: number; levels: [number, number];
+  name: string; id: string; x: number; y: number; tier: number; levels: [number, number]; sea?: boolean;
   terrain: string; monsters: string[]; towns: string[]; dungeons: string[]; overlords: string[]; about: string;
 }
 export interface Quest { title: string; type: string; text: string }
@@ -76,7 +76,7 @@ export interface GameData {
   characters: Record<string, string>;
 }
 
-export interface Spot { id: number; x: number; y: number; kind: 'field' | 'town' | 'dungeon' | 'overlord' | 'exit'; ref?: string; exit?: string }
+export interface Spot { id: number; x: number; y: number; kind: 'field' | 'town' | 'dungeon' | 'overlord' | 'exit' | 'dock'; ref?: string; exit?: string }
 export type Maps = Record<string, { spots: Spot[]; edges: [number, number][] }>;
 
 /** A monster the player (or an NPC) owns. */

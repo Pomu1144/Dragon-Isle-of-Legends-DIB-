@@ -13517,6 +13517,7 @@
 11,
 17
 ],
+"sea": false,
 "terrain": "forest",
 "monsters": [
 "Doombat",
@@ -13556,6 +13557,7 @@
 28,
 37
 ],
+"sea": false,
 "terrain": "mountain",
 "monsters": [
 "Kingpen",
@@ -13594,6 +13596,7 @@
 56,
 69
 ],
+"sea": false,
 "terrain": "snow",
 "monsters": [
 "Cult Rogue",
@@ -13622,6 +13625,7 @@
 98,
 116
 ],
+"sea": false,
 "terrain": "beach",
 "monsters": [
 "Kingpen",
@@ -13673,6 +13677,7 @@
 7,
 12
 ],
+"sea": false,
 "terrain": "meadow",
 "monsters": [
 "Giant Turtle",
@@ -13713,6 +13718,7 @@
 22,
 30
 ],
+"sea": false,
 "terrain": "meadow",
 "monsters": [
 "Slime",
@@ -13738,9 +13744,7 @@
 "Sasquatch"
 ],
 "towns": [],
-"dungeons": [
-"Ruins"
-],
+"dungeons": [],
 "overlords": [
 "Ormr"
 ],
@@ -13756,6 +13760,7 @@
 41,
 52
 ],
+"sea": false,
 "terrain": "mountain",
 "monsters": [
 "Finder",
@@ -13790,6 +13795,7 @@
 72,
 87
 ],
+"sea": false,
 "terrain": "river",
 "monsters": [
 "Iron Slime",
@@ -13827,6 +13833,7 @@
 4,
 8
 ],
+"sea": false,
 "terrain": "beach",
 "monsters": [
 "Piranha",
@@ -13871,6 +13878,7 @@
 16,
 23
 ],
+"sea": false,
 "terrain": "meadow",
 "monsters": [
 "Cult Priest",
@@ -13909,6 +13917,7 @@
 48,
 60
 ],
+"sea": false,
 "terrain": "mountain",
 "monsters": [
 "Lich Eye",
@@ -13938,6 +13947,7 @@
 80,
 96
 ],
+"sea": false,
 "terrain": "river",
 "monsters": [
 "Chimera Ant",
@@ -13970,9 +13980,7 @@
 "Cult Rogue",
 "Centurion"
 ],
-"towns": [
-"Ilios"
-],
+"towns": [],
 "dungeons": [
 "Holy Cave"
 ],
@@ -13991,6 +13999,7 @@
 2,
 5
 ],
+"sea": false,
 "terrain": "meadow",
 "monsters": [
 "Bitewing",
@@ -14041,6 +14050,7 @@
 34,
 44
 ],
+"sea": false,
 "terrain": "forest",
 "monsters": [
 "Drake",
@@ -14079,6 +14089,7 @@
 63,
 77
 ],
+"sea": false,
 "terrain": "volcano",
 "monsters": [
 "Crab King",
@@ -14110,6 +14121,7 @@
 89,
 106
 ],
+"sea": false,
 "terrain": "meadow",
 "monsters": [
 "Ninja",
@@ -14147,6 +14159,48 @@
 "Arkanis"
 ],
 "about": "Info coming soon, feel free to help!"
+},
+{
+"name": "Underworld",
+"id": "underworld",
+"x": 4,
+"y": 2,
+"tier": 16,
+"levels": [
+108,
+127
+],
+"sea": true,
+"terrain": "underworld",
+"monsters": [
+"Lion King",
+"Thunder Mage",
+"King Slime",
+"Mer King",
+"Kaguya",
+"Megaslug",
+"Angelic Bird",
+"Yacare",
+"Dark Spirit",
+"Beholder",
+"Unhappy Bird",
+"Beastman King",
+"Kemet God",
+"Blood Rogue",
+"Terror Claw",
+"Nessie",
+"Berith",
+"Shenron",
+"Snow Man"
+],
+"towns": [
+"Ilios"
+],
+"dungeons": [
+"Ruins"
+],
+"overlords": [],
+"about": ""
 }
 ],
 "towns": [
@@ -14214,7 +14268,7 @@
 },
 {
 "name": "Ilios",
-"region": "Saintspring",
+"region": "Underworld",
 "quests": [
 {
 "title": "Name",
@@ -14693,7 +14747,7 @@
 },
 {
 "name": "Ruins",
-"region": "Safaris",
+"region": "Underworld",
 "floors": 10,
 "specials": {
 "3": "Waypoint",

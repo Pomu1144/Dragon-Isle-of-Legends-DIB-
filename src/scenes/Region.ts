@@ -19,6 +19,7 @@ const KIND_STYLE: Record<Spot['kind'], { color: number; icon: string; label: str
   dungeon: { color: 0xff5a5a, icon: '⛰', label: 'Dungeon' },
   overlord: { color: 0xb46bff, icon: '🐲', label: 'Dragon Overlord' },
   exit: { color: 0xf6c453, icon: '➜', label: 'Road' },
+  dock: { color: 0x42a5f5, icon: '⛵', label: 'Dock' },
 };
 
 export class RegionScene extends Phaser.Scene {
@@ -71,6 +72,7 @@ export class RegionScene extends Phaser.Scene {
       if (s.kind === 'dungeon') { const v = art('bk_fx_web', 0.42, 0, 14); this.tweens.add({ targets: v, angle: 360, duration: 12000, repeat: -1 }); v.setOrigin(0.5); }
       if (s.kind === 'overlord') { const e = art('town_warp_emblem', 0.42, 0, 10); if (defeatedOverlord) e.setAlpha(0.45).setTint(0x888888); }
       if (s.kind === 'exit') art('town_signpost', 0.38, 0, 14);
+      if (s.kind === 'dock') { const d = art('town_dock', 0.3, 0, 18); this.tweens.add({ targets: d, y: d.y - 3, duration: 1400, yoyo: true, repeat: -1, ease: 'Sine.inOut' }); }
       if (s.kind === 'field') {
         const flag = this.add.text(-2, -30, '⚑', { fontSize: '26px', color: '#3bdc6a', stroke: '#063', strokeThickness: 3 }).setOrigin(0.5);
         c.add(flag);
@@ -82,7 +84,7 @@ export class RegionScene extends Phaser.Scene {
         this.tweens.add({ targets: q, y: -48, duration: 600, yoyo: true, repeat: -1 });
       }
       if (s.kind !== 'field') {
-        const label = s.kind === 'exit' ? `→ ${region(s.ref!).name}` : s.ref!;
+        const label = s.kind === 'exit' ? `→ ${region(s.ref!).name}` : s.kind === 'dock' ? `⛵ ${region(s.ref!).name}` : s.ref!;
         c.add(this.add.text(0, 28, label, { fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold', fontSize: '15px', color: '#fff', stroke: '#000', strokeThickness: 4 }).setOrigin(0.5, 0));
       }
       ring.setInteractive({ useHandCursor: true }).on('pointerdown', () => this.clickSpot(s));
@@ -123,6 +125,7 @@ export class RegionScene extends Phaser.Scene {
         spot?.kind === 'town' ? h('button', { class: 'btn gold', onClick: () => toTown(spot.ref!) }, `Enter ${spot.ref}`) : null,
         spot?.kind === 'dungeon' ? h('button', { class: 'btn red', onClick: () => this.enterDungeon(spot.ref!) }, `Enter ${spot.ref}`) : null,
         spot?.kind === 'overlord' && !S.overlords.includes(spot.ref!) ? h('button', { class: 'btn red', onClick: () => this.challengeOverlord(spot.ref!) }, `Challenge ${spot.ref}`) : null,
+        spot?.kind === 'dock' ? h('button', { class: 'btn gold', onClick: () => this.sail(spot.ref!) }, `⛵ Sail to ${region(spot.ref!).name}`) : null,
         h('span', { class: 'chip panel' }, 'Tap a connected marker to travel')),
       h('div', { class: 'region-info panel' },
         h('b', {}, 'Monsters sighted'),
@@ -217,6 +220,9 @@ export class RegionScene extends Phaser.Scene {
         if (!S.overlords.includes(s.ref!)) this.challengeOverlord(s.ref!);
         else toast(`${s.ref} has already been defeated.`);
         break;
+      case 'dock':
+        this.sail(s.ref!);
+        break;
       case 'exit': {
         const next = region(s.ref!);
         const nm = maps()[next.id];
@@ -228,6 +234,28 @@ export class RegionScene extends Phaser.Scene {
         break;
       }
     }
+  }
+
+  /** Board the boat at a dock and sail to the matching dock on the other side of the sea route. */
+  async sail(to: string) {
+    const dest = region(to);
+    const here = region(S.location.region);
+    const tough = dest.levels[0] > Math.max(...S.party.map((p) => p.level)) + 10;
+    await dialogue([{ who: 'Ferryman', text: `Fair winds today! I can sail you from ${here.name} to ${dest.name}.${tough ? ` Mind you, the monsters there are around Lv ${dest.levels[0]}–${dest.levels[1]}.` : ''}` }]);
+    if (!(await confirmBox(`Set sail for ${dest.name}?`, 'Set sail'))) return;
+    const m = maps()[to];
+    const pier = m.spots.find((x) => x.kind === 'dock' && x.ref === here.id) ?? m.spots[0];
+    S.location = { region: to, spot: pier.id };
+    if (!S.visited.includes(to)) S.visited.push(to);
+    save();
+    sfx('magic');
+    // the boat crosses the sea, then the camera fades into the destination
+    const { width, height } = this.scale;
+    const boat = this.add.image(this.token.x, this.token.y, 'town_dock').setScale(0.3).setDepth(60);
+    this.token.setVisible(false);
+    this.tweens.add({ targets: boat, x: to === 'underworld' ? width + 200 : -200, y: height * 0.5, duration: 1400, ease: 'Sine.in' });
+    this.cameras.main.fadeOut(1400, 8, 20, 30);
+    this.cameras.main.once('camerafadeoutcomplete', () => { toast(`⛵ Arrived in ${dest.name}`); toRegion(); });
   }
 
   hunt() {

@@ -19,7 +19,7 @@ export interface Encounter {
 
 const TERRAIN_BG: Record<string, string[]> = {
   meadow: ['meadow', 'river'], forest: ['forest', 'swamp'], mountain: ['mountain'], snow: ['snow', 'mountain'],
-  beach: ['beach', 'meadow'], river: ['river', 'meadow'], volcano: ['volcano', 'magma'],
+  beach: ['beach', 'meadow'], river: ['river', 'meadow'], volcano: ['volcano', 'magma'], underworld: ['abyss', 'ruins', 'swamp'],
 };
 
 export function regionBg(r: Region, spot = 0) {

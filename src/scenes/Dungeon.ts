@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { coverBg, vignette, ambient } from './fx';
-import { data, dungeon as dungeonData } from '../core/data';
+import { data, dungeon as dungeonData, maps } from '../core/data';
 import { S, save, rollGem, hash } from '../core/state';
 import { dungeonEncounter, dungeonBoss, FINALE } from '../core/encounters';
 import { hud, openMenu } from '../ui/menus';
@@ -146,6 +146,18 @@ export class DungeonScene extends Phaser.Scene {
 
   descend() {
     const d = dungeonData(this.name)!;
+    if (this.name === 'Unknown Relic' && this.floor >= d.floors) {
+      // as in the original, the Unknown Relic's last stairs lead down into the Underworld
+      const m = maps()['underworld'];
+      S.location = { region: 'underworld', spot: (m.spots.find((s) => s.kind === 'dungeon' && s.ref === 'Ruins') ?? m.spots[0]).id };
+      if (!S.visited.includes('underworld')) S.visited.push('underworld');
+      save();
+      visit = null;
+      toast('The stairs lead down into the Underworld…');
+      this.cameras.main.fadeOut(500);
+      this.cameras.main.once('camerafadeoutcomplete', () => toRegion());
+      return;
+    }
     if (this.floor >= d.floors) { toast('This is the deepest floor.'); return; }
     visit = null;
     this.cameras.main.fadeOut(300);

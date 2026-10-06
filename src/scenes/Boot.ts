@@ -24,7 +24,7 @@ export class BootScene extends Phaser.Scene {
       'card_flame', 'card_locked', 'info', 'btn_flee', 'btn_monsters', 'btn_scroll', 'fx_tornado', 'fx_ring', 'fx_sparkle', 'fx_silver', 'fx_web', 'fx_red',
       'fx_green', 'fx_target', 'candle_small', 'candle_tall', 'candle_double'])
       this.load.image(`bk_${k}`, `assets/ui/orig/bk/${k}.png`);
-    for (const k of ['menu_m', 'leave', 'shop', 'hero', 'warp_emblem', 'emblem_house', 'house_a', 'warp_house', 'house_b', 'monsterpedia', 'monsters', 'signpost', 'trees', 'bigtree', 'bushes', 'farm'])
+    for (const k of ['menu_m', 'leave', 'shop', 'hero', 'warp_emblem', 'emblem_house', 'house_a', 'warp_house', 'house_b', 'monsterpedia', 'monsters', 'signpost', 'trees', 'bigtree', 'bushes', 'farm', 'dock'])
       this.load.image(`town_${k}`, `assets/ui/orig/town/${k}.png`);
     // soft particle textures
     const g = this.make.graphics({ x: 0, y: 0 }, false);
