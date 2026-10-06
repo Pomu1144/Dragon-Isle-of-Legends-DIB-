@@ -54,7 +54,7 @@ export interface Species {
 }
 
 export interface Region {
-  name: string; id: string; x: number; y: number; tier: number; levels: [number, number]; sea?: boolean;
+  name: string; id: string; x: number; y: number; tier: number; levels: [number, number]; sea?: boolean; realm?: 'isle' | 'frontier';
   terrain: string; monsters: string[]; towns: string[]; dungeons: string[]; overlords: string[]; about: string;
 }
 export interface Quest { title: string; type: string; text: string }
@@ -71,7 +71,7 @@ export interface ShopItem { item: string; price: number; currency: 'silver' | 'g
 export interface GameData {
   monsters: Species[]; regions: Region[]; towns: Town[]; dungeons: Dungeon[]; overlords: Overlord[];
   recipes: Recipe[]; shop: ShopItem[]; licenses: License[]; eggs: { egg: string[]; golden: string[] };
-  spirits: string[]; soulStones: Record<string, StatKey[]>; growth: number;
+  spirits: string[]; soulStones: Record<string, StatKey[]>; growth: number; seaRoutes?: [string, string][];
   quests: Record<string, { obtained: string; text: string; how: string; reward: string; town: string | null }>;
   characters: Record<string, string>;
 }

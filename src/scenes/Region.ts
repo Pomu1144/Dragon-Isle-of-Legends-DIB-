@@ -37,7 +37,6 @@ export class RegionScene extends Phaser.Scene {
   private moving = false;
   private markers = new Map<number, Phaser.GameObjects.Container>();
   private fog!: Phaser.GameObjects.RenderTexture;
-  private paths!: Phaser.GameObjects.Graphics;
   private view?: Phaser.GameObjects.Graphics;
   private WW = 2560;
   private WH = 1440;
@@ -76,8 +75,6 @@ export class RegionScene extends Phaser.Scene {
     const here0 = m.spots[S.location.spot] ?? m.spots[0];
     reveal(r.id, [here0.id, ...this.neighbours(here0.id), ...questSpots.keys()]);
 
-    this.paths = this.add.graphics().setDepth(2);
-    this.drawPaths();
     for (const s of m.spots) this.markers.set(s.id, this.marker(s, questSpots.has(s.id)));
 
     // fog of war: a dark layer with soft clearings punched out around every explored spot
@@ -210,22 +207,6 @@ export class RegionScene extends Phaser.Scene {
     return c;
   }
 
-  /** Roads are drawn wherever at least one end is explored, so they lead off into the fog. */
-  private drawPaths() {
-    const m = maps()[S.location.region];
-    const g = this.paths.clear();
-    for (const [a, b] of m.edges) {
-      if (!this.seen(a) && !this.seen(b)) continue;
-      const pa = this.P(m.spots[a]), pb = this.P(m.spots[b]);
-      const len = Phaser.Math.Distance.Between(pa.x, pa.y, pb.x, pb.y);
-      for (let d = 0; d < len; d += 14) {
-        const t = d / len;
-        g.fillStyle(0x000000, 0.35).fillCircle(pa.x + (pb.x - pa.x) * t + 1, pa.y + (pb.y - pa.y) * t + 2, 3.2);
-        g.fillStyle(0xfff3d0, 0.85).fillCircle(pa.x + (pb.x - pa.x) * t, pa.y + (pb.y - pa.y) * t, 2.6);
-      }
-    }
-  }
-
   private clearFog(s: Spot) {
     const p = this.P(s);
     this.fog.erase('fog_brush', p.x - FOG_R, p.y - FOG_R);
@@ -242,7 +223,6 @@ export class RegionScene extends Phaser.Scene {
       const c = this.markers.get(id);
       if (c) { c.setVisible(true).setAlpha(0); this.tweens.add({ targets: c, alpha: 1, duration: 500 }); }
     }
-    this.drawPaths();
     const e = exploreState(r.id);
     if (e.seen.length >= m.spots.length && !e.done.includes(-1)) {
       e.done.push(-1);

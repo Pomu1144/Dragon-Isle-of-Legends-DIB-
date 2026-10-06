@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { data } from '../core/data';
 import { setGame, go } from '../nav';
 
-export const BGS = ['abyss', 'arena', 'beach', 'castle', 'cave', 'forest', 'lighthouse', 'magma', 'meadow', 'mountain', 'piratecave', 'river', 'ruins', 'sanctuary', 'snow', 'swamp', 'title', 'town', 'volcano'];
+export const BGS = ['abyss', 'arena', 'beach', 'castle', 'cave', 'forest', 'lighthouse', 'magma', 'meadow', 'mountain', 'piratecave', 'river', 'ruins', 'sanctuary', 'snow', 'swamp', 'title', 'town', 'volcano', 'glacier', 'hell', 'graveyard', 'deepforest'];
 
 export class BootScene extends Phaser.Scene {
   constructor() { super('Boot'); }
@@ -15,6 +15,7 @@ export class BootScene extends Phaser.Scene {
     this.load.on('progress', (p: number) => (bar.width = 600 * p));
     this.load.image('title', 'assets/bg/title.jpg');
     this.load.image('world', 'assets/maps/world.jpg');
+    this.load.image('world_frontier', 'assets/maps/frontier.jpg');
     for (const r of data().regions) this.load.image(`map_${r.id}`, `assets/maps/${r.id}.jpg`);
     for (const b of BGS) this.load.image(`bg_${b}`, `assets/bg/${b}.jpg`);
     // original-game UI pieces (tools/ref_ui/slice_town_battle.py)

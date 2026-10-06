@@ -4,7 +4,7 @@
 usage: build_data.py RAW_DIR OUT_DIR
   RAW_DIR contains pages.json + images.json (scrape_wiki.py) and img/ (download_images.py)
 """
-import json, os, re, shutil, statistics, sys
+import json, os, random, re, shutil, statistics, sys
 from collections import defaultdict
 
 sys.path.insert(0, os.path.dirname(__file__))
@@ -610,6 +610,62 @@ for n in ["Goblin", "Slime", "Wolf", "Giant Ant", "Bitewing", "Fairy", "Penguin"
     if n in byname and n not in sa["monsters"]:
         sa["monsters"].insert(0, n)
 
+# ---------------------------------------------------------------- the Frontier (expansion continent)
+# Hand-written regions, villages and dungeons (tools/custom/expansion.json) on their own 5x2 grid across the
+# sea. Wild pools come from the wiki monster list, filtered by the region's elements and its tier's star band.
+EXP = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "custom", "expansion.json")))
+for r in regions:
+    r["realm"] = "isle"
+
+
+def themed_pool(elements, tier, size):
+    c = 2 + tier * 0.28
+    def ok(m, lo, hi):
+        return m["element"] in elements and lo <= m["stars"] <= hi and not re.search("hatchling", m["name"], re.I)
+    pool = [m for m in monsters if ok(m, c - 1, c + 1.5)]
+    pool += [m for m in monsters if ok(m, c + 1.5, c + 3) and m not in pool][: max(2, size // 6)]
+    if len(pool) < size // 2:
+        pool += [m for m in monsters if c - 1.5 <= m["stars"] <= c + 1.5 and m not in pool and not re.search("hatchling", m["name"], re.I)]
+    rng = random.Random(tier * 977 + len(elements))
+    rng.shuffle(pool)
+    return [m["name"] for m in sorted(pool[:size], key=lambda m: m["stars"])]
+
+
+QUEST_TEMPLATES = [
+    ("Trouble on the Road", "Battle", "A rogue breeder named {npc} has been ambushing travellers in {region}. Beat them and send them packing!"),
+    ("Specimen Wanted", "Capture", "The Guild's scholars need a live {mon} from {region}. Capture one and bring it in."),
+    ("Prove Your Strength", "Train", "The wilds of {region} are no place for the weak. Defeat 12 monsters to show you can handle them."),
+    ("Urgent Message", "Deliver", "Please carry this sealed letter to the Guild in {town}. It must not be opened on the way."),
+    ("Bounty: {npc2}", "Battle", "{npc2} is a breeder who has been stealing eggs from {region}. Defeat them and the bounty is yours."),
+]
+NPCS = ["Vorga", "Hask", "Ingrid", "Morrow", "Sella", "Grimsby", "Ulric", "Thessaly", "Corvin", "Nyx", "Bram", "Isolde", "Fenwick",
+        "Drusk", "Ysolde", "Kael", "Merrin", "Oswin", "Rhoswen", "Talia"]
+for er in EXP["regions"]:
+    name = er["name"]
+    lo = 2 + round(er["tier"] ** 1.45 * 1.9)
+    regions.append({"name": name, "id": slug(name), "x": er["x"], "y": er["y"], "tier": er["tier"], "levels": [lo, lo + 3 + er["tier"]],
+                    "sea": False, "realm": "frontier", "terrain": er["terrain"], "monsters": themed_pool(er["elements"], er["tier"], 20),
+                    "towns": [t["name"] for t in EXP["towns"] if t["region"] == name],
+                    "dungeons": [d["name"] for d in EXP["dungeons"] if d["region"] == name], "overlords": [], "about": er["about"]})
+etowns = [t["name"] for t in EXP["towns"]]
+for i, t in enumerate(EXP["towns"]):
+    reg = next(r for r in regions if r["name"] == t["region"])
+    rnd = random.Random(t["name"])
+    quests = []
+    for title, typ, text in QUEST_TEMPLATES:
+        fill = {"npc": NPCS[(i * 3) % len(NPCS)], "npc2": NPCS[(i * 3 + 7) % len(NPCS)], "region": reg["name"],
+                "mon": rnd.choice(reg["monsters"][: max(3, len(reg["monsters"]) * 2 // 3)]),
+                "town": etowns[(i + 1 + rnd.randrange(len(etowns) - 1)) % len(etowns)]}
+        quests.append({"title": title.format(**fill), "type": typ, "text": text.format(**fill)})
+    towns[t["name"]] = {"name": t["name"], "region": t["region"], "quests": quests, "about": t["about"],
+                        "arena": bool(t.get("arena")), "tournament": bool(t.get("tournament"))}
+for d in EXP["dungeons"]:
+    reg = next(r for r in regions if r["name"] == d["region"])
+    dungeons[d["name"]] = {"name": d["name"], "region": d["region"], "floors": d["floors"], "specials": {},
+                           "monsters": themed_pool(d["elements"], reg["tier"] + 2, 16), "spirit": [], "captureChallenge": [],
+                           "about": d["about"], "bg": d["bg"]}
+SEA_ROUTES = [[slug(a), slug(b)] for a, b in EXP["sea_routes"]]
+
 # ---------------------------------------------------------------- recipes
 recipes = []
 seen_results = set()
@@ -686,7 +742,8 @@ monsters.sort(key=lambda m: m["id"])
 data = {"monsters": monsters, "regions": regions, "towns": list(towns.values()), "dungeons": list(dungeons.values()),
         "overlords": list(overlords.values()), "recipes": recipes, "shop": shop, "licenses": licenses,
         "eggs": {"egg": egg_pool, "golden": sorted(set(golden_pool))}, "spirits": spirits, "soulStones": soul,
-        "quests": quests_detail, "characters": characters, "growth": G}
+        "quests": quests_detail, "characters": characters, "growth": G,
+        "seaRoutes": [["saintspring", "underworld"]] + SEA_ROUTES}
 json.dump(data, open(os.path.join(OUT, "gamedata.json"), "w"), indent=0, ensure_ascii=False)
 print(f"monsters={len(monsters)} sprites_missing={len(missing)} {missing}")
 print(f"regions={len(regions)} towns={len(towns)} dungeons={len(dungeons)} overlords={len(overlords)} recipes={len(recipes)}")

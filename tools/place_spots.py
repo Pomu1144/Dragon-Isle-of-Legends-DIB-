@@ -57,7 +57,8 @@ def place(region, mask, rng):
     spots = [{"id": i, "x": round(p[0] / GW, 4), "y": round(p[1] / GH, 4), "kind": "field"} for i, p in enumerate(pts)]
     # exits toward neighbouring regions
     for dx, dy, key in [(-1, 0, "W"), (1, 0, "E"), (0, -1, "N"), (0, 1, "S")]:
-        nb = next((r for r in gd["regions"] if r["x"] == region["x"] + dx and r["y"] == region["y"] + dy), None)
+        nb = next((r for r in gd["regions"] if r["x"] == region["x"] + dx and r["y"] == region["y"] + dy
+                   and r.get("realm") == region.get("realm")), None)
         if not nb or nb.get("sea") or region.get("sea"):
             continue  # sea regions are reached by boat, not by road
         score = {"W": lambda s: s["x"], "E": lambda s: -s["x"], "N": lambda s: s["y"], "S": lambda s: -s["y"]}[key]
@@ -112,16 +113,17 @@ def place(region, mask, rng):
 
 # The maps are pure terrain (towns are drawn on top as building sprites), so no landmark anchors.
 ANCHORS: dict = {}
-SEA_ROUTES = [("saintspring", "underworld")]  # dock <-> dock boat connections
+SEA_ROUTES = gd.get("seaRoutes", [])  # dock <-> dock boat connections
 out = {}
 for r in gd["regions"]:
     rng = random.Random(r["id"])
     out[r["id"]] = place(r, land_mask(os.path.join(ASSETS, "maps", r["id"] + ".jpg")), rng)
 # bounding box of the island on the world map, so the 4x4 region grid can sit on the land
-wm = land_mask(os.path.join(ASSETS, "maps", "world.jpg"))
-cols = [x for x in range(GW) if sum(wm[y][x] for y in range(GH)) > GH * 0.25]
-rows = [y for y in range(GH) if sum(wm[y][x] for x in range(GW)) > GW * 0.2]
-out["_world"] = {"x0": round(min(cols) / GW, 3), "x1": round((max(cols) + 1) / GW, 3), "y0": round(min(rows) / GH, 3), "y1": round((max(rows) + 1) / GH, 3)}
-print("world island", out["_world"])
+for key, img in (("_world", "world.jpg"), ("_world_frontier", "frontier.jpg")):
+    wm = land_mask(os.path.join(ASSETS, "maps", img))
+    cols = [x for x in range(GW) if sum(wm[y][x] for y in range(GH)) > GH * 0.25]
+    rows = [y for y in range(GH) if sum(wm[y][x] for x in range(GW)) > GW * 0.2]
+    out[key] = {"x0": round(min(cols) / GW, 3), "x1": round((max(cols) + 1) / GW, 3), "y0": round(min(rows) / GH, 3), "y1": round((max(rows) + 1) / GH, 3)}
+    print(key, out[key])
 json.dump(out, open(os.path.join(DATA, "maps.json"), "w"), separators=(",", ":"))
 print({k: [s["kind"][0] for s in v["spots"]] for k, v in out.items() if not k.startswith("_")})

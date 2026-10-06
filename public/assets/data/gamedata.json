@@ -13545,7 +13545,8 @@
 "Giant Mangal"
 ],
 "overlords": [],
-"about": ""
+"about": "",
+"realm": "isle"
 },
 {
 "name": "Norwoods",
@@ -13584,7 +13585,8 @@
 "North Cave"
 ],
 "overlords": [],
-"about": ""
+"about": "",
+"realm": "isle"
 },
 {
 "name": "North Earlsome",
@@ -13613,7 +13615,8 @@
 "overlords": [
 "Xiuhcoatl"
 ],
-"about": ""
+"about": "",
+"realm": "isle"
 },
 {
 "name": "Swinedene",
@@ -13665,7 +13668,8 @@
 "overlords": [
 "Ladon"
 ],
-"about": ""
+"about": "",
+"realm": "isle"
 },
 {
 "name": "Ringfeld",
@@ -13706,7 +13710,8 @@
 "overlords": [
 "Archelon"
 ],
-"about": ""
+"about": "",
+"realm": "isle"
 },
 {
 "name": "Safaris",
@@ -13748,7 +13753,8 @@
 "overlords": [
 "Ormr"
 ],
-"about": ""
+"about": "",
+"realm": "isle"
 },
 {
 "name": "South Earlsome",
@@ -13783,7 +13789,8 @@
 "overlords": [
 "Apalala"
 ],
-"about": ""
+"about": "",
+"realm": "isle"
 },
 {
 "name": "Endergate",
@@ -13821,7 +13828,8 @@
 "overlords": [
 "Pythios"
 ],
-"about": "It is located east of Longdale and has the Cave of Endergate in it.It is also part of the path leading to Olympia."
+"about": "It is located east of Longdale and has the Cave of Endergate in it.It is also part of the path leading to Olympia.",
+"realm": "isle"
 },
 {
 "name": "Northern Alvalon",
@@ -13866,7 +13874,8 @@
 "overlords": [
 "Apophis"
 ],
-"about": ""
+"about": "",
+"realm": "isle"
 },
 {
 "name": "Greater Wesing",
@@ -13905,7 +13914,8 @@
 "overlords": [
 "Nagendra"
 ],
-"about": ""
+"about": "",
+"realm": "isle"
 },
 {
 "name": "Wesburn",
@@ -13935,7 +13945,8 @@
 "The Abyss"
 ],
 "overlords": [],
-"about": ""
+"about": "",
+"realm": "isle"
 },
 {
 "name": "Saintspring",
@@ -13987,7 +13998,8 @@
 "overlords": [
 "Quetzalcoatl"
 ],
-"about": ""
+"about": "",
+"realm": "isle"
 },
 {
 "name": "Southern Alvalon",
@@ -14038,7 +14050,8 @@
 "overlords": [
 "Arashi"
 ],
-"about": ""
+"about": "",
+"realm": "isle"
 },
 {
 "name": "Western Gracia",
@@ -14077,7 +14090,8 @@
 "overlords": [
 "Garuga"
 ],
-"about": ""
+"about": "",
+"realm": "isle"
 },
 {
 "name": "Eastern Gracia",
@@ -14109,7 +14123,8 @@
 "Igneous Passage"
 ],
 "overlords": [],
-"about": ""
+"about": "",
+"realm": "isle"
 },
 {
 "name": "Applefield",
@@ -14158,7 +14173,8 @@
 "overlords": [
 "Arkanis"
 ],
-"about": "Info coming soon, feel free to help!"
+"about": "Info coming soon, feel free to help!",
+"realm": "isle"
 },
 {
 "name": "Underworld",
@@ -14200,7 +14216,441 @@
 "Ruins"
 ],
 "overlords": [],
-"about": ""
+"about": "",
+"realm": "isle"
+},
+{
+"name": "Frostfang Coast",
+"id": "frostfang_coast",
+"x": 0,
+"y": 0,
+"tier": 6,
+"levels": [
+28,
+37
+],
+"sea": false,
+"realm": "frontier",
+"terrain": "frost",
+"monsters": [
+"Reptilo",
+"Razorfish",
+"Cockatrice",
+"Kemet King",
+"Sea Maiden",
+"White Dolphin",
+"Sasuke",
+"Blue Dragonling",
+"Baby Nessie",
+"Flame Wing",
+"Ceola King",
+"Bat King",
+"Terror Shark",
+"Sphinxling",
+"Cult Rogue",
+"Mer King",
+"Elder Seahorse",
+"Energy",
+"White Dragon",
+"Snow Panther"
+],
+"towns": [
+"Icehaven",
+"Whitecap"
+],
+"dungeons": [],
+"overlords": [],
+"about": "A frozen shoreline where ice floes grind against the cliffs. Hardy fishers and breeders who trade in cold-blooded monsters keep the coast alive through the endless winter."
+},
+{
+"name": "Glacier Expanse",
+"id": "glacier_expanse",
+"x": 1,
+"y": 0,
+"tier": 8,
+"levels": [
+41,
+52
+],
+"sea": false,
+"realm": "frontier",
+"terrain": "glacier",
+"monsters": [
+"Baby Nessie",
+"Carnoraptor",
+"Flame Wing",
+"Mer Prince",
+"White Seahorse",
+"Unhappy Bird",
+"Finder",
+"Reptile Lord",
+"Iron Sludge",
+"Sphinxling",
+"Kingpen",
+"Fate",
+"Cult Rogue",
+"Dark Razorfish",
+"Mer King",
+"Elder Seahorse",
+"Ninja",
+"Energy",
+"Demios",
+"Snow Panther"
+],
+"towns": [
+"Rimeholt",
+"Glacierfall"
+],
+"dungeons": [
+"Frozen Labyrinth"
+],
+"overlords": [],
+"about": "A sea of ancient ice, cracked by blue crevasses that run deeper than any rope. Crystal-backed monsters roam the sheets, and travellers say the glacier hums at night."
+},
+{
+"name": "Rimeheart Peaks",
+"id": "rimeheart_peaks",
+"x": 2,
+"y": 0,
+"tier": 11,
+"levels": [
+63,
+77
+],
+"sea": false,
+"realm": "frontier",
+"terrain": "glacier",
+"monsters": [
+"Cyclops",
+"Thunder Mage",
+"Steel Snake",
+"Mer King",
+"Kemet God",
+"Cult Rogue",
+"Elder Seahorse",
+"Stomper",
+"Berith",
+"Turtle King",
+"Yacare",
+"Nessie",
+"Gold Dragon",
+"King Slime",
+"Sphinx",
+"White Dragon",
+"Snake God",
+"Tiger Swarm",
+"Snow Panther",
+"Sphinx Master"
+],
+"towns": [
+"Frostspire",
+"Hoarfrost Hollow"
+],
+"dungeons": [],
+"overlords": [],
+"about": "The roof of the Frontier: storm-wrapped summits around a frozen lake that never thaws. Only the strongest breeders climb the switchbacks to the Frostspire."
+},
+{
+"name": "Ashen Wastes",
+"id": "ashen_wastes",
+"x": 3,
+"y": 0,
+"tier": 13,
+"levels": [
+80,
+96
+],
+"sea": false,
+"realm": "frontier",
+"terrain": "ash",
+"monsters": [
+"Dark Spirit",
+"Megaslug",
+"Light Crawler",
+"Stomper",
+"Decimator",
+"Berith",
+"Samurai Lord",
+"Centurion",
+"Multiclops",
+"Gold Dragon",
+"Snake God",
+"Demon",
+"King Slime",
+"Evil",
+"Shogun",
+"Fire Tiger",
+"Guardian",
+"Gold Wyrm",
+"Red Wyrm",
+"Chimera Ant"
+],
+"towns": [
+"Cinderreach",
+"Ashfall"
+],
+"dungeons": [],
+"overlords": [],
+"about": "Grey dunes of ash from fires that burned for a thousand years. Embers still glow in the cracks, and the creatures here feed on the heat beneath the dust."
+},
+{
+"name": "Infernal Rift",
+"id": "infernal_rift",
+"x": 4,
+"y": 0,
+"tier": 15,
+"levels": [
+98,
+116
+],
+"sea": false,
+"realm": "frontier",
+"terrain": "hell",
+"monsters": [
+"Samurai Lord",
+"Blood Rogue",
+"Centurion",
+"Demon",
+"Red Dragon",
+"Night Crawler",
+"Guardian",
+"Evil",
+"Shogun",
+"Fire Tiger",
+"Dark Panther",
+"Red Wyrm",
+"Orochi"
+],
+"towns": [
+"Brimstone",
+"Emberhold"
+],
+"dungeons": [],
+"overlords": [],
+"about": "Where the earth split open and the lava came up to meet the sky. Obsidian bridges cross rivers of fire, and the air tastes of brimstone."
+},
+{
+"name": "Elderwood",
+"id": "elderwood",
+"x": 0,
+"y": 1,
+"tier": 7,
+"levels": [
+34,
+44
+],
+"sea": false,
+"realm": "frontier",
+"terrain": "deepforest",
+"monsters": [
+"Mutation",
+"Spike Ball",
+"Yeti",
+"Beastman",
+"Beast Knight",
+"Resistance",
+"Gold Lion",
+"Minos",
+"Cherub",
+"Sasquatch",
+"Rider",
+"Serpent Mage",
+"Beastman King",
+"Spike Crab",
+"Steel Snake",
+"Destroyer",
+"Cyclops",
+"Stomper",
+"Decimator",
+"Angelic Bird"
+],
+"towns": [
+"Mossbrook",
+"Elderglen"
+],
+"dungeons": [],
+"overlords": [],
+"about": "A forest older than the kingdoms, its treetops so wide that whole villages shelter beneath a single bough. Mushroom rings mark the paths of forest spirits."
+},
+{
+"name": "Titanroot Forest",
+"id": "titanroot_forest",
+"x": 1,
+"y": 1,
+"tier": 9,
+"levels": [
+48,
+60
+],
+"sea": false,
+"realm": "frontier",
+"terrain": "deepforest",
+"monsters": [
+"Sasquatch",
+"Fate",
+"Iron Sludge",
+"Minos",
+"Ice Yeti",
+"Gold Lion",
+"Cherub",
+"Beastman King",
+"Bane",
+"Grimoire",
+"Steel Snake",
+"Spike Crab",
+"Decimator",
+"Kaguya",
+"Angelic Bird",
+"Berith",
+"Bastion",
+"Karma",
+"Titan",
+"Djinn"
+],
+"towns": [
+"Rootheart",
+"Canopy Rise"
+],
+"dungeons": [
+"Elder Hollow"
+],
+"overlords": [],
+"about": "Colossal trees whose roots form canyons. Glowing blue blossoms light the hollows, and the monsters here have grown as large as the trees that shelter them."
+},
+{
+"name": "Gravemoor",
+"id": "gravemoor",
+"x": 2,
+"y": 1,
+"tier": 10,
+"levels": [
+56,
+69
+],
+"sea": false,
+"realm": "frontier",
+"terrain": "graveyard",
+"monsters": [
+"Imp",
+"Finder",
+"Lich Eye",
+"Iron Sludge",
+"Watcher",
+"Bane",
+"Skull Crow",
+"Grimoire",
+"Lich King",
+"Aggression",
+"Beholder",
+"Dream Hunter",
+"Light Crawler",
+"Dark Spirit",
+"Iron Slime",
+"Night Crawler",
+"Demon",
+"Dementor",
+"Titan",
+"Djinn"
+],
+"towns": [
+"Gravesend",
+"Lanternwick"
+],
+"dungeons": [
+"Crypt of Kings"
+],
+"overlords": [],
+"about": "A misty moor of endless graves. Lanterns burn on the crypt doors so the dead can find their way, and not every shape in the fog belongs to the living."
+},
+{
+"name": "Hollow Necropolis",
+"id": "hollow_necropolis",
+"x": 3,
+"y": 1,
+"tier": 12,
+"levels": [
+72,
+87
+],
+"sea": false,
+"realm": "frontier",
+"terrain": "graveyard",
+"monsters": [
+"Skull Crow",
+"Lich King",
+"Bane",
+"Destroyer",
+"Spike Crab",
+"Beholder",
+"Stomper",
+"Light Crawler",
+"Iron Slime",
+"Berith",
+"Snake God",
+"Gold Dragon",
+"Night Crawler",
+"Evil",
+"Titan",
+"Doki",
+"Dementor",
+"Djinn",
+"Dark Panther",
+"Spike Monster"
+],
+"towns": [
+"Bonechapel",
+"Duskhallow"
+],
+"dungeons": [
+"Ashen Catacombs"
+],
+"overlords": [],
+"about": "A city of tombs built for kings no one remembers. Giant bones jut from the dead ground and green light rises from the burial pits after dusk."
+},
+{
+"name": "Hellmouth",
+"id": "hellmouth",
+"x": 4,
+"y": 1,
+"tier": 17,
+"levels": [
+118,
+138
+],
+"sea": false,
+"realm": "frontier",
+"terrain": "hell",
+"monsters": [
+"Mage Bane",
+"Bastion",
+"Demon",
+"Fire Tiger",
+"Juggernaut",
+"Guardian",
+"Evil",
+"Doki",
+"Titan",
+"Shogun",
+"Dementor",
+"Djinn",
+"Spikey",
+"Death Crawler",
+"Dark Panther",
+"Thought",
+"Morfeus",
+"Ganesha",
+"Red Wyrm",
+"Orochi"
+],
+"towns": [
+"Pandemon",
+"Sulphur Gate"
+],
+"dungeons": [
+"Inferno Depths"
+],
+"overlords": [],
+"about": "A burning chasm ringed by black cliffs and demonic gates. Legends say the oldest dragons were born from its fire, and the strongest monsters in the world still prowl its rim."
 }
 ],
 "towns": [
@@ -14448,6 +14898,686 @@
 "about": "",
 "arena": true,
 "tournament": true
+},
+{
+"name": "Icehaven",
+"region": "Frostfang Coast",
+"quests": [
+{
+"title": "Trouble on the Road",
+"type": "Battle",
+"text": "A rogue breeder named Vorga has been ambushing travellers in Frostfang Coast. Beat them and send them packing!"
+},
+{
+"title": "Specimen Wanted",
+"type": "Capture",
+"text": "The Guild's scholars need a live Ceola King from Frostfang Coast. Capture one and bring it in."
+},
+{
+"title": "Prove Your Strength",
+"type": "Train",
+"text": "The wilds of Frostfang Coast are no place for the weak. Defeat 12 monsters to show you can handle them."
+},
+{
+"title": "Urgent Message",
+"type": "Deliver",
+"text": "Please carry this sealed letter to the Guild in Mossbrook. It must not be opened on the way."
+},
+{
+"title": "Bounty: Thessaly",
+"type": "Battle",
+"text": "Thessaly is a breeder who has been stealing eggs from Frostfang Coast. Defeat them and the bounty is yours."
+}
+],
+"about": "A harbour town of turf-roofed lodges where ships from the Dragon Isle unload. Its Guild hall is warmed by a fire-drake kept in the cellar.",
+"arena": false,
+"tournament": false
+},
+{
+"name": "Whitecap",
+"region": "Frostfang Coast",
+"quests": [
+{
+"title": "Trouble on the Road",
+"type": "Battle",
+"text": "A rogue breeder named Morrow has been ambushing travellers in Frostfang Coast. Beat them and send them packing!"
+},
+{
+"title": "Specimen Wanted",
+"type": "Capture",
+"text": "The Guild's scholars need a live Flame Wing from Frostfang Coast. Capture one and bring it in."
+},
+{
+"title": "Prove Your Strength",
+"type": "Train",
+"text": "The wilds of Frostfang Coast are no place for the weak. Defeat 12 monsters to show you can handle them."
+},
+{
+"title": "Urgent Message",
+"type": "Deliver",
+"text": "Please carry this sealed letter to the Guild in Duskhallow. It must not be opened on the way."
+},
+{
+"title": "Bounty: Bram",
+"type": "Battle",
+"text": "Bram is a breeder who has been stealing eggs from Frostfang Coast. Defeat them and the bounty is yours."
+}
+],
+"about": "A fishing village on the cliffs, famous for hot fish stew and the ice-diving breeders who raise sea monsters in the frozen bays.",
+"arena": false,
+"tournament": false
+},
+{
+"name": "Rimeholt",
+"region": "Glacier Expanse",
+"quests": [
+{
+"title": "Trouble on the Road",
+"type": "Battle",
+"text": "A rogue breeder named Ulric has been ambushing travellers in Glacier Expanse. Beat them and send them packing!"
+},
+{
+"title": "Specimen Wanted",
+"type": "Capture",
+"text": "The Guild's scholars need a live Flame Wing from Glacier Expanse. Capture one and bring it in."
+},
+{
+"title": "Prove Your Strength",
+"type": "Train",
+"text": "The wilds of Glacier Expanse are no place for the weak. Defeat 12 monsters to show you can handle them."
+},
+{
+"title": "Urgent Message",
+"type": "Deliver",
+"text": "Please carry this sealed letter to the Guild in Whitecap. It must not be opened on the way."
+},
+{
+"title": "Bounty: Drusk",
+"type": "Battle",
+"text": "Drusk is a breeder who has been stealing eggs from Glacier Expanse. Defeat them and the bounty is yours."
+}
+],
+"about": "A fortress-town carved into a wall of blue ice. Its people mine ice crystals that hold magic and trade them across the Frontier.",
+"arena": true,
+"tournament": false
+},
+{
+"name": "Glacierfall",
+"region": "Glacier Expanse",
+"quests": [
+{
+"title": "Trouble on the Road",
+"type": "Battle",
+"text": "A rogue breeder named Nyx has been ambushing travellers in Glacier Expanse. Beat them and send them packing!"
+},
+{
+"title": "Specimen Wanted",
+"type": "Capture",
+"text": "The Guild's scholars need a live Sphinxling from Glacier Expanse. Capture one and bring it in."
+},
+{
+"title": "Prove Your Strength",
+"type": "Train",
+"text": "The wilds of Glacier Expanse are no place for the weak. Defeat 12 monsters to show you can handle them."
+},
+{
+"title": "Urgent Message",
+"type": "Deliver",
+"text": "Please carry this sealed letter to the Guild in Duskhallow. It must not be opened on the way."
+},
+{
+"title": "Bounty: Merrin",
+"type": "Battle",
+"text": "Merrin is a breeder who has been stealing eggs from Glacier Expanse. Defeat them and the bounty is yours."
+}
+],
+"about": "A camp of snow-houses at the foot of a frozen waterfall, where glacier guides wait to lead travellers across the crevasses.",
+"arena": false,
+"tournament": false
+},
+{
+"name": "Frostspire",
+"region": "Rimeheart Peaks",
+"quests": [
+{
+"title": "Trouble on the Road",
+"type": "Battle",
+"text": "A rogue breeder named Fenwick has been ambushing travellers in Rimeheart Peaks. Beat them and send them packing!"
+},
+{
+"title": "Specimen Wanted",
+"type": "Capture",
+"text": "The Guild's scholars need a live Gold Dragon from Rimeheart Peaks. Capture one and bring it in."
+},
+{
+"title": "Prove Your Strength",
+"type": "Train",
+"text": "The wilds of Rimeheart Peaks are no place for the weak. Defeat 12 monsters to show you can handle them."
+},
+{
+"title": "Urgent Message",
+"type": "Deliver",
+"text": "Please carry this sealed letter to the Guild in Ashfall. It must not be opened on the way."
+},
+{
+"title": "Bounty: Talia",
+"type": "Battle",
+"text": "Talia is a breeder who has been stealing eggs from Rimeheart Peaks. Defeat them and the bounty is yours."
+}
+],
+"about": "A monastery town clinging to the highest peak, where monks study the storms and train wind monsters in the thin air.",
+"arena": false,
+"tournament": false
+},
+{
+"name": "Hoarfrost Hollow",
+"region": "Rimeheart Peaks",
+"quests": [
+{
+"title": "Trouble on the Road",
+"type": "Battle",
+"text": "A rogue breeder named Kael has been ambushing travellers in Rimeheart Peaks. Beat them and send them packing!"
+},
+{
+"title": "Specimen Wanted",
+"type": "Capture",
+"text": "The Guild's scholars need a live Cult Rogue from Rimeheart Peaks. Capture one and bring it in."
+},
+{
+"title": "Prove Your Strength",
+"type": "Train",
+"text": "The wilds of Rimeheart Peaks are no place for the weak. Defeat 12 monsters to show you can handle them."
+},
+{
+"title": "Urgent Message",
+"type": "Deliver",
+"text": "Please carry this sealed letter to the Guild in Duskhallow. It must not be opened on the way."
+},
+{
+"title": "Bounty: Ingrid",
+"type": "Battle",
+"text": "Ingrid is a breeder who has been stealing eggs from Rimeheart Peaks. Defeat them and the bounty is yours."
+}
+],
+"about": "A hidden valley village around a hot spring, the only warm place for leagues. Breeders rest here before the final climb.",
+"arena": false,
+"tournament": false
+},
+{
+"name": "Cinderreach",
+"region": "Ashen Wastes",
+"quests": [
+{
+"title": "Trouble on the Road",
+"type": "Battle",
+"text": "A rogue breeder named Rhoswen has been ambushing travellers in Ashen Wastes. Beat them and send them packing!"
+},
+{
+"title": "Specimen Wanted",
+"type": "Capture",
+"text": "The Guild's scholars need a live Multiclops from Ashen Wastes. Capture one and bring it in."
+},
+{
+"title": "Prove Your Strength",
+"type": "Train",
+"text": "The wilds of Ashen Wastes are no place for the weak. Defeat 12 monsters to show you can handle them."
+},
+{
+"title": "Urgent Message",
+"type": "Deliver",
+"text": "Please carry this sealed letter to the Guild in Whitecap. It must not be opened on the way."
+},
+{
+"title": "Bounty: Grimsby",
+"type": "Battle",
+"text": "Grimsby is a breeder who has been stealing eggs from Ashen Wastes. Defeat them and the bounty is yours."
+}
+],
+"about": "A trading post built from the ribs of a fallen titan, where scavengers sell treasures dug from the ash.",
+"arena": false,
+"tournament": false
+},
+{
+"name": "Ashfall",
+"region": "Ashen Wastes",
+"quests": [
+{
+"title": "Trouble on the Road",
+"type": "Battle",
+"text": "A rogue breeder named Hask has been ambushing travellers in Ashen Wastes. Beat them and send them packing!"
+},
+{
+"title": "Specimen Wanted",
+"type": "Capture",
+"text": "The Guild's scholars need a live Stomper from Ashen Wastes. Capture one and bring it in."
+},
+{
+"title": "Prove Your Strength",
+"type": "Train",
+"text": "The wilds of Ashen Wastes are no place for the weak. Defeat 12 monsters to show you can handle them."
+},
+{
+"title": "Urgent Message",
+"type": "Deliver",
+"text": "Please carry this sealed letter to the Guild in Rootheart. It must not be opened on the way."
+},
+{
+"title": "Bounty: Corvin",
+"type": "Battle",
+"text": "Corvin is a breeder who has been stealing eggs from Ashen Wastes. Defeat them and the bounty is yours."
+}
+],
+"about": "A soot-black mining town where ash rains every evening. Its smiths forge gems in the heat of the fissures.",
+"arena": true,
+"tournament": false
+},
+{
+"name": "Brimstone",
+"region": "Infernal Rift",
+"quests": [
+{
+"title": "Trouble on the Road",
+"type": "Battle",
+"text": "A rogue breeder named Sella has been ambushing travellers in Infernal Rift. Beat them and send them packing!"
+},
+{
+"title": "Specimen Wanted",
+"type": "Capture",
+"text": "The Guild's scholars need a live Guardian from Infernal Rift. Capture one and bring it in."
+},
+{
+"title": "Prove Your Strength",
+"type": "Train",
+"text": "The wilds of Infernal Rift are no place for the weak. Defeat 12 monsters to show you can handle them."
+},
+{
+"title": "Urgent Message",
+"type": "Deliver",
+"text": "Please carry this sealed letter to the Guild in Gravesend. It must not be opened on the way."
+},
+{
+"title": "Bounty: Isolde",
+"type": "Battle",
+"text": "Isolde is a breeder who has been stealing eggs from Infernal Rift. Defeat them and the bounty is yours."
+}
+],
+"about": "A fortress of obsidian on an island in a lava lake, home to fire-breeders who fear nothing.",
+"arena": false,
+"tournament": false
+},
+{
+"name": "Emberhold",
+"region": "Infernal Rift",
+"quests": [
+{
+"title": "Trouble on the Road",
+"type": "Battle",
+"text": "A rogue breeder named Thessaly has been ambushing travellers in Infernal Rift. Beat them and send them packing!"
+},
+{
+"title": "Specimen Wanted",
+"type": "Capture",
+"text": "The Guild's scholars need a live Guardian from Infernal Rift. Capture one and bring it in."
+},
+{
+"title": "Prove Your Strength",
+"type": "Train",
+"text": "The wilds of Infernal Rift are no place for the weak. Defeat 12 monsters to show you can handle them."
+},
+{
+"title": "Urgent Message",
+"type": "Deliver",
+"text": "Please carry this sealed letter to the Guild in Duskhallow. It must not be opened on the way."
+},
+{
+"title": "Bounty: Ysolde",
+"type": "Battle",
+"text": "Ysolde is a breeder who has been stealing eggs from Infernal Rift. Defeat them and the bounty is yours."
+}
+],
+"about": "A walled outpost guarding the bridges over the rift. Its watchmen have seen things crawl out of the lava that no Monsterpedia lists.",
+"arena": false,
+"tournament": false
+},
+{
+"name": "Mossbrook",
+"region": "Elderwood",
+"quests": [
+{
+"title": "Trouble on the Road",
+"type": "Battle",
+"text": "A rogue breeder named Bram has been ambushing travellers in Elderwood. Beat them and send them packing!"
+},
+{
+"title": "Specimen Wanted",
+"type": "Capture",
+"text": "The Guild's scholars need a live Yeti from Elderwood. Capture one and bring it in."
+},
+{
+"title": "Prove Your Strength",
+"type": "Train",
+"text": "The wilds of Elderwood are no place for the weak. Defeat 12 monsters to show you can handle them."
+},
+{
+"title": "Urgent Message",
+"type": "Deliver",
+"text": "Please carry this sealed letter to the Guild in Ashfall. It must not be opened on the way."
+},
+{
+"title": "Bounty: Oswin",
+"type": "Battle",
+"text": "Oswin is a breeder who has been stealing eggs from Elderwood. Defeat them and the bounty is yours."
+}
+],
+"about": "A village of treehouses joined by rope bridges, where the elders speak with the forest and every child raises a sapling monster.",
+"arena": false,
+"tournament": false
+},
+{
+"name": "Elderglen",
+"region": "Elderwood",
+"quests": [
+{
+"title": "Trouble on the Road",
+"type": "Battle",
+"text": "A rogue breeder named Drusk has been ambushing travellers in Elderwood. Beat them and send them packing!"
+},
+{
+"title": "Specimen Wanted",
+"type": "Capture",
+"text": "The Guild's scholars need a live Beastman from Elderwood. Capture one and bring it in."
+},
+{
+"title": "Prove Your Strength",
+"type": "Train",
+"text": "The wilds of Elderwood are no place for the weak. Defeat 12 monsters to show you can handle them."
+},
+{
+"title": "Urgent Message",
+"type": "Deliver",
+"text": "Please carry this sealed letter to the Guild in Bonechapel. It must not be opened on the way."
+},
+{
+"title": "Bounty: Vorga",
+"type": "Battle",
+"text": "Vorga is a breeder who has been stealing eggs from Elderwood. Defeat them and the bounty is yours."
+}
+],
+"about": "A glade town around a giant mushroom ring. Herbalists here brew potions from moss that only grows on thousand-year-old bark.",
+"arena": false,
+"tournament": false
+},
+{
+"name": "Rootheart",
+"region": "Titanroot Forest",
+"quests": [
+{
+"title": "Trouble on the Road",
+"type": "Battle",
+"text": "A rogue breeder named Merrin has been ambushing travellers in Titanroot Forest. Beat them and send them packing!"
+},
+{
+"title": "Specimen Wanted",
+"type": "Capture",
+"text": "The Guild's scholars need a live Decimator from Titanroot Forest. Capture one and bring it in."
+},
+{
+"title": "Prove Your Strength",
+"type": "Train",
+"text": "The wilds of Titanroot Forest are no place for the weak. Defeat 12 monsters to show you can handle them."
+},
+{
+"title": "Urgent Message",
+"type": "Deliver",
+"text": "Please carry this sealed letter to the Guild in Whitecap. It must not be opened on the way."
+},
+{
+"title": "Bounty: Morrow",
+"type": "Battle",
+"text": "Morrow is a breeder who has been stealing eggs from Titanroot Forest. Defeat them and the bounty is yours."
+}
+],
+"about": "A town built inside the hollow trunk of a titan tree, lit by glowing blossoms. The Guild here is the oldest on the Frontier.",
+"arena": true,
+"tournament": false
+},
+{
+"name": "Canopy Rise",
+"region": "Titanroot Forest",
+"quests": [
+{
+"title": "Trouble on the Road",
+"type": "Battle",
+"text": "A rogue breeder named Talia has been ambushing travellers in Titanroot Forest. Beat them and send them packing!"
+},
+{
+"title": "Specimen Wanted",
+"type": "Capture",
+"text": "The Guild's scholars need a live Grimoire from Titanroot Forest. Capture one and bring it in."
+},
+{
+"title": "Prove Your Strength",
+"type": "Train",
+"text": "The wilds of Titanroot Forest are no place for the weak. Defeat 12 monsters to show you can handle them."
+},
+{
+"title": "Urgent Message",
+"type": "Deliver",
+"text": "Please carry this sealed letter to the Guild in Cinderreach. It must not be opened on the way."
+},
+{
+"title": "Bounty: Ulric",
+"type": "Battle",
+"text": "Ulric is a breeder who has been stealing eggs from Titanroot Forest. Defeat them and the bounty is yours."
+}
+],
+"about": "A lookout village high in the canopy, reached by lifts of woven vine. Flying monsters nest in its eaves.",
+"arena": false,
+"tournament": false
+},
+{
+"name": "Gravesend",
+"region": "Gravemoor",
+"quests": [
+{
+"title": "Trouble on the Road",
+"type": "Battle",
+"text": "A rogue breeder named Ingrid has been ambushing travellers in Gravemoor. Beat them and send them packing!"
+},
+{
+"title": "Specimen Wanted",
+"type": "Capture",
+"text": "The Guild's scholars need a live Beholder from Gravemoor. Capture one and bring it in."
+},
+{
+"title": "Prove Your Strength",
+"type": "Train",
+"text": "The wilds of Gravemoor are no place for the weak. Defeat 12 monsters to show you can handle them."
+},
+{
+"title": "Urgent Message",
+"type": "Deliver",
+"text": "Please carry this sealed letter to the Guild in Elderglen. It must not be opened on the way."
+},
+{
+"title": "Bounty: Nyx",
+"type": "Battle",
+"text": "Nyx is a breeder who has been stealing eggs from Gravemoor. Defeat them and the bounty is yours."
+}
+],
+"about": "The gravediggers' town at the edge of the moor. Its people are cheerful in the way only those who see the dead daily can be.",
+"arena": false,
+"tournament": false
+},
+{
+"name": "Lanternwick",
+"region": "Gravemoor",
+"quests": [
+{
+"title": "Trouble on the Road",
+"type": "Battle",
+"text": "A rogue breeder named Grimsby has been ambushing travellers in Gravemoor. Beat them and send them packing!"
+},
+{
+"title": "Specimen Wanted",
+"type": "Capture",
+"text": "The Guild's scholars need a live Lich King from Gravemoor. Capture one and bring it in."
+},
+{
+"title": "Prove Your Strength",
+"type": "Train",
+"text": "The wilds of Gravemoor are no place for the weak. Defeat 12 monsters to show you can handle them."
+},
+{
+"title": "Urgent Message",
+"type": "Deliver",
+"text": "Please carry this sealed letter to the Guild in Rootheart. It must not be opened on the way."
+},
+{
+"title": "Bounty: Fenwick",
+"type": "Battle",
+"text": "Fenwick is a breeder who has been stealing eggs from Gravemoor. Defeat them and the bounty is yours."
+}
+],
+"about": "A candle-makers' hamlet whose lanterns keep the restless dead away. Every door has a light, and every light has a name.",
+"arena": false,
+"tournament": false
+},
+{
+"name": "Bonechapel",
+"region": "Hollow Necropolis",
+"quests": [
+{
+"title": "Trouble on the Road",
+"type": "Battle",
+"text": "A rogue breeder named Corvin has been ambushing travellers in Hollow Necropolis. Beat them and send them packing!"
+},
+{
+"title": "Specimen Wanted",
+"type": "Capture",
+"text": "The Guild's scholars need a live Iron Slime from Hollow Necropolis. Capture one and bring it in."
+},
+{
+"title": "Prove Your Strength",
+"type": "Train",
+"text": "The wilds of Hollow Necropolis are no place for the weak. Defeat 12 monsters to show you can handle them."
+},
+{
+"title": "Urgent Message",
+"type": "Deliver",
+"text": "Please carry this sealed letter to the Guild in Sulphur Gate. It must not be opened on the way."
+},
+{
+"title": "Bounty: Kael",
+"type": "Battle",
+"text": "Kael is a breeder who has been stealing eggs from Hollow Necropolis. Defeat them and the bounty is yours."
+}
+],
+"about": "A chapel-town built from tomb stones, where priests guard the necropolis and bind the spirits that wander out of it.",
+"arena": false,
+"tournament": false
+},
+{
+"name": "Duskhallow",
+"region": "Hollow Necropolis",
+"quests": [
+{
+"title": "Trouble on the Road",
+"type": "Battle",
+"text": "A rogue breeder named Isolde has been ambushing travellers in Hollow Necropolis. Beat them and send them packing!"
+},
+{
+"title": "Specimen Wanted",
+"type": "Capture",
+"text": "The Guild's scholars need a live Stomper from Hollow Necropolis. Capture one and bring it in."
+},
+{
+"title": "Prove Your Strength",
+"type": "Train",
+"text": "The wilds of Hollow Necropolis are no place for the weak. Defeat 12 monsters to show you can handle them."
+},
+{
+"title": "Urgent Message",
+"type": "Deliver",
+"text": "Please carry this sealed letter to the Guild in Lanternwick. It must not be opened on the way."
+},
+{
+"title": "Bounty: Rhoswen",
+"type": "Battle",
+"text": "Rhoswen is a breeder who has been stealing eggs from Hollow Necropolis. Defeat them and the bounty is yours."
+}
+],
+"about": "A town that only wakes at nightfall. Its market sells relics, soul stones and stranger things.",
+"arena": false,
+"tournament": true
+},
+{
+"name": "Pandemon",
+"region": "Hellmouth",
+"quests": [
+{
+"title": "Trouble on the Road",
+"type": "Battle",
+"text": "A rogue breeder named Ysolde has been ambushing travellers in Hellmouth. Beat them and send them packing!"
+},
+{
+"title": "Specimen Wanted",
+"type": "Capture",
+"text": "The Guild's scholars need a live Spikey from Hellmouth. Capture one and bring it in."
+},
+{
+"title": "Prove Your Strength",
+"type": "Train",
+"text": "The wilds of Hellmouth are no place for the weak. Defeat 12 monsters to show you can handle them."
+},
+{
+"title": "Urgent Message",
+"type": "Deliver",
+"text": "Please carry this sealed letter to the Guild in Glacierfall. It must not be opened on the way."
+},
+{
+"title": "Bounty: Hask",
+"type": "Battle",
+"text": "Hask is a breeder who has been stealing eggs from Hellmouth. Defeat them and the bounty is yours."
+}
+],
+"about": "A citadel of red stone on the rim of the Hellmouth, built by breeders mad enough to tame what lives inside it.",
+"arena": true,
+"tournament": true
+},
+{
+"name": "Sulphur Gate",
+"region": "Hellmouth",
+"quests": [
+{
+"title": "Trouble on the Road",
+"type": "Battle",
+"text": "A rogue breeder named Oswin has been ambushing travellers in Hellmouth. Beat them and send them packing!"
+},
+{
+"title": "Specimen Wanted",
+"type": "Capture",
+"text": "The Guild's scholars need a live Shogun from Hellmouth. Capture one and bring it in."
+},
+{
+"title": "Prove Your Strength",
+"type": "Train",
+"text": "The wilds of Hellmouth are no place for the weak. Defeat 12 monsters to show you can handle them."
+},
+{
+"title": "Urgent Message",
+"type": "Deliver",
+"text": "Please carry this sealed letter to the Guild in Brimstone. It must not be opened on the way."
+},
+{
+"title": "Bounty: Sella",
+"type": "Battle",
+"text": "Sella is a breeder who has been stealing eggs from Hellmouth. Defeat them and the bounty is yours."
+}
+],
+"about": "The last town before the burning chasm: a gatehouse of iron and stone where the bravest breeders sign their names before descending.",
+"arena": false,
+"tournament": false
 }
 ],
 "dungeons": [
@@ -14889,6 +16019,146 @@
 "captureChallenge": [],
 "about": "Unknown Relic is a dungeon that leads to the Underworld. It remains locked (you can pass over it, but can't enter the dungeon) until you complete the Final Battle quest in Olympia .",
 "bg": "ruins"
+},
+{
+"name": "Frozen Labyrinth",
+"region": "Glacier Expanse",
+"floors": 15,
+"specials": {},
+"monsters": [
+"Terror Shark",
+"Crab King",
+"Kingpen",
+"Unhappy Bird",
+"Bat King",
+"Sea Caliph",
+"Dark Razorfish",
+"Mer King",
+"Sea Dragon",
+"Ninja",
+"Turtle King",
+"White Dragon",
+"Griffin Rider",
+"Yacare",
+"Nessie",
+"Deep Whale"
+],
+"spirit": [],
+"captureChallenge": [],
+"about": "Tunnels melted through the glacier by something enormous. The walls are clear ice, and things are frozen inside them.",
+"bg": "glacier"
+},
+{
+"name": "Elder Hollow",
+"region": "Titanroot Forest",
+"floors": 15,
+"specials": {},
+"monsters": [
+"Destroyer",
+"Spike Crab",
+"Cyclops",
+"Steel Snake",
+"Decimator",
+"Kaguya",
+"Stomper",
+"Lion King",
+"Angel",
+"Berith",
+"Multiclops",
+"Gold Dragon",
+"Karma",
+"Snake God",
+"Wendigo",
+"Spike Monster"
+],
+"spirit": [],
+"captureChallenge": [],
+"about": "The hollow heart of the eldest titan tree, spiralling down through its roots into the earth.",
+"bg": "deepforest"
+},
+{
+"name": "Crypt of Kings",
+"region": "Gravemoor",
+"floors": 15,
+"specials": {},
+"monsters": [
+"Grimoire",
+"Skull Crow",
+"Bane",
+"Lich King",
+"Aggression",
+"Dream Hunter",
+"Light Crawler",
+"Dark Spirit",
+"Beholder",
+"Iron Slime",
+"Bastion",
+"Demon",
+"Mage Bane",
+"Evil",
+"Dementor",
+"Djinn"
+],
+"spirit": [],
+"captureChallenge": [],
+"about": "The royal crypt beneath the moor. Each floor holds an older dynasty, and the oldest kings do not rest.",
+"bg": "graveyard"
+},
+{
+"name": "Ashen Catacombs",
+"region": "Hollow Necropolis",
+"floors": 18,
+"specials": {},
+"monsters": [
+"Megaslug",
+"Terror Claw",
+"Beholder",
+"Dark Spirit",
+"Light Crawler",
+"Dream Hunter",
+"Centurion",
+"Samurai Lord",
+"Demon",
+"Night Crawler",
+"Red Dragon",
+"Guardian",
+"Shogun",
+"Evil",
+"Fire Tiger",
+"Red Wyrm"
+],
+"spirit": [],
+"captureChallenge": [],
+"about": "Burial halls choked with ash, where the necropolis buried those who died in the great fire.",
+"bg": "ruins"
+},
+{
+"name": "Inferno Depths",
+"region": "Hellmouth",
+"floors": 20,
+"specials": {},
+"monsters": [
+"Dementor",
+"Fire Tiger",
+"Evil",
+"Doki",
+"Shogun",
+"Guardian",
+"Titan",
+"Djinn",
+"Morfeus",
+"Thought",
+"Death Crawler",
+"Spikey",
+"Red Wyrm",
+"Orochi",
+"Ganesha",
+"Red Dragoon"
+],
+"spirit": [],
+"captureChallenge": [],
+"about": "The descent into the Hellmouth itself. Few who go down the burning stairs come back, and none come back unchanged.",
+"bg": "hell"
 }
 ],
 "overlords": [
@@ -15797,5 +17067,19 @@
 "Ryu": "Ryu is an NPC. He's found in the forest in Greater Wesing. {{stub}} [[Category:Characters]]",
 "Ursula": "Ursula is an NPC found on the 1st floor of No Man's Castle. She gives the Skull Crow recipe. [[Category:Characters]]"
 },
-"growth": 0.075
+"growth": 0.075,
+"seaRoutes": [
+[
+"saintspring",
+"underworld"
+],
+[
+"forest_of_mangal",
+"frostfang_coast"
+],
+[
+"endergate",
+"gravemoor"
+]
+]
 }
