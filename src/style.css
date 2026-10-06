@@ -140,30 +140,31 @@ input.text { font: inherit; padding: .5em .8em; border-radius: .5em; border: 1px
 .town-btn:hover { border-color: var(--gold); transform: translateY(-2px); }
 .loading { position: absolute; inset: 0; display: grid; place-items: center; font-family: Cinzel, serif; font-size: 1.4em; }
 
-/* ===================================================================== Monster book: 1:1 with the original */
-.dibx-root { position: absolute; inset: 0; z-index: 18; overflow: hidden; background: #2f5d1f center / cover; animation: fade .2s; }
-.dibx-backdrop { position: absolute; inset: -20px; background-position: center; background-size: cover; filter: blur(14px) brightness(.55); }
-.dibx-page { position: absolute; left: 50%; top: 50%; width: 1170px; height: 879px; transform-origin: center; background-size: 1170px 879px;
-  font-family: Arial, Helvetica, 'Liberation Sans', sans-serif; box-shadow: 0 0 40px rgba(0,0,0,.6); }
-.dibx-back { position: absolute; left: .8em; top: .8em; z-index: 2; }
-.dibx-card { position: absolute; width: 272px; height: 342px; cursor: pointer; }
-.dibx-card:active { filter: brightness(1.08); }
-.dibx-name { position: absolute; left: 20px; right: 20px; top: 20px; height: 29px; line-height: 29px; text-align: center; font-size: 28px; font-weight: 700;
-  color: #121212; white-space: nowrap; overflow: hidden; text-shadow: 0 1px 0 rgba(255,255,255,.45), 0 0 1px #000; letter-spacing: -.3px; }
-.dibx-sprite { position: absolute; left: 18px; top: 55px; width: 236px; height: 160px; display: flex; align-items: center; justify-content: center; }
-.dibx-sprite img { max-width: 100%; max-height: 100%; width: auto; height: 100%; object-fit: contain; }
-.dibx-stars { position: absolute; left: 30px; width: 216px; top: 234px; height: 24px; display: flex; justify-content: center; align-items: center; gap: 1px; }
-.dibx-stars img { height: 18px; }
-.dibx-stars.many img { height: 15px; }
-.dibx-stars img.half { margin-left: -1px; }
-.dibx-crown { position: absolute; left: 43px; top: 281px; width: 34px; height: 32px; line-height: 32px; text-align: center; font-size: 27px; font-weight: 700;
-  color: #0c1a13; text-shadow: 0 0 2px rgba(220,255,235,.7); }
-.dibx-crown.long { font-size: 17px; }
-.dibx-el { position: absolute; left: 109px; top: 260px; width: 64px; height: 64px; object-fit: contain; }
-.dibx-num { position: absolute; left: 207px; top: 286px; width: 48px; height: 36px; line-height: 36px; text-align: center; font-size: 33px; font-weight: 700;
-  color: #0b1724; letter-spacing: -1px; text-shadow: 0 0 1px #0b1724; }
-.dibx-tab { position: absolute; background: transparent; }
-.dibx-pg { position: absolute; left: 990px; width: 195px; top: 643px; text-align: center; font-size: 35px; font-weight: 700; line-height: 53px; color: #111;
-  text-shadow: 0 0 2px rgba(255,255,255,.5); cursor: pointer; }
-.dibx-plank { position: absolute; left: 880px; top: 800px; width: 240px; height: 46px; background: transparent; font-family: inherit; font-size: 25px; font-weight: 700;
-  color: #241d12; text-shadow: 0 1px 0 rgba(255,255,255,.35); }
+/* ===================================================================== Monster book (built from the DIB UI kit) */
+.kb-root { position: absolute; inset: 0; z-index: 18; overflow: hidden; background: #2b4a1c; animation: fade .2s; }
+.kb-backdrop { position: absolute; inset: -30px; background-position: center; background-size: cover; filter: blur(16px) brightness(.5); }
+.kb-page { position: absolute; left: 50%; top: 50%; width: 1536px; height: 1024px; transform-origin: center; background-size: 1536px 1024px;
+  font-family: 'Crimson Pro', Georgia, 'Times New Roman', serif; box-shadow: 0 0 50px rgba(0,0,0,.6); }
+.kb-page > div > .kb-card, .kb-card { position: absolute; background-size: 100% 100%; cursor: pointer; }
+.kb-card:hover { filter: brightness(1.06); }
+.kb-card > * { position: absolute; }
+.kb-name { text-align: center; line-height: 32px; font-size: 31px; font-weight: 800; color: #2a1d10; white-space: nowrap; overflow: hidden;
+  text-overflow: ellipsis; text-shadow: 0 1px 0 rgba(255,245,220,.7); }
+.kb-sprite { display: flex; align-items: center; justify-content: center; }
+.kb-sprite img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 6px 6px rgba(0,25,45,.45)); }
+.kb-stars { display: flex; justify-content: center; align-items: center; gap: 2px; }
+.kb-stars img { height: 24px; filter: drop-shadow(0 1px 1px rgba(80,40,0,.5)); }
+.kb-stars.many img { height: 19px; }
+.kb-crown { text-align: center; line-height: 40px; font-size: 34px; font-weight: 800; color: #3b1f00;
+  text-shadow: 0 1px 0 #fff3b8, 0 0 3px rgba(255,236,170,.9); }
+.kb-crown.long { font-size: 25px; }
+.kb-el { object-fit: contain; filter: drop-shadow(0 2px 2px rgba(40,30,0,.4)); }
+.kb-num { text-align: center; line-height: 50px; font-size: 42px; font-weight: 800; color: #10243a; text-shadow: 0 1px 0 rgba(255,255,255,.55); }
+.kb-tab, .kb-plank, .kb-back { position: absolute; padding: 0; background: none; transition: transform .12s, filter .12s; }
+.kb-tab img, .kb-plank img, .kb-back img { width: 100%; height: 100%; display: block; }
+.kb-tab:hover, .kb-back:hover, .kb-plank:hover { filter: brightness(1.1); }
+.kb-tab.on { transform: translateX(-22px); filter: brightness(1.12) drop-shadow(0 0 10px rgba(255,220,120,.65)); }
+.kb-plank-label { position: absolute; display: flex; align-items: center; justify-content: center; font-family: 'Crimson Pro', Georgia, serif;
+  font-size: 40px; font-weight: 800; color: #2b1d0e; text-shadow: 0 1px 0 rgba(255,240,210,.6); pointer-events: none; }
+.kb-pg { position: absolute; left: 62px; top: 900px; font-size: 44px; font-weight: 800; line-height: 50px; color: #2a1c0e;
+  text-shadow: 0 1px 0 rgba(255,245,220,.6); cursor: pointer; }

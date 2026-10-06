@@ -49,17 +49,17 @@ Original monsters live in `tools/custom/monsters.json`, with their art in `tools
 python3 tools/cutout_black.py my_art.jpg tools/custom/sprites/my_monster.png
 ```
 
-## Monsterpedia: a 1:1 copy of the original screen
+## Monsterpedia UI kit
 
-The Monsterpedia and My Monsters book is built from a screenshot of the original game, `tools/ref_ui/reference.jpg`. `tools/ref_ui/extract.py` produces two images (it needs `pip install opencv-python-headless scipy`):
+The Monsterpedia and My Monsters book is built from the Dragon Island Blue UI kit, `tools/ref_ui/kit.png`. That sheet holds the empty cards, the six tabs, the "My Monsters" plank and the back button, on a transparent background.
 
-- **The empty card frame.** The five cards in the screenshot are aligned; pixels on which two cards agree make up the frame, and the per-monster content is erased.
-- **The book page.** The original tabs and plank are kept; the cards and text are filled in with matching parchment.
-
-`src/ui/book.ts` lays out names, sprites, stars, crown levels, element icons and numbers at the original pixel positions, in the screenshot's own 1170×879 space.
+- **`tools/ref_ui/slice_kit.py`** cuts the sheet into `public/assets/ui/kit/`. It erases the placeholder silhouette in the element socket and the plank's baked-in label, and writes `layout.json` with every position.
+- **The parchment page** comes from a screenshot of the original game. `tools/ref_ui/extract.py` removes the cards, counter and labels from `reference.jpg`; that step needs `pip install opencv-python-headless scipy`.
+- **`src/ui/book.ts`** lays everything out in the kit's 1536×1024 space. It writes the names, sprites, stars, the level on the crown, the element icon in the socket and the number in the number box.
 
 ```bash
 python3 tools/ref_ui/extract.py tools/ref_ui/reference.jpg public/assets/ui/dib
+python3 tools/ref_ui/slice_kit.py tools/ref_ui/kit.png public/assets/ui/dib/page.jpg public/assets/ui/kit
 ```
 
 ## Project layout

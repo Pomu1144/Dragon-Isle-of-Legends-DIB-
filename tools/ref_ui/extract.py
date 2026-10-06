@@ -180,6 +180,7 @@ cv2.circle(holes, (108, 792), 52, 255, -1)
 # membrane (Laplace) fill at quarter resolution: matches the surrounding parchment exactly at
 # every hole edge and varies smoothly inside
 q = 4
+KERNEL = np.array([[0, .25, 0], [.25, 0, .25], [0, .25, 0]], np.float32)
 sm = cv2.resize(page, (W // q, H // q), interpolation=cv2.INTER_AREA).astype(np.float32)
 hm = cv2.resize(holes, (W // q, H // q), interpolation=cv2.INTER_NEAREST) > 0
 solve = hm.copy()
@@ -189,7 +190,7 @@ solve[860 // q:, :] = True
 solve[:, 1000 // q:] = solve[:, 1000 // q:] & hm[:, 1000 // q:]
 sm[solve] = sm[~solve].mean(0)
 for _ in range(5000):
-    avg = (np.roll(sm, 1, 0) + np.roll(sm, -1, 0) + np.roll(sm, 1, 1) + np.roll(sm, -1, 1)) / 4
+    avg = cv2.filter2D(sm, -1, KERNEL, borderType=cv2.BORDER_REPLICATE)  # no wrap-around at the edges
     sm[solve] = avg[solve]
 fit = cv2.resize(cv2.GaussianBlur(sm, (0, 0), 1), (W, H), interpolation=cv2.INTER_CUBIC)
 tex = img[445:745, 665:915].astype(np.float32)                 # empty 6th slot = clean parchment
