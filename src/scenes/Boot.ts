@@ -14,9 +14,6 @@ export class BootScene extends Phaser.Scene {
     this.add.text(width / 2, height / 2 - 20, 'DRAGON ISLE OF LEGENDS', { fontFamily: 'Cinzel, serif', fontSize: '40px', color: '#ffe2a0' }).setOrigin(0.5);
     this.load.on('progress', (p: number) => (bar.width = 600 * p));
     this.load.image('title', 'assets/bg/title.jpg');
-    this.load.image('world', 'assets/maps/world.jpg');
-    this.load.image('world_frontier', 'assets/maps/frontier.jpg');
-    for (const r of data().regions) this.load.image(`map_${r.id}`, `assets/maps/${r.id}.jpg`);
     for (const b of BGS) this.load.image(`bg_${b}`, `assets/bg/${b}.jpg`);
     // original-game UI pieces (tools/ref_ui/slice_town_battle.py)
     for (const k of ['panel', 'panel_cards', 'hpbar', 'coin', 'qframe', 'qbar', 'orb', 'ghost'])
@@ -45,6 +42,43 @@ export class BootScene extends Phaser.Scene {
 }
 
 /** Ensure monster sprites are loaded before use. */
+/**
+ * Region paintings are 4K, so they are streamed in when a region is entered instead of at boot,
+ * and the least recently used ones are dropped to keep GPU memory in check.
+ */
+const mapLru: string[] = [];
+export function loadMap(scene: Phaser.Scene, id: string, done: () => void) {
+  const key = `map_${id}`;
+  const touch = () => {
+    mapLru.splice(mapLru.indexOf(key), 1);
+    mapLru.push(key);
+    while (mapLru.length > 3) { const old = mapLru.shift()!; if (scene.textures.exists(old)) scene.textures.remove(old); }
+    done();
+  };
+  if (!mapLru.includes(key)) mapLru.push(key);
+  if (scene.textures.exists(key)) return touch();
+  scene.load.image(key, `assets/maps/${id}.jpg`);
+  scene.load.once('complete', touch);
+  scene.load.start();
+}
+
+/** The stitched world map, cut into tiles that fit in a WebGL texture (tools/stitch_world.py). */
+export interface WorldLayout { width: number; height: number; tiles: { file: string; x: number; w: number }[] }
+export function loadWorld(scene: Phaser.Scene, done: (lay: WorldLayout) => void) {
+  const go = () => {
+    const lay = scene.cache.json.get('world_layout') as WorldLayout;
+    const need = lay.tiles.filter((t) => !scene.textures.exists(`wt_${t.file}`));
+    if (!need.length) return done(lay);
+    need.forEach((t) => scene.load.image(`wt_${t.file}`, `assets/maps/${t.file}`));
+    scene.load.once('complete', () => done(lay));
+    scene.load.start();
+  };
+  if (scene.cache.json.exists('world_layout')) return go();
+  scene.load.json('world_layout', 'assets/maps/world_layout.json');
+  scene.load.once('complete', go);
+  scene.load.start();
+}
+
 export function loadSprites(scene: Phaser.Scene, files: string[], done: () => void) {
   const need = [...new Set(files)].filter((f) => !scene.textures.exists(`spr_${f}`));
   if (!need.length) return done();

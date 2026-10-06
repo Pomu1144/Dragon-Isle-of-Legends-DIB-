@@ -220,4 +220,3 @@ input.text { font: inherit; padding: .5em .8em; border-radius: .5em; border: 1px
 .explore-bar { position: relative; width: 17em; height: 1.25em; margin: .35em auto 0; border-radius: .7em; background: rgba(0,0,0,.55); border: 2px solid #f6d27a; overflow: hidden; }
 .explore-bar i { position: absolute; left: 0; top: 0; bottom: 0; background: linear-gradient(#9be15d, #3fa34d); }
 .explore-bar span { position: relative; display: block; font: 800 .78em/1.6em Arial, sans-serif; color: #fff; text-shadow: 0 0 3px #000, 0 1px 0 #000; }
-.realm-tabs { position: absolute; left: 50%; top: .6em; transform: translateX(-50%); display: flex; gap: .4em; z-index: 5; }

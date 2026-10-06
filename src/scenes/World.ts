@@ -1,124 +1,166 @@
 import Phaser from 'phaser';
-import { coverBg, vignette } from './fx';
 import { data, maps } from '../core/data';
 import { S, save } from '../core/state';
 import type { Region } from '../core/types';
 import { hud, openMenu } from '../ui/menus';
-import { h, layer, toast } from '../ui/dom';
+import { h, layer, toast, anyModal } from '../ui/dom';
 import { music, sfx } from '../audio';
-import { go, toRegion } from '../nav';
+import { toRegion } from '../nav';
+import { loadWorld } from './Boot';
 
-type Realm = 'isle' | 'frontier';
-const REALMS: Record<Realm, { name: string; bg: string; bounds: string; blurb: string }> = {
-  isle: { name: 'Dragon Isle', bg: 'world', bounds: '_world',
-    blurb: 'Tap your current region to return, a neighbouring region to travel there, or any visited region to fast travel. Western lands are gentle; the east holds the fiercest monsters.' },
-  frontier: { name: 'The Frontier', bg: 'world_frontier', bounds: '_world_frontier',
-    blurb: 'A wild continent across the sea: frozen coasts and glaciers in the north-west, ash wastes and the Infernal Rift in the north-east, giant forests, graveyards and the Hellmouth in the south.' },
-};
-const realmOf = (r: Region): Realm => r.realm ?? 'isle';
+const MINI_W = 256;
+const realmOf = (r: Region) => r.realm ?? 'isle';
 
+/**
+ * One huge painted world (six Higgsfield panels stitched by tools/stitch_world.py) that you drag and
+ * zoom around. Every region is a pin on its own stretch of land; a minimap shows the whole world.
+ */
 export class WorldScene extends Phaser.Scene {
   constructor() { super('World'); }
-  private realm: Realm = 'isle';
-
-  init(d: { realm?: Realm }) {
-    const cur = data().regions.find((r) => r.id === S.location.region)!;
-    this.realm = d?.realm ?? realmOf(cur);
-  }
-
-  /** The other end of each boat route leaving this region, if it lies in another realm or out at sea. */
-  private crossings(r: Region) {
-    return (data().seaRoutes ?? []).filter((p) => p.includes(r.id)).map((p) => data().regions.find((x) => x.id === (p[0] === r.id ? p[1] : p[0]))!)
-      .filter((o) => o && (o.sea || realmOf(o) !== realmOf(r)));
-  }
-
-  /** Sea regions (reached by boat) are drawn as islands off the coast of the realm they belong to. */
-  seaIsles(ox: number, oy: number, cw: number, ch: number, cur: Region) {
-    const { width } = this.scale;
-    for (const r of data().regions.filter((x) => x.sea && realmOf(x) === this.realm)) {
-      const from = data().regions.find((x) => !x.sea && realmOf(x) === this.realm && Math.abs(x.x - r.x) + Math.abs(x.y - r.y) === 1)!;
-      const tx = Math.min(width - 70, ox + 4 * cw + 50), ty = oy + from.y * ch + ch * 0.5 - 40;
-      const visited = S.visited.includes(r.id);
-      const here = cur.id === r.id;
-      const isle = this.add.circle(tx, ty, 46, here ? 0xf6c453 : 0x2a1f3d, here ? 0.35 : 0.55).setStrokeStyle(3, here ? 0xf6c453 : 0xffffff, 0.8).setInteractive({ useHandCursor: true });
-      this.add.image(tx, ty - 6, 'town_dock').setScale(0.16);
-      this.add.text(tx, ty + 28, r.name, { fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold', fontSize: '16px', color: '#fff', stroke: '#000', strokeThickness: 5 }).setOrigin(0.5);
-      this.add.text(tx, ty + 46, `Lv ${r.levels[0]}–${r.levels[1]} · by boat`, { fontFamily: 'Arial, Helvetica, sans-serif', fontSize: '12px', color: '#fff', stroke: '#000', strokeThickness: 4 }).setOrigin(0.5);
-      isle.on('pointerdown', () => {
-        if (here) return toRegion();
-        if (!visited) return toast(`Sail to ${r.name} from the dock in ${from.name}.`);
-        this.arriveAt(r, maps()[r.id].spots.find((s) => s.kind === 'dock') ?? maps()[r.id].spots[0]);
-      });
-    }
-  }
-
-  private arriveAt(r: Region, spot: { id: number }) {
-    S.location = { region: r.id, spot: spot.id };
-    if (!S.visited.includes(r.id)) S.visited.push(r.id);
-    save();
-    sfx('step');
-    toRegion();
-  }
+  private W = 1;
+  private H = 1;
+  private pins: Phaser.GameObjects.Container[] = [];
+  private view?: Phaser.GameObjects.Graphics;
+  private drag = { on: false, moved: false, x: 0, y: 0, sx: 0, sy: 0, mini: false };
+  private keys?: Phaser.Types.Input.Keyboard.CursorKeys;
 
   create() {
     music('world');
+    this.pins = [];
+    this.view = undefined;
+    loadWorld(this, (lay) => this.build(lay));
+  }
+
+  private build(lay: { width: number; height: number; tiles: { file: string; x: number }[] }) {
     const { width, height } = this.scale;
-    const realm = REALMS[this.realm];
-    coverBg(this, realm.bg, false);
-    vignette(this, 0.4);
-    this.cameras.main.fadeIn(400);
-    // regions sit on the land itself (bounds measured from the map by tools/place_spots.py)
-    const wb = (maps() as any)[realm.bounds] ?? { x0: 0, x1: 1, y0: 0.06, y1: 1 };
-    const land = data().regions.filter((r) => !r.sea && realmOf(r) === this.realm);
-    const cols = Math.max(...land.map((r) => r.x)) + 1, rows = Math.max(...land.map((r) => r.y)) + 1;
-    const ox = wb.x0 * width, oy = wb.y0 * height;
-    const cw = ((wb.x1 - wb.x0) * width) / cols, ch = ((wb.y1 - wb.y0) * height) / rows;
+    this.W = lay.width;
+    this.H = lay.height;
+    for (const t of lay.tiles) this.add.image(t.x, 0, `wt_${t.file}`).setOrigin(0);
+    const cam = this.cameras.main;
+    cam.setBounds(0, 0, this.W, this.H);
+    const minZoom = Math.max(width / this.W, height / this.H);
+    cam.setZoom(0.55);
+    cam.fadeIn(400);
+
+    const wm = (maps() as any)._worldmap as { pos: Record<string, [number, number]> } | undefined;
     const cur = data().regions.find((r) => r.id === S.location.region)!;
-    this.seaIsles(ox, oy, cw, ch, cur);
-    for (const r of land) {
-      const x = ox + r.x * cw, y = oy + r.y * ch;
-      const visited = S.visited.includes(r.id);
-      const adjacent = realmOf(cur) === this.realm && !cur.sea && Math.abs(r.x - cur.x) + Math.abs(r.y - cur.y) === 1;
-      const here = r.id === cur.id;
-      const rect = this.add.rectangle(x + cw / 2, y + ch / 2, cw - 4, ch - 4, here ? 0xf6c453 : 0x0b1020, here ? 0.22 : visited ? 0.01 : 0.3)
-        .setStrokeStyle(2, here ? 0xf6c453 : 0xffffff, here ? 0.9 : 0.25).setInteractive({ useHandCursor: true });
-      const big = cols > 4 ? 17 : 19;
-      const t = this.add.text(x + cw / 2, y + ch / 2 - 12, r.name, { fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold', fontSize: `${big}px`, color: here ? '#ffe9a8' : '#ffffff', stroke: '#000', strokeThickness: 5, align: 'center', wordWrap: { width: cw - 16 } }).setOrigin(0.5);
-      const towns = r.towns.length ? `\n${r.towns.join(', ')}` : '';
-      this.add.text(x + cw / 2, y + ch / 2 + 16, `Lv ${r.levels[0]}–${r.levels[1]}${towns}`, { fontFamily: 'Arial, Helvetica, sans-serif', fontSize: '13px', color: '#ffffff', stroke: '#000', strokeThickness: 4, align: 'center', wordWrap: { width: cw - 16 } }).setOrigin(0.5, 0);
-      const done = r.overlords.filter((o) => S.overlords.includes(o)).length;
-      if (r.overlords.length) this.add.text(x + cw - 12, y + 10, done ? '🐲✔' : '🐲', { fontSize: '20px' }).setOrigin(1, 0);
-      const ports = this.crossings(r).filter((o) => !o.sea);
-      if (ports.length) this.add.text(x + 12, y + 10, `⛵ ${ports.map((o) => o.name).join(', ')}`, { fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold', fontSize: '12px', color: '#bfe9ff', stroke: '#000', strokeThickness: 4 });
-      rect.on('pointerover', () => { rect.setFillStyle(0xf6c453, 0.22); t.setScale(1.06); });
-      rect.on('pointerout', () => { rect.setFillStyle(here ? 0xf6c453 : 0x0b1020, here ? 0.22 : visited ? 0.01 : 0.3); t.setScale(1); });
-      rect.on('pointerdown', () => {
-        if (here) return toRegion();
-        if (!visited && !adjacent) {
-          const port = this.realm === 'frontier' ? 'Sail to the Frontier from a dock on the Dragon Isle, then travel overland.' : 'Travel overland through neighbouring regions to reach this area.';
-          return toast(port);
-        }
-        // fast travel: arrive at the exit facing where we came from, or the town
-        const m = maps()[r.id];
-        const town = m.spots.find((s) => s.kind === 'town');
-        const entry = m.spots.find((s) => s.kind === 'exit' && s.ref === cur.id) ?? town ?? m.spots[0];
-        if (!visited && r.levels[0] > Math.max(...S.party.map((p) => p.level)) + 12) toast(`Careful — monsters in ${r.name} are around Lv ${r.levels[0]}!`);
-        this.arriveAt(r, visited && town ? town : entry);
-      });
+    const P = (r: Region) => { const p = wm?.pos[r.id] ?? [0.5, 0.5]; return { x: p[0] * this.W, y: p[1] * this.H }; };
+    for (const r of data().regions) this.pins.push(this.pin(r, P(r), cur));
+    const here = P(cur);
+    cam.centerOn(here.x, here.y);
+
+    // minimap of the whole world, with the current view outlined
+    const MINI_H = Math.round((MINI_W * this.H) / this.W);
+    const mx = width - MINI_W - 14, my = 60;
+    const frame = this.add.graphics().setScrollFactor(0).setDepth(80);
+    frame.fillStyle(0x000000, 0.55).fillRoundedRect(mx - 6, my - 6, MINI_W + 12, MINI_H + 12, 8);
+    frame.lineStyle(3, 0xf6d27a, 1).strokeRoundedRect(mx - 4, my - 4, MINI_W + 8, MINI_H + 8, 6);
+    const view = this.add.graphics().setDepth(90);
+    // the frame lives on an unzoomed UI camera (scroll-factor-0 objects still scale with camera zoom)
+    const ui = this.cameras.add(0, 0, width, height);
+    ui.inputEnabled = false;
+    cam.ignore(frame);
+    const mini = this.cameras.add(mx, my, MINI_W, MINI_H).setZoom(MINI_W / this.W).setBounds(0, 0, this.W, this.H);
+    mini.centerOn(this.W / 2, this.H / 2);
+    mini.inputEnabled = false;
+    mini.ignore([frame, ...this.pins]);
+    cam.ignore(view);
+    this.view = view;
+    // tiny dots on the minimap mark each region; the current one is gold
+    const dots = this.add.graphics().setDepth(91);
+    for (const r of data().regions) {
+      const p = P(r);
+      dots.fillStyle(r.id === cur.id ? 0xffd54f : S.visited.includes(r.id) ? 0xffffff : 0x8899aa, 1).fillCircle(p.x, p.y, r.id === cur.id ? 70 : 42);
     }
-    const frontierOpen = data().regions.some((r) => realmOf(r) === 'frontier' && S.visited.includes(r.id));
-    const tab = (k: Realm) => h('button', {
-      class: `btn small ${this.realm === k ? 'gold' : ''}`,
-      onClick: () => {
-        if (k === this.realm) return;
-        if (k === 'frontier' && !frontierOpen) return toast('The Frontier lies across the sea. Board a boat at the dock in Forest of Mangal or Endergate.');
-        go('World', { realm: k });
-      },
-    }, `${k === 'frontier' && !frontierOpen ? '🔒 ' : ''}${REALMS[k].name}`);
+    cam.ignore(dots);
+    ui.ignore(this.children.list.filter((o) => o !== frame));
+
+    const inMini = (p: Phaser.Input.Pointer) => p.x >= mx && p.x <= mx + MINI_W && p.y >= my && p.y <= my + MINI_H;
+    const jump = (p: Phaser.Input.Pointer) => cam.centerOn(((p.x - mx) / MINI_W) * this.W, ((p.y - my) / MINI_H) * this.H);
+    this.input.on('pointerdown', (p: Phaser.Input.Pointer) => {
+      this.drag = { on: true, moved: false, x: p.x, y: p.y, sx: cam.scrollX, sy: cam.scrollY, mini: inMini(p) };
+      if (this.drag.mini) { this.drag.moved = true; jump(p); }
+    });
+    this.input.on('pointermove', (p: Phaser.Input.Pointer) => {
+      if (!this.drag.on || !p.isDown || anyModal()) return;
+      if (this.drag.mini) return jump(p);
+      const dx = p.x - this.drag.x, dy = p.y - this.drag.y;
+      if (!this.drag.moved && Math.hypot(dx, dy) < 8) return;
+      this.drag.moved = true;
+      cam.setScroll(this.drag.sx - dx / cam.zoom, this.drag.sy - dy / cam.zoom);
+    });
+    this.input.on('pointerup', () => { this.drag.on = false; });
+    const zoomBy = (f: number) => { cam.setZoom(Phaser.Math.Clamp(cam.zoom * f, minZoom, 1.2)); this.fitPins(); };
+    this.input.on('wheel', (_p: unknown, _o: unknown, _dx: number, dy: number) => zoomBy(dy > 0 ? 0.88 : 1.14));
+    this.keys = this.input.keyboard?.createCursorKeys();
+    this.fitPins();
+
     const refresh = () => hud((k) => openMenu(k, refresh), [h('button', { class: 'btn small gold', onClick: () => toRegion() }, '⬅ Back to region')]);
     refresh();
     layer('scene', h('div', {},
-      h('div', { class: 'realm-tabs' }, tab('isle'), tab('frontier')),
-      h('div', { class: 'region-info panel', style: { width: '22em' } }, h('b', {}, realm.name), h('div', { class: 'muted' }, realm.blurb))));
+      h('div', { class: 'region-actions' },
+        h('button', { class: 'btn small', onClick: () => zoomBy(1.3) }, '＋'),
+        h('button', { class: 'btn small', onClick: () => zoomBy(1 / 1.3) }, '－'),
+        h('button', { class: 'btn small', onClick: () => cam.pan(here.x, here.y, 500, 'Sine.easeInOut') }, '◎ Me'),
+        h('span', { class: 'chip panel' }, 'Drag to explore the world · scroll or ＋/－ to zoom · tap a region to travel')),
+      h('div', { class: 'region-info panel', style: { width: '20em' } }, h('b', {}, 'The World'),
+        h('div', { class: 'muted' }, `${S.visited.length} of ${data().regions.length} regions discovered. The Dragon Isle lies in the south-west; boats from its docks reach the Underworld and the Frontier lands to the north and east.`))));
+  }
+
+  update() {
+    const cam = this.cameras.main;
+    const k = this.keys;
+    if (k && !anyModal()) {
+      const vx = (k.right.isDown ? 1 : 0) - (k.left.isDown ? 1 : 0), vy = (k.down.isDown ? 1 : 0) - (k.up.isDown ? 1 : 0);
+      if (vx || vy) cam.setScroll(cam.scrollX + (vx * 16) / cam.zoom, cam.scrollY + (vy * 16) / cam.zoom);
+    }
+    const v = cam.worldView;
+    this.view?.clear().lineStyle((this.W / MINI_W) * 2, 0xffffff, 0.95).strokeRect(v.x, v.y, v.width, v.height);
+  }
+
+  /** Pins keep a constant on-screen size whatever the zoom. */
+  private fitPins() {
+    const z = this.cameras.main.zoom;
+    const k = (1 / z) * Phaser.Math.Clamp(z / 0.45, 0.62, 1);
+    for (const p of this.pins) p.setScale(k);
+  }
+
+  private pin(r: Region, at: { x: number; y: number }, cur: Region) {
+    const visited = S.visited.includes(r.id);
+    const here = r.id === cur.id;
+    const adjacent = !r.sea && !cur.sea && realmOf(r) === realmOf(cur) && Math.abs(r.x - cur.x) + Math.abs(r.y - cur.y) === 1;
+    const c = this.add.container(at.x, at.y).setDepth(10);
+    const ring = this.add.circle(0, 0, 13, here ? 0xffd54f : visited ? 0xffffff : 0x6f7f95, 1).setStrokeStyle(3, 0x1a1208, 1);
+    if (here) {
+      const halo = this.add.circle(0, 0, 22, 0xffd54f, 0.35).setStrokeStyle(2, 0xffd54f);
+      c.add(halo);
+      this.tweens.add({ targets: halo, scale: 1.6, alpha: 0, duration: 1200, repeat: -1 });
+    }
+    c.add(ring);
+    const name = visited || adjacent || here ? r.name : '???';
+    const label = this.add.text(0, -20, name, { fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold', fontSize: '17px', color: here ? '#ffe9a8' : '#ffffff', stroke: '#000', strokeThickness: 5 }).setOrigin(0.5, 1);
+    const sub = [`Lv ${r.levels[0]}–${r.levels[1]}`, ...r.towns].join(' · ');
+    const info = this.add.text(0, 18, visited || here ? sub : `Lv ${r.levels[0]}–${r.levels[1]}`, { fontFamily: 'Arial, Helvetica, sans-serif', fontSize: '12px', color: '#e8f4ff', stroke: '#000', strokeThickness: 4 }).setOrigin(0.5, 0);
+    c.add([label, info]);
+    if (r.overlords.length) c.add(this.add.text(16, -8, r.overlords.every((o) => S.overlords.includes(o)) ? '🐲✔' : '🐲', { fontSize: '16px' }).setOrigin(0, 0.5));
+    ring.setInteractive({ useHandCursor: true, hitArea: new Phaser.Geom.Circle(0, 0, 24), hitAreaCallback: Phaser.Geom.Circle.Contains });
+    ring.on('pointerover', () => c.setScale(c.scale * 1.12)).on('pointerout', () => this.fitPins());
+    ring.on('pointerup', () => {
+      if (this.drag.moved) return;
+      if (here) return toRegion();
+      if (r.sea && !visited) return toast(`${r.name} lies across the sea. Sail there from a dock.`);
+      if (!visited && !adjacent) return toast(realmOf(r) === 'frontier' ? 'The Frontier lies across the sea. Board a boat at the dock in Forest of Mangal or Endergate.' : 'Travel overland through neighbouring regions to reach this area.');
+      // fast travel: arrive at the town (visited regions), else at the road from where we came
+      const m = maps()[r.id];
+      const town = m.spots.find((s) => s.kind === 'town');
+      const entry = m.spots.find((s) => s.kind === 'exit' && s.ref === cur.id) ?? m.spots.find((s) => s.kind === 'dock') ?? town ?? m.spots[0];
+      if (!visited && r.levels[0] > Math.max(...S.party.map((p) => p.level)) + 12) toast(`Careful — monsters in ${r.name} are around Lv ${r.levels[0]}!`);
+      S.location = { region: r.id, spot: (visited && town ? town : entry).id };
+      if (!S.visited.includes(r.id)) S.visited.push(r.id);
+      save();
+      sfx('step');
+      toRegion();
+    });
+    return c;
   }
 }

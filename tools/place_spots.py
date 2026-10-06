@@ -7,15 +7,16 @@ Reads ASSET_DIR/maps/<region>.jpg and DATA_DIR/gamedata.json, writes DATA_DIR/ma
 Coordinates are normalised 0..1 so the game can scale the art freely.
 """
 import colorsys, json, math, os, random, sys
+import numpy as np
 from PIL import Image
 
 ASSETS, DATA = sys.argv[1], sys.argv[2]
 gd = json.load(open(os.path.join(DATA, "gamedata.json")))
 GW, GH = 128, 72
-N_SPOTS = 36          # walkable points per region (the region map is ~2x the screen and scrolls)
-LINK = 20             # max extra-road length, in grid cells
+N_SPOTS = 60          # walkable points per region (the region map is 3x the screen and scrolls)
+LINK = 16             # max extra-road length, in grid cells
 # hidden discoveries per region (revealed by exploring; see src/scenes/Region.ts)
-DISCOVERIES = [("treasure", 4), ("rare", 2), ("breeder", 2), ("lookout", 1)]
+DISCOVERIES = [("treasure", 7), ("rare", 3), ("breeder", 3), ("lookout", 2)]
 
 
 def land_mask(path):
@@ -31,7 +32,7 @@ def land_mask(path):
 
 
 def place(region, mask, rng):
-    margin_x, margin_y = 6, 6
+    margin_x, margin_y = 4, 4
     land = [(x, y) for y in range(margin_y, GH - margin_y) for x in range(margin_x, GW - margin_x) if mask[y][x]
             and sum(mask[yy][xx] for yy in range(y - 2, y + 3) for xx in range(x - 2, x + 3)) >= 22]
     if len(land) < N_SPOTS:
@@ -118,12 +119,48 @@ out = {}
 for r in gd["regions"]:
     rng = random.Random(r["id"])
     out[r["id"]] = place(r, land_mask(os.path.join(ASSETS, "maps", r["id"] + ".jpg")), rng)
-# bounding box of the island on the world map, so the 4x4 region grid can sit on the land
-for key, img in (("_world", "world.jpg"), ("_world_frontier", "frontier.jpg")):
-    wm = land_mask(os.path.join(ASSETS, "maps", img))
-    cols = [x for x in range(GW) if sum(wm[y][x] for y in range(GH)) > GH * 0.25]
-    rows = [y for y in range(GH) if sum(wm[y][x] for x in range(GW)) > GW * 0.2]
-    out[key] = {"x0": round(min(cols) / GW, 3), "x1": round((max(cols) + 1) / GW, 3), "y0": round(min(rows) / GH, 3), "y1": round((max(rows) + 1) / GH, 3)}
-    print(key, out[key])
+# ---- the stitched world map (tools/stitch_world.py): pin every region onto its panel's land
+WORLD_PANELS = {
+    (0, 0): ["frostfang_coast", "glacier_expanse", "rimeheart_peaks"],
+    (1, 0): ["ashen_wastes", "infernal_rift"],
+    (2, 0): ["hellmouth"],
+    (0, 1): [r["id"] for r in gd["regions"] if r.get("realm", "isle") == "isle" and not r.get("sea")],
+    (1, 1): ["underworld"],
+    (2, 1): ["elderwood", "titanroot_forest", "gravemoor", "hollow_necropolis"],
+}
+lay_path = os.path.join(ASSETS, "maps", "world_layout.json")
+if os.path.exists(lay_path):
+    lay = json.load(open(lay_path))
+    FW, FH = lay["width"], lay["height"]
+    PW, PH = lay["panel"]
+    OV = lay["overlap"]
+    small = Image.open(os.path.join(ASSETS, "maps", "world_small.jpg")).convert("RGB")
+    SW, SH = small.size
+    px = small.load()
+
+    def is_land(x, y):
+        r_, g_, b_ = px[x, y]
+        h_, s_, v_ = colorsys.rgb_to_hsv(r_ / 255, g_ / 255, b_ / 255)
+        return not (0.40 < h_ < 0.62 and s_ > 0.12 and b_ >= r_)
+    byid = {r["id"]: r for r in gd["regions"]}
+    pos = {}
+    for (c, rr), ids in WORLD_PANELS.items():
+        ids = [i for i in ids if i in byid]
+        x0, y0 = c * (PW - OV) * SW / FW, rr * (PH - OV) * SH / FH
+        x1, y1 = x0 + PW * SW / FW, y0 + PH * SH / FH
+        land = [(x, y) for y in range(int(y0) + 4, int(y1) - 4) for x in range(int(x0) + 4, int(x1) - 4) if is_land(x, y)]
+        lx0, lx1 = np.percentile([p[0] for p in land], [8, 92]); ly0, ly1 = np.percentile([p[1] for p in land], [8, 92])
+        gx = [byid[i]["x"] for i in ids]; gy = [byid[i]["y"] for i in ids]
+        taken = []
+        for i in ids:
+            fx = 0.5 if max(gx) == min(gx) else (byid[i]["x"] - min(gx)) / (max(gx) - min(gx))
+            fy = 0.5 if max(gy) == min(gy) else (byid[i]["y"] - min(gy)) / (max(gy) - min(gy))
+            tx, ty = lx0 + (lx1 - lx0) * fx, ly0 + (ly1 - ly0) * fy
+            spread = min(lx1 - lx0, ly1 - ly0) / (len(ids) ** 0.5 + 1) * 0.6
+            best = min(land, key=lambda p: (p[0] - tx) ** 2 + (p[1] - ty) ** 2 + (1e9 if any((p[0] - q[0]) ** 2 + (p[1] - q[1]) ** 2 < spread ** 2 for q in taken) else 0))
+            taken.append(best)
+            pos[i] = [round(best[0] / SW, 4), round(best[1] / SH, 4)]
+    out["_worldmap"] = {"size": [FW, FH], "pos": pos}
+    print("worldmap", len(pos), "regions placed")
 json.dump(out, open(os.path.join(DATA, "maps.json"), "w"), separators=(",", ":"))
 print({k: [s["kind"][0] for s in v["spots"]] for k, v in out.items() if not k.startswith("_")})

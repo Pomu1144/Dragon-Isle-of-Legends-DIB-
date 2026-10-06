@@ -9,6 +9,7 @@ import { toRegion, toTown } from '../nav';
 import { fight } from '../flow';
 import { Rng } from '../core/rng';
 import { displayName } from '../core/monster';
+import { loadMap } from './Boot';
 
 export class TownScene extends Phaser.Scene {
   constructor() { super('Town'); }
@@ -24,7 +25,7 @@ export class TownScene extends Phaser.Scene {
     if (spot) { S.location = { region: reg.id, spot: spot.id }; S.lastTown = { ...S.location }; }
     questEvent('visit', this.name);
     save();
-    this.drawTown(reg.id, spot ? { x: spot.x, y: spot.y } : { x: 0.5, y: 0.5 });
+    loadMap(this, reg.id, () => this.drawTown(reg.id, spot ? { x: spot.x, y: spot.y } : { x: 0.5, y: 0.5 }));
     this.render();
     const ready = S.quests.filter(questDone).filter((q) => q.town === this.name);
     if (ready.length) toast(`📜 ${ready.length} quest(s) ready to turn in at the Guild!`);

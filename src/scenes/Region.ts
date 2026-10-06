@@ -9,7 +9,7 @@ import { h, layer, toast, confirmBox, dialogue, starsHtml, anyModal } from '../u
 import { music, sfx } from '../audio';
 import { toTown, toDungeon, toWorld, toRegion, go } from '../nav';
 import { fight } from '../flow';
-import { loadSprites } from './Boot';
+import { loadSprites, loadMap } from './Boot';
 import { species } from '../core/data';
 import { rng } from '../core/rng';
 
@@ -28,7 +28,7 @@ const KIND_STYLE: Record<Spot['kind'], { color: number; label: string }> = {
 const DISCOVERY = new Set<Spot['kind']>(['treasure', 'rare', 'breeder', 'lookout']);
 const DISC_ART: Partial<Record<Spot['kind'], string>> = { treasure: 'disc_chest', rare: 'disc_lair', breeder: 'disc_tent', lookout: 'disc_tower' };
 const BREEDERS = ['Rowan the Wanderer', 'Old Mira', 'Kestrel', 'Brannoc', 'Sable', 'Tamsin', 'Hollis', 'Wren'];
-const FOG_R = 360;          // radius of the clearing around each explored spot (world px)
+const FOG_R = 420;          // radius of the clearing around each explored spot (world px)
 const MINI_W = 256, MINI_H = 144;
 
 export class RegionScene extends Phaser.Scene {
@@ -50,6 +50,12 @@ export class RegionScene extends Phaser.Scene {
   private passable(s: Spot) { return s.kind === 'field' || (DISCOVERY.has(s.kind) && this.isDone(s)); }
 
   create() {
+    this.view = undefined;
+    this.keys = undefined;
+    loadMap(this, S.location.region, () => this.build());
+  }
+
+  private build() {
     const r = region(S.location.region);
     const m = maps()[r.id];
     const { width, height } = this.scale;
@@ -57,9 +63,9 @@ export class RegionScene extends Phaser.Scene {
     this.moving = false;
     this.markers.clear();
     this.view = undefined;
-    // the painting is shown at full resolution: the region is a world twice the screen that scrolls
+    // the 4K painting is shown at full resolution: the region is a world three screens wide that scrolls
     const bg = this.add.image(0, 0, `map_${r.id}`).setOrigin(0);
-    const k = Math.max(width * 2 / bg.width, height * 2 / bg.height);
+    const k = Math.max(width * 3 / bg.width, height * 3 / bg.height);
     bg.setScale(k);
     this.WW = bg.width * k;
     this.WH = bg.height * k;
