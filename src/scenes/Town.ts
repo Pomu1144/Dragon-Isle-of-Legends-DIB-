@@ -1,5 +1,4 @@
 import Phaser from 'phaser';
-import { coverBg, ambient, vignette } from './fx';
 import { data, maps, region, regionByName, species, speciesByName, spriteUrl, town as townData } from '../core/data';
 import { S, save, buildQuest, questDone, questEvent, heroLevel, rollGem, findMon, allMonsters, fuse, partySize } from '../core/state';
 import { arenaEncounter, breederTeam } from '../core/encounters';
@@ -18,9 +17,6 @@ export class TownScene extends Phaser.Scene {
 
   create() {
     music('town');
-    coverBg(this, 'bg_town');
-    ambient(this, 0xffe6a8, 18);
-    vignette(this, 0.5);
     this.cameras.main.fadeIn(400);
     const t = townData(this.name)!;
     const reg = regionByName(t.region)!;
@@ -28,9 +24,54 @@ export class TownScene extends Phaser.Scene {
     if (spot) { S.location = { region: reg.id, spot: spot.id }; S.lastTown = { ...S.location }; }
     questEvent('visit', this.name);
     save();
+    this.drawTown(reg.id, spot ? { x: spot.x, y: spot.y } : { x: 0.5, y: 0.5 });
     this.render();
     const ready = S.quests.filter(questDone).filter((q) => q.town === this.name);
     if (ready.length) toast(`📜 ${ready.length} quest(s) ready to turn in at the Guild!`);
+  }
+
+  /**
+   * The town is shown the way the original does it: the region map zoomed in on the town, with
+   * the town's buildings and their round emblems standing on it (layout from the original's
+   * 480x360 town screen; art from the original sprite sheet).
+   */
+  drawTown(regionId: string, at: { x: number; y: number }) {
+    const { width, height } = this.scale;
+    const bg = this.add.image(0, 0, `map_${regionId}`).setOrigin(0, 0);
+    const zoom = Math.max(width / bg.width, height / bg.height) * 2.3;
+    bg.setScale(zoom);
+    bg.x = Phaser.Math.Clamp(width / 2 - at.x * bg.width * zoom, width - bg.width * zoom, 0);
+    bg.y = Phaser.Math.Clamp(height / 2 - at.y * bg.height * zoom, height - bg.height * zoom, 0);
+    const K = height / 360, OX = (width - 480 * K) / 2;   // reference 480x360 -> world
+    const PIECE = 0.44 * K;                                // sheet art is drawn at 0.44x in the reference
+    const t = townData(this.name)!;
+    const put = (key: string, x: number, y: number, fn?: () => void, label?: string, depth = 10) => {
+      const img = this.add.image(OX + x * K, y * K, `town_${key}`).setScale(PIECE).setDepth(depth + y / 100);
+      if (label) this.add.text(img.x, img.y + img.displayHeight * 0.38, label, { fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold', fontSize: `${8.5 * K}px`, color: '#ffffff', stroke: '#000', strokeThickness: 4 }).setOrigin(0.5).setDepth(img.depth + 0.01);
+      if (fn) {
+        img.setInteractive({ useHandCursor: true, pixelPerfect: true, alphaTolerance: 40 });
+        img.on('pointerover', () => img.setTint(0xfff2c8)).on('pointerout', () => img.clearTint());
+        img.on('pointerdown', () => { sfx('select'); fn(); });
+      }
+      return img;
+    };
+    // scenery
+    put('trees', 200, 52, undefined, undefined, 2);
+    put('bigtree', 92, 262, undefined, undefined, 2);
+    put('farm', 332, 258, undefined, undefined, 2);
+    put('bushes', 395, 305, undefined, undefined, 2);
+    // buildings, positioned as in the original town screen
+    put('hero', 213, 100, () => openMenu('hero', () => this.render()));
+    put('shop', 140, 152, () => this.shop());
+    put('leave', 55, 190, () => toRegion());
+    put('warp_house', 255, 203, () => this.warp());
+    put('warp_emblem', 252, 160, () => this.warp(), undefined, 11);
+    put('monsterpedia', 180, 242, () => openMenu('pedia', () => this.render()));
+    put('monsters', 245, 300, () => openMenu('team', () => this.render()));
+    put('house_a', 332, 116, () => this.guild(), 'Guild');
+    put('house_b', 332, 205, () => this.lab(), 'Recipe Lab');
+    if (t.arena) put('emblem_house', 412, 165, () => this.arena(), 'Arena');
+    if (t.tournament) put('signpost', 420, 248, () => this.tournament(), 'Tournament');
   }
 
   render() {
@@ -38,19 +79,9 @@ export class TownScene extends Phaser.Scene {
     const refresh = () => this.render();
     hud((k) => openMenu(k, refresh));
     const ready = S.quests.filter((q) => q.town === this.name && questDone(q)).length;
-    const btn = (ico: string, label: string, fn: () => void, badge?: string) =>
-      h('button', { class: 'town-btn panel', onClick: fn }, h('span', { class: 'ico' }, ico), label, badge ? h('span', { class: 'chip', style: { background: 'var(--gold)', color: '#241400' } }, badge) : null);
     layer('scene', h('div', {},
-      h('div', { class: 'region-title' }, h('h2', {}, this.name), h('div', {}, `${t.region} · ${t.about.slice(0, 90)}`)),
-      h('div', { class: 'town-panel' },
-        btn('📜', 'Guild', () => this.guild(), ready ? `${ready} ready` : undefined),
-        btn('🛒', 'Shop', () => this.shop()),
-        btn('⚗', 'Recipe Lab', () => this.lab()),
-        btn('🌀', 'Warp Gate', () => this.warp()),
-        t.arena ? btn('🏟', 'Arena', () => this.arena()) : null,
-        t.tournament ? btn('🏆', 'Tournament', () => this.tournament()) : null,
-        btn('🐉', 'Monsters', () => openMenu('team', refresh)),
-        btn('🚪', 'Leave town', () => toRegion()))));
+      h('div', { class: 'town-name' }, this.name, ready ? h('span', { class: 'chip', style: { background: 'var(--gold)', color: '#241400', marginLeft: '.5em' } }, `📜 ${ready} ready at the Guild`) : null),
+      h('div', { class: 'town-sub' }, t.region)));
   }
 
   // ---------------------------------------------------------------- Guild

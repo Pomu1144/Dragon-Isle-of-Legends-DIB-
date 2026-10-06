@@ -65,15 +65,15 @@ export function speciesDetail(sp: Species, m?: MonsterInst, actions?: HTMLElemen
 // ------------------------------------------------------------------ HUD
 export function hud(onMenu: (k: string) => void, extra: HTMLElement[] = []) {
   const coin = (g = false) => h('span', { class: `coin ${g ? 'g' : ''}` });
+  const items: [string, string][] = [['team', 'Monsters'], ['pedia', 'Monsterpedia'], ['bag', 'Bag'], ['quests', 'Quests'], ['hero', 'Hero'], ['system', 'Settings']];
+  const menu = h('div', { class: 'm-menu' }, ...items.map(([k, l]) => h('button', { class: 'bt-mi', 'data-menu': k, onClick: () => { menu.classList.remove('open'); onMenu(k); } }, l)));
   return layer('hud', h('div', { class: 'hud' },
-    h('div', { class: 'badge panel' }, h('span', { class: 'hero-lv' }, `Lv ${heroLevel()}`), h('b', {}, S.hero),
-      S.license >= 0 ? h('span', { class: 'chip' }, data().licenses[S.license].name) : null),
-    h('div', { class: 'badge panel' }, coin(), h('b', {}, S.silver.toLocaleString()), coin(true), h('b', {}, S.gold.toLocaleString()),
-      h('span', { class: 'muted', title: 'Capture cards' }, `🂠 ${S.items.card}/${S.items.silver}/${S.items.gold}`)),
-    ...extra,
-    h('div', { class: 'menu' },
-      ...[['team', '🐉 Team'], ['bag', '🎒 Bag'], ['pedia', '📖 Pedia'], ['quests', '📜 Quests'], ['hero', '🛡 Hero'], ['system', '⚙']]
-        .map(([k, l]) => h('button', { class: 'btn small', onClick: () => onMenu(k), 'data-menu': k }, l)))));
+    h('button', { class: 'm-btn', title: 'Menu', 'data-testid': 'menu-m', onClick: () => menu.classList.toggle('open') }, h('img', { src: 'assets/ui/orig/town/menu_m.png', alt: 'M' })),
+    menu,
+    h('div', { class: 'hud-stats' }, h('span', { class: 'hero-lv' }, `Lv ${heroLevel()}`), h('b', {}, S.hero),
+      coin(), h('b', {}, S.silver.toLocaleString()), coin(true), h('b', {}, S.gold.toLocaleString()),
+      h('span', { title: 'Capture cards' }, `🂠 ${S.items.card}/${S.items.silver}/${S.items.gold}`)),
+    ...extra));
 }
 
 export function openMenu(k: string, refresh: () => void) {

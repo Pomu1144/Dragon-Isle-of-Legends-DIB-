@@ -17,6 +17,11 @@ export class BootScene extends Phaser.Scene {
     this.load.image('world', 'assets/maps/world.jpg');
     for (const r of data().regions) this.load.image(`map_${r.id}`, `assets/maps/${r.id}.jpg`);
     for (const b of BGS) this.load.image(`bg_${b}`, `assets/bg/${b}.jpg`);
+    // original-game UI pieces (tools/ref_ui/slice_town_battle.py)
+    for (const k of ['panel', 'hpbar', 'coin', 'qframe', 'qbar', 'orb', 'ghost'])
+      this.load.image(`ui_${k}`, `assets/ui/orig/battle/${k}.png`);
+    for (const k of ['menu_m', 'leave', 'shop', 'hero', 'warp_emblem', 'emblem_house', 'house_a', 'warp_house', 'house_b', 'monsterpedia', 'monsters', 'signpost', 'trees', 'bigtree', 'bushes', 'farm'])
+      this.load.image(`town_${k}`, `assets/ui/orig/town/${k}.png`);
     // soft particle textures
     const g = this.make.graphics({ x: 0, y: 0 }, false);
     for (let r = 16; r > 0; r--) { g.fillStyle(0xffffff, (1 - r / 16) * 0.25); g.fillCircle(16, 16, r); }

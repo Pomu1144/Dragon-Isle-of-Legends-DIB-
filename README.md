@@ -62,6 +62,22 @@ python3 tools/ref_ui/extract.py tools/ref_ui/reference.jpg public/assets/ui/dib
 python3 tools/ref_ui/slice_kit.py tools/ref_ui/kit.png public/assets/ui/dib/page.jpg public/assets/ui/kit
 ```
 
+## Town and battle screens from the original sprite sheet
+
+The town and battle screens follow the original game's layout, using art from `tools/ref_ui/town_battle_sheet.jpg`. In that sheet the transparency checkerboard was flattened into the image, so it takes two steps to cut the pieces out:
+
+```bash
+python3 tools/ref_ui/dechecker.py tools/ref_ui/town_battle_sheet.jpg .cache/sheet_rgba.png   # fits the checker grid -> alpha
+python3 tools/ref_ui/slice_town_battle.py .cache/sheet_rgba.png public/assets/ui/orig        # town buildings, HUD, battle panel
+```
+
+- **Town:** the region map is zoomed in on the town. The original buildings and emblems stand on it at the positions from the reference screen, `town_reference.jpg`: Shop, Hero, Warp Gate, Monsterpedia and Monsters, plus Leave Town, Guild, Recipe Lab, Arena and Tournament. The "M" button opens the menu.
+- **Battle:** this matches `battle_reference.jpg`:
+  - Enemies stand in the scene, with their names coloured by element and HP bars across the top. A coin shows how many enemies are still in reserve.
+  - The left column is the turn queue, giving the time units until each monster acts.
+  - The bottom panel has the ghost box (capture cards, auto, speed and escape), your monsters with "HP/max" bars, and the hero portrait (tap it to toggle auto).
+  - Magic attacks fire the original glowing orbs.
+
 ## Project layout
 
 ```
