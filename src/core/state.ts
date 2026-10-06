@@ -34,13 +34,14 @@ export interface SaveData {
   questCount: number;
   overlords: string[];
   dungeons: Record<string, { best: number; cleared: boolean }>;
-  location: { region: string; spot: number };
+  /** where the hero stands: the nearest map spot, plus the exact free-roam position (0..1) when known */
+  location: { region: string; spot: number; x?: number; y?: number };
   lastTown: { region: string; spot: number };
   visited: string[];
   stats: { battles: number; wins: number; captures: number; defeated: number };
   ending: boolean;
   /** per region: spots seen (fog cleared) and discoveries used up (chests opened, breeders beaten, …) */
-  explore: Record<string, { seen: number[]; done: number[] }>;
+  explore: Record<string, { seen: number[]; done: number[]; trail?: number[] }>;
   settings: { speed: number; auto: boolean; music: boolean; sfx: boolean };
 }
 

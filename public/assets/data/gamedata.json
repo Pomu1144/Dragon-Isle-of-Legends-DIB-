@@ -42,7 +42,7 @@
 "def": 13,
 "res": 13
 },
-"sprite": "001.png",
+"sprite": "001.webp",
 "spriteSource": "Fire_Hatchling.png"
 },
 {
@@ -96,7 +96,7 @@
 "def": 21,
 "res": 21
 },
-"sprite": "002.png",
+"sprite": "002.webp",
 "spriteSource": "Red_Dragonling.png"
 },
 {
@@ -162,7 +162,7 @@
 "def": 28,
 "res": 28
 },
-"sprite": "003.png",
+"sprite": "003.webp",
 "spriteSource": "Red_Dragon.png"
 },
 {
@@ -231,7 +231,7 @@
 "def": 58,
 "res": 58
 },
-"sprite": "004.png",
+"sprite": "004.webp",
 "spriteSource": "Red_Wyrm.png"
 },
 {
@@ -276,7 +276,7 @@
 "def": 13,
 "res": 13
 },
-"sprite": "005.png",
+"sprite": "005.webp",
 "spriteSource": "Water_Hatchling.png"
 },
 {
@@ -330,7 +330,7 @@
 "def": 22,
 "res": 22
 },
-"sprite": "006.png",
+"sprite": "006.webp",
 "spriteSource": "Blue_Dragonling.png"
 },
 {
@@ -399,7 +399,7 @@
 "def": 28,
 "res": 28
 },
-"sprite": "007.png",
+"sprite": "007.webp",
 "spriteSource": "BlueDragon.png"
 },
 {
@@ -468,7 +468,7 @@
 "def": 58,
 "res": 58
 },
-"sprite": "008.png",
+"sprite": "008.webp",
 "spriteSource": "Blue_Wyrm.png"
 },
 {
@@ -513,7 +513,7 @@
 "def": 13,
 "res": 13
 },
-"sprite": "009.png",
+"sprite": "009.webp",
 "spriteSource": "Spark_Hatchling.png"
 },
 {
@@ -558,7 +558,7 @@
 "def": 22,
 "res": 22
 },
-"sprite": "010.png",
+"sprite": "010.webp",
 "spriteSource": "White_Dragonling.png"
 },
 {
@@ -640,7 +640,7 @@
 "def": 28,
 "res": 28
 },
-"sprite": "011.png",
+"sprite": "011.webp",
 "spriteSource": "White_Dragon.png"
 },
 {
@@ -709,7 +709,7 @@
 "def": 58,
 "res": 58
 },
-"sprite": "012.png",
+"sprite": "012.webp",
 "spriteSource": "White_Wyrm.png"
 },
 {
@@ -754,7 +754,7 @@
 "def": 13,
 "res": 13
 },
-"sprite": "013.png",
+"sprite": "013.webp",
 "spriteSource": "Gold_Hatchling.png"
 },
 {
@@ -808,7 +808,7 @@
 "def": 22,
 "res": 22
 },
-"sprite": "014.png",
+"sprite": "014.webp",
 "spriteSource": "Gold_Dragonling.png"
 },
 {
@@ -877,7 +877,7 @@
 "def": 28,
 "res": 28
 },
-"sprite": "015.png",
+"sprite": "015.webp",
 "spriteSource": "Gold_Dragon.png"
 },
 {
@@ -946,7 +946,7 @@
 "def": 58,
 "res": 58
 },
-"sprite": "016.png",
+"sprite": "016.webp",
 "spriteSource": "Gold_Wyrm.png"
 },
 {
@@ -988,7 +988,7 @@
 "def": 0,
 "res": 5
 },
-"sprite": "017.png",
+"sprite": "017.webp",
 "spriteSource": "Bat_Squirrel.png",
 "icon": "017_icon.png"
 },
@@ -1040,7 +1040,7 @@
 "def": 6,
 "res": 13
 },
-"sprite": "018.png",
+"sprite": "018.webp",
 "spriteSource": "Giant_Bat.png",
 "icon": "018_icon.png"
 },
@@ -1102,7 +1102,7 @@
 "def": 9,
 "res": 14
 },
-"sprite": "019.png",
+"sprite": "019.webp",
 "spriteSource": "Doombat.png"
 },
 {
@@ -1163,7 +1163,7 @@
 "def": 15,
 "res": 21
 },
-"sprite": "020.png",
+"sprite": "020.webp",
 "spriteSource": "Bat_King.png"
 },
 {
@@ -1197,7 +1197,7 @@
 "def": 4,
 "res": 2
 },
-"sprite": "021.png",
+"sprite": "021.webp",
 "spriteSource": "Piranha.png",
 "icon": "021_icon.png"
 },
@@ -1250,7 +1250,7 @@
 "def": 8,
 "res": 8
 },
-"sprite": "022.png",
+"sprite": "022.webp",
 "spriteSource": "Razorfish.png"
 },
 {
@@ -1324,7 +1324,7 @@
 "def": 21,
 "res": 21
 },
-"sprite": "023.png",
+"sprite": "023.webp",
 "spriteSource": "Dark_Razorfish.png"
 },
 {
@@ -1388,7 +1388,7 @@
 "def": 41,
 "res": 41
 },
-"sprite": "024.png",
+"sprite": "024.webp",
 "spriteSource": "Deep_Whale.png"
 },
 {
@@ -1431,7 +1431,7 @@
 "def": 13,
 "res": 13
 },
-"sprite": "025.png",
+"sprite": "025.webp",
 "spriteSource": "Snow_Cub.png",
 "icon": "025_icon.png"
 },
@@ -1493,7 +1493,7 @@
 "def": 32,
 "res": 32
 },
-"sprite": "026.png",
+"sprite": "026.webp",
 "spriteSource": "Snow_Panther.png"
 },
 {
@@ -1536,7 +1536,7 @@
 "def": 13,
 "res": 13
 },
-"sprite": "027.png",
+"sprite": "027.webp",
 "spriteSource": "Fire_Cub.png",
 "icon": "027_icon.png"
 },
@@ -1598,7 +1598,7 @@
 "def": 31,
 "res": 31
 },
-"sprite": "028.png",
+"sprite": "028.webp",
 "spriteSource": "Fire_Tiger.png"
 },
 {
@@ -1645,7 +1645,7 @@
 "def": 15,
 "res": 1
 },
-"sprite": "029.png",
+"sprite": "029.webp",
 "spriteSource": "GiantWasp-hd.png",
 "icon": "029_icon.png"
 },
@@ -1716,7 +1716,7 @@
 "def": 10,
 "res": 10
 },
-"sprite": "030.png",
+"sprite": "030.webp",
 "spriteSource": "Wasp_Queen.png"
 },
 {
@@ -1762,7 +1762,7 @@
 "def": 21,
 "res": 21
 },
-"sprite": "031.png",
+"sprite": "031.webp",
 "spriteSource": "Giant_Crab.png",
 "icon": "031_icon.png"
 },
@@ -1849,7 +1849,7 @@
 "def": 36,
 "res": 28
 },
-"sprite": "032.png",
+"sprite": "032.webp",
 "spriteSource": "Crab_King.png"
 },
 {
@@ -1892,7 +1892,7 @@
 "def": 14,
 "res": 17
 },
-"sprite": "033.png",
+"sprite": "033.webp",
 "spriteSource": "Giant_Turtle.png",
 "icon": "033_icon.png"
 },
@@ -1961,7 +1961,7 @@
 "def": 26,
 "res": 26
 },
-"sprite": "034.png",
+"sprite": "034.webp",
 "spriteSource": "Turtle_King.png"
 },
 {
@@ -2002,7 +2002,7 @@
 "def": 2,
 "res": 2
 },
-"sprite": "035.png",
+"sprite": "035.webp",
 "spriteSource": "Bitewing.png",
 "icon": "035_icon.png"
 },
@@ -2062,7 +2062,7 @@
 "def": 26,
 "res": 10
 },
-"sprite": "036.png",
+"sprite": "036.webp",
 "spriteSource": "Flame_Wing.png",
 "icon": "036_icon.png"
 },
@@ -2122,7 +2122,7 @@
 "def": 20,
 "res": 20
 },
-"sprite": "037.png",
+"sprite": "037.webp",
 "spriteSource": "Angelic_Bird.png"
 },
 {
@@ -2165,7 +2165,7 @@
 "def": 19,
 "res": 19
 },
-"sprite": "038.png",
+"sprite": "038.webp",
 "spriteSource": "Unhappy_Bird.png"
 },
 {
@@ -2213,7 +2213,7 @@
 "def": 11,
 "res": 11
 },
-"sprite": "039.png",
+"sprite": "039.webp",
 "spriteSource": "Baby_Nessie.png",
 "icon": "039_icon.png"
 },
@@ -2279,7 +2279,7 @@
 "def": 28,
 "res": 28
 },
-"sprite": "040.png",
+"sprite": "040.webp",
 "spriteSource": "Nessie.png"
 },
 {
@@ -2320,7 +2320,7 @@
 "def": 13,
 "res": 6
 },
-"sprite": "041.png",
+"sprite": "041.webp",
 "spriteSource": "Giant_Ant.png",
 "icon": "041_icon.png"
 },
@@ -2376,7 +2376,7 @@
 "def": 16,
 "res": 11
 },
-"sprite": "042.png",
+"sprite": "042.webp",
 "spriteSource": "Mutation.png"
 },
 {
@@ -2453,7 +2453,7 @@
 "def": 48,
 "res": 48
 },
-"sprite": "043.png",
+"sprite": "043.webp",
 "spriteSource": "Chimera_Ant.png"
 },
 {
@@ -2494,7 +2494,7 @@
 "def": 5,
 "res": 5
 },
-"sprite": "044.png",
+"sprite": "044.webp",
 "spriteSource": "Sludge.png",
 "icon": "044_icon.png"
 },
@@ -2550,7 +2550,7 @@
 "def": 11,
 "res": 11
 },
-"sprite": "045.png",
+"sprite": "045.webp",
 "spriteSource": "Slime.png"
 },
 {
@@ -2615,7 +2615,7 @@
 "def": 28,
 "res": 28
 },
-"sprite": "046.png",
+"sprite": "046.webp",
 "spriteSource": "KingSlime.png"
 },
 {
@@ -2667,7 +2667,7 @@
 "def": 4,
 "res": 12
 },
-"sprite": "047.png",
+"sprite": "047.webp",
 "spriteSource": "Fairy.png",
 "icon": "047_icon.png"
 },
@@ -2730,7 +2730,7 @@
 "def": 16,
 "res": 16
 },
-"sprite": "048.png",
+"sprite": "048.webp",
 "spriteSource": "Fairy_Queen.png"
 },
 {
@@ -2774,7 +2774,7 @@
 "def": 6,
 "res": 6
 },
-"sprite": "049.png",
+"sprite": "049.webp",
 "spriteSource": "Wolf.png",
 "icon": "049_icon.png"
 },
@@ -2825,7 +2825,7 @@
 "def": 13,
 "res": 13
 },
-"sprite": "050.png",
+"sprite": "050.webp",
 "spriteSource": "Dire_Wolf.png"
 },
 {
@@ -2892,7 +2892,7 @@
 "def": 29,
 "res": 29
 },
-"sprite": "051.png",
+"sprite": "051.webp",
 "spriteSource": "ThunderWolf.png"
 },
 {
@@ -2946,7 +2946,7 @@
 "def": 16,
 "res": 16
 },
-"sprite": "052.png",
+"sprite": "052.webp",
 "spriteSource": "Drake.png"
 },
 {
@@ -2980,7 +2980,7 @@
 "def": 3,
 "res": 6
 },
-"sprite": "053.png",
+"sprite": "053.webp",
 "spriteSource": "Evil_Eye.png",
 "icon": "053_icon.png"
 },
@@ -3024,7 +3024,7 @@
 "def": 11,
 "res": 11
 },
-"sprite": "054.png",
+"sprite": "054.webp",
 "spriteSource": "Watcher.png"
 },
 {
@@ -3079,7 +3079,7 @@
 "def": 15,
 "res": 15
 },
-"sprite": "055.png",
+"sprite": "055.webp",
 "spriteSource": "Lich_Eye.png"
 },
 {
@@ -3144,7 +3144,7 @@
 "def": 22,
 "res": 23
 },
-"sprite": "056.png",
+"sprite": "056.webp",
 "spriteSource": "Beholder.png"
 },
 {
@@ -3186,7 +3186,7 @@
 "def": 6,
 "res": 6
 },
-"sprite": "057.png",
+"sprite": "057.webp",
 "spriteSource": "Penguin.png",
 "icon": "057_icon.png"
 },
@@ -3254,7 +3254,7 @@
 "def": 14,
 "res": 14
 },
-"sprite": "058.png",
+"sprite": "058.webp",
 "spriteSource": "Kingpen.png"
 },
 {
@@ -3296,7 +3296,7 @@
 "def": 5,
 "res": 5
 },
-"sprite": "059.png",
+"sprite": "059.webp",
 "spriteSource": "Goblin.png",
 "icon": "059_icon.png"
 },
@@ -3360,7 +3360,7 @@
 "def": 13,
 "res": 13
 },
-"sprite": "060.png",
+"sprite": "060.webp",
 "spriteSource": "Gnoll.png"
 },
 {
@@ -3403,7 +3403,7 @@
 "def": 13,
 "res": 13
 },
-"sprite": "061.png",
+"sprite": "061.webp",
 "spriteSource": "Beast_Knight.png"
 },
 {
@@ -3468,7 +3468,7 @@
 "def": 18,
 "res": 18
 },
-"sprite": "062.png",
+"sprite": "062.webp",
 "spriteSource": "Rider.png"
 },
 {
@@ -3552,7 +3552,7 @@
 "def": 26,
 "res": 26
 },
-"sprite": "063.png",
+"sprite": "063.webp",
 "spriteSource": "Berith.png"
 },
 {
@@ -3601,7 +3601,7 @@
 "def": 11,
 "res": 0
 },
-"sprite": "064.png",
+"sprite": "064.webp",
 "spriteSource": "Stinger.png",
 "icon": "064_icon.png"
 },
@@ -3656,7 +3656,7 @@
 "def": 36,
 "res": 36
 },
-"sprite": "065.png",
+"sprite": "065.webp",
 "spriteSource": "Iron_Sludge.png"
 },
 {
@@ -3726,7 +3726,7 @@
 "def": 8,
 "res": 8
 },
-"sprite": "066.png",
+"sprite": "066.webp",
 "spriteSource": "Pincer.png"
 },
 {
@@ -3805,7 +3805,7 @@
 "def": 23,
 "res": 23
 },
-"sprite": "067.png",
+"sprite": "067.webp",
 "spriteSource": "Terror_Claw.png"
 },
 {
@@ -3863,7 +3863,7 @@
 "def": 11,
 "res": 11
 },
-"sprite": "068.png",
+"sprite": "068.webp",
 "spriteSource": "Cockatrice.png",
 "icon": "068_icon.png"
 },
@@ -3923,7 +3923,7 @@
 "def": 6,
 "res": 6
 },
-"sprite": "069.png",
+"sprite": "069.webp",
 "spriteSource": "Mer_Hunter.png",
 "icon": "069_icon.png"
 },
@@ -3967,7 +3967,7 @@
 "def": 3,
 "res": 6
 },
-"sprite": "070.png",
+"sprite": "070.webp",
 "spriteSource": "Mer_Warrior.png",
 "icon": "070_icon.png"
 },
@@ -4036,7 +4036,7 @@
 "def": 11,
 "res": 11
 },
-"sprite": "071.png",
+"sprite": "071.webp",
 "spriteSource": "Mer_Prince.png"
 },
 {
@@ -4097,7 +4097,7 @@
 "def": 20,
 "res": 1
 },
-"sprite": "072.png",
+"sprite": "072.webp",
 "spriteSource": "Mer_King.png"
 },
 {
@@ -4150,7 +4150,7 @@
 "def": 13,
 "res": 13
 },
-"sprite": "073.png",
+"sprite": "073.webp",
 "spriteSource": "Spike_Ball.png"
 },
 {
@@ -4224,7 +4224,7 @@
 "def": 39,
 "res": 31
 },
-"sprite": "074.png",
+"sprite": "074.webp",
 "spriteSource": "Spike_Crab.png"
 },
 {
@@ -4319,7 +4319,7 @@
 "def": 72,
 "res": 56
 },
-"sprite": "075.png",
+"sprite": "075.webp",
 "spriteSource": "Spike_Monster.png"
 },
 {
@@ -4355,7 +4355,7 @@
 "def": 2,
 "res": 2
 },
-"sprite": "076.png",
+"sprite": "076.webp",
 "spriteSource": "Assassin.png",
 "icon": "076_icon.png"
 },
@@ -4407,7 +4407,7 @@
 "def": 8,
 "res": 8
 },
-"sprite": "077.png",
+"sprite": "077.webp",
 "spriteSource": "Sasuke.png"
 },
 {
@@ -4475,7 +4475,7 @@
 "def": 19,
 "res": 9
 },
-"sprite": "078.png",
+"sprite": "078.webp",
 "spriteSource": "Ninja.png"
 },
 {
@@ -4518,7 +4518,7 @@
 "def": 13,
 "res": 13
 },
-"sprite": "079.png",
+"sprite": "079.webp",
 "spriteSource": "Noko.png",
 "icon": "079_icon.png"
 },
@@ -4580,7 +4580,7 @@
 "def": 55,
 "res": 55
 },
-"sprite": "080.png",
+"sprite": "080.webp",
 "spriteSource": "Orochi.png"
 },
 {
@@ -4623,7 +4623,7 @@
 "def": 3,
 "res": 3
 },
-"sprite": "081.png",
+"sprite": "081.webp",
 "spriteSource": "Blue_Seahorse.png"
 },
 {
@@ -4684,7 +4684,7 @@
 "def": 11,
 "res": 8
 },
-"sprite": "082.png",
+"sprite": "082.webp",
 "spriteSource": "White_Seahorse.png"
 },
 {
@@ -4744,7 +4744,7 @@
 "def": 24,
 "res": 25
 },
-"sprite": "083.png",
+"sprite": "083.webp",
 "spriteSource": "Elder_Seahorse.png"
 },
 {
@@ -4778,7 +4778,7 @@
 "def": 13,
 "res": 8
 },
-"sprite": "084.png",
+"sprite": "084.webp",
 "spriteSource": "Reptilo.png",
 "icon": "084_icon.png"
 },
@@ -4832,7 +4832,7 @@
 "def": 18,
 "res": 18
 },
-"sprite": "085.png",
+"sprite": "085.webp",
 "spriteSource": "Reptile_Lord.png"
 },
 {
@@ -4905,7 +4905,7 @@
 "def": 32,
 "res": 32
 },
-"sprite": "086.png",
+"sprite": "086.webp",
 "spriteSource": "Yacare.png"
 },
 {
@@ -4951,7 +4951,7 @@
 "def": 3,
 "res": 3
 },
-"sprite": "087.png",
+"sprite": "087.webp",
 "spriteSource": "Cult_Priest.png",
 "icon": "087_icon.png"
 },
@@ -5007,7 +5007,7 @@
 "def": 10,
 "res": 10
 },
-"sprite": "088.png",
+"sprite": "088.webp",
 "spriteSource": "Cult_Warrior.png"
 },
 {
@@ -5069,7 +5069,7 @@
 "def": 17,
 "res": 9
 },
-"sprite": "089.png",
+"sprite": "089.webp",
 "spriteSource": "Cult_Rogue.png"
 },
 {
@@ -5112,7 +5112,7 @@
 "def": 4,
 "res": 2
 },
-"sprite": "090.png",
+"sprite": "090.webp",
 "spriteSource": "Tiger_Fish.png",
 "icon": "090_icon.png"
 },
@@ -5161,7 +5161,7 @@
 "def": 25,
 "res": 13
 },
-"sprite": "091.png",
+"sprite": "091.webp",
 "spriteSource": "Tiger_Swarm.png"
 },
 {
@@ -5203,7 +5203,7 @@
 "def": 13,
 "res": 13
 },
-"sprite": "092.png",
+"sprite": "092.webp",
 "spriteSource": "White_Dolphin.png",
 "icon": "092_icon.png"
 },
@@ -5265,7 +5265,7 @@
 "def": 60,
 "res": 60
 },
-"sprite": "093.png",
+"sprite": "093.webp",
 "spriteSource": "Leviathan.png"
 },
 {
@@ -5309,7 +5309,7 @@
 "def": 19,
 "res": 10
 },
-"sprite": "094.png",
+"sprite": "094.webp",
 "spriteSource": "Spartan.png"
 },
 {
@@ -5374,7 +5374,7 @@
 "def": 26,
 "res": 20
 },
-"sprite": "095.png",
+"sprite": "095.webp",
 "spriteSource": "Legionnaire.png"
 },
 {
@@ -5448,7 +5448,7 @@
 "def": 33,
 "res": 28
 },
-"sprite": "096.png",
+"sprite": "096.webp",
 "spriteSource": "Centurion.png"
 },
 {
@@ -5525,7 +5525,7 @@
 "def": 38,
 "res": 32
 },
-"sprite": "097.png",
+"sprite": "097.webp",
 "spriteSource": "Guardian.png"
 },
 {
@@ -5569,7 +5569,7 @@
 "def": 9,
 "res": 9
 },
-"sprite": "098.png",
+"sprite": "098.webp",
 "spriteSource": "Devil_Worm.png"
 },
 {
@@ -5630,7 +5630,7 @@
 "def": 8,
 "res": 9
 },
-"sprite": "099.png",
+"sprite": "099.webp",
 "spriteSource": "Mask.png",
 "icon": "099_icon.png"
 },
@@ -5695,7 +5695,7 @@
 "def": 10,
 "res": 10
 },
-"sprite": "100.png",
+"sprite": "100.webp",
 "spriteSource": "Bones.png",
 "icon": "100_icon.png"
 },
@@ -5732,7 +5732,7 @@
 "def": 6,
 "res": 6
 },
-"sprite": "101.png",
+"sprite": "101.webp",
 "spriteSource": "Iron_Fish.png"
 },
 {
@@ -5768,7 +5768,7 @@
 "def": 19,
 "res": 19
 },
-"sprite": "102.png",
+"sprite": "102.webp",
 "spriteSource": "Sea_Dragon.png"
 },
 {
@@ -5804,7 +5804,7 @@
 "def": 6,
 "res": 6
 },
-"sprite": "103.png",
+"sprite": "103.webp",
 "spriteSource": "Armor_Fish.png"
 },
 {
@@ -5838,7 +5838,7 @@
 "def": 15,
 "res": 15
 },
-"sprite": "104.png",
+"sprite": "104.webp",
 "spriteSource": "Ceola_King.png"
 },
 {
@@ -5872,7 +5872,7 @@
 "def": 17,
 "res": 17
 },
-"sprite": "105.png",
+"sprite": "105.webp",
 "spriteSource": "Finder.png"
 },
 {
@@ -5931,7 +5931,7 @@
 "def": 37,
 "res": 46
 },
-"sprite": "106.png",
+"sprite": "106.webp",
 "spriteSource": "Djinn.png"
 },
 {
@@ -5987,7 +5987,7 @@
 "def": 15,
 "res": 9
 },
-"sprite": "107.png",
+"sprite": "107.webp",
 "spriteSource": "Gold_Lion.png"
 },
 {
@@ -6063,7 +6063,7 @@
 "def": 26,
 "res": 26
 },
-"sprite": "108.png",
+"sprite": "108.webp",
 "spriteSource": "Lion_King.png"
 },
 {
@@ -6108,7 +6108,7 @@
 "def": 6,
 "res": 6
 },
-"sprite": "109.png",
+"sprite": "109.webp",
 "spriteSource": "Spark.png"
 },
 {
@@ -6183,7 +6183,7 @@
 "def": 18,
 "res": 18
 },
-"sprite": "110.png",
+"sprite": "110.webp",
 "spriteSource": "Thunder_Mage.png"
 },
 {
@@ -6228,7 +6228,7 @@
 "def": 16,
 "res": 23
 },
-"sprite": "111.png",
+"sprite": "111.webp",
 "spriteSource": "Cherub.png"
 },
 {
@@ -6282,7 +6282,7 @@
 "def": 25,
 "res": 36
 },
-"sprite": "112.png",
+"sprite": "112.webp",
 "spriteSource": "Angel.png"
 },
 {
@@ -6343,7 +6343,7 @@
 "def": 53,
 "res": 68
 },
-"sprite": "113.png",
+"sprite": "113.webp",
 "spriteSource": "Archangel.png"
 },
 {
@@ -6388,7 +6388,7 @@
 "def": 6,
 "res": 13
 },
-"sprite": "114.png",
+"sprite": "114.webp",
 "spriteSource": "Treehead.png",
 "icon": "114_icon.png"
 },
@@ -6448,7 +6448,7 @@
 "def": 14,
 "res": 16
 },
-"sprite": "115.png",
+"sprite": "115.webp",
 "spriteSource": "Pyro.png"
 },
 {
@@ -6494,7 +6494,7 @@
 "def": 6,
 "res": 13
 },
-"sprite": "116.png",
+"sprite": "116.webp",
 "spriteSource": "Bat_Fiend.png",
 "icon": "116_icon.png"
 },
@@ -6558,7 +6558,7 @@
 "def": 10,
 "res": 16
 },
-"sprite": "117.png",
+"sprite": "117.webp",
 "spriteSource": "Vampire.png"
 },
 {
@@ -6622,7 +6622,7 @@
 "def": 22,
 "res": 28
 },
-"sprite": "118.png",
+"sprite": "118.webp",
 "spriteSource": "Dark_Spirit.png"
 },
 {
@@ -6693,7 +6693,7 @@
 "def": 21,
 "res": 21
 },
-"sprite": "119.png",
+"sprite": "119.webp",
 "spriteSource": "Steel_Snake.png"
 },
 {
@@ -6752,7 +6752,7 @@
 "def": 6,
 "res": 13
 },
-"sprite": "120.png",
+"sprite": "120.webp",
 "spriteSource": "Manticore.png"
 },
 {
@@ -6808,7 +6808,7 @@
 "def": 13,
 "res": 6
 },
-"sprite": "121.png",
+"sprite": "121.webp",
 "spriteSource": "Shark.png",
 "icon": "121_icon.png"
 },
@@ -6874,7 +6874,7 @@
 "def": 18,
 "res": 18
 },
-"sprite": "122.png",
+"sprite": "122.webp",
 "spriteSource": "Terror_Shark.png"
 },
 {
@@ -6929,7 +6929,7 @@
 "def": 18,
 "res": 18
 },
-"sprite": "123.png",
+"sprite": "123.webp",
 "spriteSource": "Samurai.png"
 },
 {
@@ -6993,7 +6993,7 @@
 "def": 25,
 "res": 24
 },
-"sprite": "124.png",
+"sprite": "124.webp",
 "spriteSource": "Samurai_Lord.png"
 },
 {
@@ -7060,7 +7060,7 @@
 "def": 31,
 "res": 30
 },
-"sprite": "125.png",
+"sprite": "125.webp",
 "spriteSource": "Shogun.png"
 },
 {
@@ -7122,7 +7122,7 @@
 "def": 46,
 "res": 46
 },
-"sprite": "126.png",
+"sprite": "126.webp",
 "spriteSource": "Dark_Panther.png"
 },
 {
@@ -7166,7 +7166,7 @@
 "def": 11,
 "res": 11
 },
-"sprite": "127.png",
+"sprite": "127.webp",
 "spriteSource": "Kappa.png"
 },
 {
@@ -7228,7 +7228,7 @@
 "def": 31,
 "res": 31
 },
-"sprite": "128.png",
+"sprite": "128.webp",
 "spriteSource": "Tengu.png"
 },
 {
@@ -7287,7 +7287,7 @@
 "def": 14,
 "res": 22
 },
-"sprite": "129.png",
+"sprite": "129.webp",
 "spriteSource": "Imp.png",
 "icon": "129_icon.png"
 },
@@ -7329,7 +7329,7 @@
 "def": 6,
 "res": 6
 },
-"sprite": "130.png",
+"sprite": "130.webp",
 "spriteSource": "Dream_Eater.png",
 "icon": "130_icon.png"
 },
@@ -7373,7 +7373,7 @@
 "def": 22,
 "res": 22
 },
-"sprite": "131.png",
+"sprite": "131.webp",
 "spriteSource": "Dream_Hunter.png"
 },
 {
@@ -7426,7 +7426,7 @@
 "def": 8,
 "res": 8
 },
-"sprite": "132.png",
+"sprite": "132.webp",
 "spriteSource": "Beastman.png"
 },
 {
@@ -7479,7 +7479,7 @@
 "def": 15,
 "res": 15
 },
-"sprite": "133.png",
+"sprite": "133.webp",
 "spriteSource": "Beastman_King.png"
 },
 {
@@ -7544,7 +7544,7 @@
 "def": 26,
 "res": 26
 },
-"sprite": "134.png",
+"sprite": "134.webp",
 "spriteSource": "Sphinxling.png"
 },
 {
@@ -7623,7 +7623,7 @@
 "def": 37,
 "res": 45
 },
-"sprite": "135.png",
+"sprite": "135.webp",
 "spriteSource": "Sphinx.png"
 },
 {
@@ -7703,7 +7703,7 @@
 "def": 49,
 "res": 58
 },
-"sprite": "136.png",
+"sprite": "136.webp",
 "spriteSource": "Sphinx_Master.png"
 },
 {
@@ -7746,7 +7746,7 @@
 "def": 3,
 "res": 3
 },
-"sprite": "137.png",
+"sprite": "137.webp",
 "spriteSource": "Minotaur.png",
 "icon": "137_icon.png"
 },
@@ -7811,7 +7811,7 @@
 "def": 18,
 "res": 18
 },
-"sprite": "138.png",
+"sprite": "138.webp",
 "spriteSource": "Minos.png"
 },
 {
@@ -7852,7 +7852,7 @@
 "def": 26,
 "res": 26
 },
-"sprite": "139.png",
+"sprite": "139.webp",
 "spriteSource": "Stomper.png"
 },
 {
@@ -7915,7 +7915,7 @@
 "def": 55,
 "res": 55
 },
-"sprite": "140.png",
+"sprite": "140.webp",
 "spriteSource": "Ganesha.png"
 },
 {
@@ -7969,7 +7969,7 @@
 "def": 24,
 "res": 75
 },
-"sprite": "141.png",
+"sprite": "141.webp",
 "spriteSource": "Kaguya.png"
 },
 {
@@ -8048,7 +8048,7 @@
 "def": 29,
 "res": 29
 },
-"sprite": "142.png",
+"sprite": "142.webp",
 "spriteSource": "Megaslug.png"
 },
 {
@@ -8108,7 +8108,7 @@
 "def": 16,
 "res": 3
 },
-"sprite": "143.png",
+"sprite": "143.webp",
 "spriteSource": "Yeti.png"
 },
 {
@@ -8166,7 +8166,7 @@
 "def": 22,
 "res": 16
 },
-"sprite": "144.png",
+"sprite": "144.webp",
 "spriteSource": "Ice_Yeti.png"
 },
 {
@@ -8232,7 +8232,7 @@
 "def": 26,
 "res": 20
 },
-"sprite": "145.png",
+"sprite": "145.webp",
 "spriteSource": "Destroyer.png"
 },
 {
@@ -8290,7 +8290,7 @@
 "def": 22,
 "res": 22
 },
-"sprite": "146.png",
+"sprite": "146.webp",
 "spriteSource": "Decimator.png"
 },
 {
@@ -8335,7 +8335,7 @@
 "def": 3,
 "res": 3
 },
-"sprite": "147.png",
+"sprite": "147.webp",
 "spriteSource": "Blood_Priest.png",
 "icon": "147_icon.png"
 },
@@ -8393,7 +8393,7 @@
 "def": 22,
 "res": 17
 },
-"sprite": "148.png",
+"sprite": "148.webp",
 "spriteSource": "Blood_Warrior.png"
 },
 {
@@ -8460,7 +8460,7 @@
 "def": 30,
 "res": 25
 },
-"sprite": "149.png",
+"sprite": "149.webp",
 "spriteSource": "Blood_Rogue.png"
 },
 {
@@ -8505,7 +8505,7 @@
 "def": 3,
 "res": 3
 },
-"sprite": "150.png",
+"sprite": "150.webp",
 "spriteSource": "Dark_Priest.png",
 "icon": "150_icon.png"
 },
@@ -8575,7 +8575,7 @@
 "def": 11,
 "res": 11
 },
-"sprite": "151.png",
+"sprite": "151.webp",
 "spriteSource": "Dark_Mage.png"
 },
 {
@@ -8617,7 +8617,7 @@
 "def": 6,
 "res": 13
 },
-"sprite": "152.png",
+"sprite": "152.webp",
 "spriteSource": "Mutant_Fish.png"
 },
 {
@@ -8668,7 +8668,7 @@
 "def": 13,
 "res": 16
 },
-"sprite": "153.png",
+"sprite": "153.webp",
 "spriteSource": "Sea_Maiden.png"
 },
 {
@@ -8728,7 +8728,7 @@
 "def": 16,
 "res": 22
 },
-"sprite": "154.png",
+"sprite": "154.webp",
 "spriteSource": "Sea_Caliph.png"
 },
 {
@@ -8782,7 +8782,7 @@
 "def": 47,
 "res": 47
 },
-"sprite": "155.png",
+"sprite": "155.webp",
 "spriteSource": "IronSlime.png"
 },
 {
@@ -8835,7 +8835,7 @@
 "def": 11,
 "res": 11
 },
-"sprite": "156.png",
+"sprite": "156.webp",
 "spriteSource": "Scale_Knight.png"
 },
 {
@@ -8903,7 +8903,7 @@
 "def": 18,
 "res": 18
 },
-"sprite": "157.png",
+"sprite": "157.webp",
 "spriteSource": "Serpent_Mage.png"
 },
 {
@@ -8978,7 +8978,7 @@
 "def": 31,
 "res": 31
 },
-"sprite": "158.png",
+"sprite": "158.webp",
 "spriteSource": "Snake_God.png"
 },
 {
@@ -9039,7 +9039,7 @@
 "def": 74,
 "res": 173
 },
-"sprite": "159.png",
+"sprite": "159.webp",
 "spriteSource": "Lich.png",
 "icon": "159_icon.png"
 },
@@ -9083,7 +9083,7 @@
 "def": 24,
 "res": 14
 },
-"sprite": "160.png",
+"sprite": "160.webp",
 "spriteSource": "Light_Crawler.png"
 },
 {
@@ -9140,7 +9140,7 @@
 "def": 28,
 "res": 30
 },
-"sprite": "161.png",
+"sprite": "161.webp",
 "spriteSource": "Night_Crawler.png"
 },
 {
@@ -9207,7 +9207,7 @@
 "def": 43,
 "res": 43
 },
-"sprite": "162.png",
+"sprite": "162.webp",
 "spriteSource": "DeathCrawler-hd.png"
 },
 {
@@ -9266,7 +9266,7 @@
 "def": 11,
 "res": 16
 },
-"sprite": "163.png",
+"sprite": "163.webp",
 "spriteSource": "Kemet_King.png"
 },
 {
@@ -9355,7 +9355,7 @@
 "def": 20,
 "res": 26
 },
-"sprite": "164.png",
+"sprite": "164.webp",
 "spriteSource": "Kemet_God.png"
 },
 {
@@ -9420,7 +9420,7 @@
 "def": 22,
 "res": 27
 },
-"sprite": "165.png",
+"sprite": "165.webp",
 "spriteSource": "Bane.png"
 },
 {
@@ -9494,7 +9494,7 @@
 "def": 31,
 "res": 37
 },
-"sprite": "166.png",
+"sprite": "166.webp",
 "spriteSource": "Mage_Bane.png"
 },
 {
@@ -9559,7 +9559,7 @@
 "def": 27,
 "res": 22
 },
-"sprite": "167.png",
+"sprite": "167.webp",
 "spriteSource": "Grimoire.png"
 },
 {
@@ -9633,7 +9633,7 @@
 "def": 37,
 "res": 31
 },
-"sprite": "168.png",
+"sprite": "168.webp",
 "spriteSource": "Bastion.png"
 },
 {
@@ -9691,7 +9691,7 @@
 "def": 13,
 "res": 13
 },
-"sprite": "169.png",
+"sprite": "169.webp",
 "spriteSource": "Carnoraptor.png",
 "icon": "169_icon.png"
 },
@@ -9763,7 +9763,7 @@
 "def": 28,
 "res": 28
 },
-"sprite": "170.png",
+"sprite": "170.webp",
 "spriteSource": "Multiclops.png"
 },
 {
@@ -9838,7 +9838,7 @@
 "def": 22,
 "res": 22
 },
-"sprite": "171.png",
+"sprite": "171.webp",
 "spriteSource": "Skull_Crow.png",
 "icon": "171_icon.png"
 },
@@ -9893,7 +9893,7 @@
 "def": 15,
 "res": 15
 },
-"sprite": "172.png",
+"sprite": "172.webp",
 "spriteSource": "FallenAngel2.png",
 "icon": "172_icon.png"
 },
@@ -9959,7 +9959,7 @@
 "def": 18,
 "res": 19
 },
-"sprite": "173.png",
+"sprite": "173.webp",
 "spriteSource": "Lich_King.png",
 "icon": "173_icon.png"
 },
@@ -10004,7 +10004,7 @@
 "def": 22,
 "res": 22
 },
-"sprite": "174.png",
+"sprite": "174.webp",
 "spriteSource": "Cyclops.png",
 "icon": "174_icon.png"
 },
@@ -10068,7 +10068,7 @@
 "def": 28,
 "res": 28
 },
-"sprite": "175.png",
+"sprite": "175.webp",
 "spriteSource": "Demios.png",
 "icon": "175_icon.png"
 },
@@ -10124,7 +10124,7 @@
 "def": 31,
 "res": 31
 },
-"sprite": "176.png",
+"sprite": "176.webp",
 "spriteSource": "Griffin_Rider.png",
 "icon": "176_icon.png"
 },
@@ -10181,7 +10181,7 @@
 "def": 28,
 "res": 28
 },
-"sprite": "177.png",
+"sprite": "177.webp",
 "spriteSource": "Demon.png"
 },
 {
@@ -10247,7 +10247,7 @@
 "def": 53,
 "res": 53
 },
-"sprite": "178.png",
+"sprite": "178.webp",
 "spriteSource": "Archdemon.png"
 },
 {
@@ -10311,7 +10311,7 @@
 "def": 27,
 "res": 30
 },
-"sprite": "179.png",
+"sprite": "179.webp",
 "spriteSource": "Dementor.png",
 "icon": "179_icon.png"
 },
@@ -10367,7 +10367,7 @@
 "def": 59,
 "res": 9
 },
-"sprite": "180.png",
+"sprite": "180.webp",
 "spriteSource": "Titan.png",
 "icon": "180_icon.png"
 },
@@ -10423,7 +10423,7 @@
 "def": 9,
 "res": 59
 },
-"sprite": "181.png",
+"sprite": "181.webp",
 "spriteSource": "Juggernaut.png",
 "icon": "181_icon.png"
 },
@@ -10507,7 +10507,7 @@
 "def": 22,
 "res": 22
 },
-"sprite": "182.png",
+"sprite": "182.webp",
 "spriteSource": "WolfGod.png",
 "icon": "182_icon.png"
 },
@@ -10578,7 +10578,7 @@
 "def": 43,
 "res": 43
 },
-"sprite": "183.png",
+"sprite": "183.webp",
 "spriteSource": "BlueDragoon.png",
 "icon": "183_icon.png"
 },
@@ -10651,7 +10651,7 @@
 "def": 57,
 "res": 57
 },
-"sprite": "184.png",
+"sprite": "184.webp",
 "spriteSource": "GoldDragoon.png",
 "icon": "184_icon.png"
 },
@@ -10724,7 +10724,7 @@
 "def": 57,
 "res": 57
 },
-"sprite": "185.png",
+"sprite": "185.webp",
 "spriteSource": "RedDragoon.png",
 "icon": "185_icon.png"
 },
@@ -10797,7 +10797,7 @@
 "def": 57,
 "res": 57
 },
-"sprite": "186.png",
+"sprite": "186.webp",
 "spriteSource": "WhiteDragoon.png",
 "icon": "186_icon.png"
 },
@@ -10861,7 +10861,7 @@
 "def": 59,
 "res": 59
 },
-"sprite": "187.png",
+"sprite": "187.webp",
 "spriteSource": "Pyrohydra.png",
 "icon": "187_icon.png"
 },
@@ -10925,7 +10925,7 @@
 "def": 46,
 "res": 46
 },
-"sprite": "188.png",
+"sprite": "188.webp",
 "spriteSource": "Cryohydra.png",
 "icon": "188_icon.png"
 },
@@ -10990,7 +10990,7 @@
 "def": 59,
 "res": 59
 },
-"sprite": "189.png",
+"sprite": "189.webp",
 "spriteSource": "Bone_Dragon.png",
 "icon": "189_icon.png"
 },
@@ -11039,7 +11039,7 @@
 "def": 57,
 "res": 54
 },
-"sprite": "190.png",
+"sprite": "190.webp",
 "spriteSource": "Aqua_Horror.png",
 "icon": "190_icon.png"
 },
@@ -11113,7 +11113,7 @@
 "def": 50,
 "res": 54
 },
-"sprite": "191.png",
+"sprite": "191.webp",
 "spriteSource": "Blademaster.png",
 "icon": "191_icon.png"
 },
@@ -11178,7 +11178,7 @@
 "def": 100,
 "res": 100
 },
-"sprite": "192.png",
+"sprite": "192.webp",
 "spriteSource": "Iron_King.png",
 "icon": "192_icon.png"
 },
@@ -11245,7 +11245,7 @@
 "def": 16,
 "res": 16
 },
-"sprite": "193.png",
+"sprite": "193.webp",
 "spriteSource": "Resistance.png",
 "icon": "193_icon.png"
 },
@@ -11319,7 +11319,7 @@
 "def": 14,
 "res": 14
 },
-"sprite": "194.png",
+"sprite": "194.webp",
 "spriteSource": "Fire_Spirit.png",
 "icon": "194_icon.png"
 },
@@ -11390,7 +11390,7 @@
 "def": 22,
 "res": 22
 },
-"sprite": "195.png",
+"sprite": "195.webp",
 "spriteSource": "Fate.png",
 "icon": "195_icon.png"
 },
@@ -11464,7 +11464,7 @@
 "def": 25,
 "res": 25
 },
-"sprite": "196.png",
+"sprite": "196.webp",
 "spriteSource": "Aggression.png",
 "icon": "196_icon.png"
 },
@@ -11546,7 +11546,7 @@
 "def": 23,
 "res": 23
 },
-"sprite": "197.png",
+"sprite": "197.webp",
 "spriteSource": "Energy.png",
 "icon": "197_icon.png"
 },
@@ -11615,7 +11615,7 @@
 "def": 28,
 "res": 28
 },
-"sprite": "198.png",
+"sprite": "198.webp",
 "spriteSource": "Karma.png",
 "icon": "198_icon.png"
 },
@@ -11693,7 +11693,7 @@
 "def": 37,
 "res": 37
 },
-"sprite": "199.png",
+"sprite": "199.webp",
 "spriteSource": "Evil.png",
 "icon": "199_icon.png"
 },
@@ -11765,7 +11765,7 @@
 "def": 43,
 "res": 36
 },
-"sprite": "200.png",
+"sprite": "200.webp",
 "spriteSource": "Fear.png",
 "icon": "200_icon.png"
 },
@@ -11843,7 +11843,7 @@
 "def": 52,
 "res": 52
 },
-"sprite": "201.png",
+"sprite": "201.webp",
 "spriteSource": "Thought.png",
 "icon": "201_icon.png"
 },
@@ -11916,7 +11916,7 @@
 "def": 96,
 "res": 96
 },
-"sprite": "202.png",
+"sprite": "202.webp",
 "spriteSource": "Divine.png",
 "icon": "202_icon.png"
 },
@@ -11993,7 +11993,7 @@
 "def": 113,
 "res": 113
 },
-"sprite": "203.png",
+"sprite": "203.webp",
 "spriteSource": "Time.png",
 "icon": "203_icon.png"
 },
@@ -12045,7 +12045,7 @@
 "def": 112,
 "res": 112
 },
-"sprite": "204.png",
+"sprite": "204.webp",
 "spriteSource": "Shenron.png"
 },
 {
@@ -12103,7 +12103,7 @@
 "def": 18,
 "res": 18
 },
-"sprite": "205.png",
+"sprite": "205.webp",
 "spriteSource": "Abomination.png"
 },
 {
@@ -12172,7 +12172,7 @@
 "def": 50,
 "res": 53
 },
-"sprite": "206.png",
+"sprite": "206.webp",
 "spriteSource": "Teddy.png"
 },
 {
@@ -12244,7 +12244,7 @@
 "def": 73,
 "res": 73
 },
-"sprite": "207.png",
+"sprite": "207.webp",
 "spriteSource": "Dawn_Rider.png"
 },
 {
@@ -12316,7 +12316,7 @@
 "def": 77,
 "res": 77
 },
-"sprite": "208.png",
+"sprite": "208.webp",
 "spriteSource": "Night_Rider.png"
 },
 {
@@ -12389,7 +12389,7 @@
 "def": 81,
 "res": 81
 },
-"sprite": "209.png",
+"sprite": "209.webp",
 "spriteSource": "Chaos_Rider.png"
 },
 {
@@ -12464,7 +12464,7 @@
 "def": 76,
 "res": 76
 },
-"sprite": "210.png",
+"sprite": "210.webp",
 "spriteSource": "Spikey.png"
 },
 {
@@ -12527,7 +12527,7 @@
 "def": 53,
 "res": 53
 },
-"sprite": "211.png",
+"sprite": "211.webp",
 "spriteSource": "Solaris.png"
 },
 {
@@ -12606,7 +12606,7 @@
 "def": 31,
 "res": 22
 },
-"sprite": "212.png",
+"sprite": "212.webp",
 "spriteSource": "DonPen-hd.png"
 },
 {
@@ -12669,7 +12669,7 @@
 "def": 60,
 "res": 65
 },
-"sprite": "213.png",
+"sprite": "213.webp",
 "spriteSource": "Gamera-hd.png"
 },
 {
@@ -12732,7 +12732,7 @@
 "def": 73,
 "res": 73
 },
-"sprite": "214.png",
+"sprite": "214.webp",
 "spriteSource": "UltimateDragon-hd.png"
 },
 {
@@ -12794,7 +12794,7 @@
 "def": 63,
 "res": 63
 },
-"sprite": "215.png",
+"sprite": "215.webp",
 "spriteSource": "UltimatePanther-hd.png"
 },
 {
@@ -12854,7 +12854,7 @@
 "def": 37,
 "res": 37
 },
-"sprite": "216.png",
+"sprite": "216.webp",
 "spriteSource": "Morfeus-hd.png"
 },
 {
@@ -12897,7 +12897,7 @@
 "def": 20,
 "res": 3
 },
-"sprite": "217.png",
+"sprite": "217.webp",
 "spriteSource": "Sasquatch-hd.png"
 },
 {
@@ -12959,7 +12959,7 @@
 "def": 21,
 "res": 3
 },
-"sprite": "218.png",
+"sprite": "218.webp",
 "spriteSource": "Wendigo-hd.png"
 },
 {
@@ -12993,7 +12993,7 @@
 "def": 24,
 "res": 15
 },
-"sprite": "219.png",
+"sprite": "219.webp",
 "spriteSource": "Bon-hd.png"
 },
 {
@@ -13055,7 +13055,7 @@
 "def": 59,
 "res": 59
 },
-"sprite": "220.png",
+"sprite": "220.webp",
 "spriteSource": "Ifrit-hd.png"
 },
 {
@@ -13122,7 +13122,7 @@
 "def": 57,
 "res": 21
 },
-"sprite": "221.png",
+"sprite": "221.webp",
 "spriteSource": "Goemon-hd.png"
 },
 {
@@ -13155,7 +13155,7 @@
 "def": 30,
 "res": 20
 },
-"sprite": "222.png",
+"sprite": "222.webp",
 "spriteSource": "Doki-hd.png"
 },
 {
@@ -13219,7 +13219,7 @@
 "def": 55,
 "res": 55
 },
-"sprite": "223.png",
+"sprite": "223.webp",
 "spriteSource": "Asura-hd.png"
 },
 {
@@ -13280,7 +13280,7 @@
 "def": 34,
 "res": 23
 },
-"sprite": "224.png",
+"sprite": "224.webp",
 "spriteSource": "SnowMan-hd.png"
 },
 {
@@ -13356,7 +13356,7 @@
 "def": 68,
 "res": 62
 },
-"sprite": "225.png",
+"sprite": "225.webp",
 "spriteSource": "custom/moonreaver.png",
 "custom": true
 },
@@ -13429,7 +13429,7 @@
 "def": 62,
 "res": 80
 },
-"sprite": "226.png",
+"sprite": "226.webp",
 "spriteSource": "custom/seraph.png",
 "custom": true
 },
@@ -13501,7 +13501,7 @@
 "def": 78,
 "res": 100
 },
-"sprite": "227.png",
+"sprite": "227.webp",
 "spriteSource": "custom/empyrean.png",
 "custom": true
 }
@@ -16164,7 +16164,7 @@
 "overlords": [
 {
 "name": "Arashi",
-"form": "Drake",
+"form": "Red Dragonling",
 "region": "Southern Alvalon",
 "about": "",
 "stats": null

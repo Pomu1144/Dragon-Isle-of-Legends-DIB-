@@ -8,7 +8,7 @@ import { RegionScene } from './scenes/Region';
 import { BattleScene } from './scenes/Battle';
 import { TownScene } from './scenes/Town';
 import { DungeonScene } from './scenes/Dungeon';
-import { h, ui } from './ui/dom';
+import { loadingMessage } from './ui/loading';
 import * as nav from './nav';
 import * as state from './core/state';
 import * as enc from './core/encounters';
@@ -17,10 +17,12 @@ import * as menus from './ui/menus';
 import * as dom from './ui/dom';
 
 async function start() {
-  const loading = h('div', { class: 'loading' }, 'Summoning dragons…');
-  ui().append(loading);
-  await loadData();
-  loading.remove();
+  try {
+    await loadData();
+  } catch (e) {
+    loadingMessage('Could not load the game data. Please check your connection and reload.');
+    throw e;
+  }
   const game = new Phaser.Game({
     type: Phaser.AUTO,
     parent: 'game',

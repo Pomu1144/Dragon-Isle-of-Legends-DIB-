@@ -52,6 +52,7 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; backgroun
 .hud .menu { margin-left: auto; display: flex; gap: .4em; }
 .region-title { position: absolute; left: 50%; transform: translateX(-50%); top: 3.6em; text-align: center; pointer-events: none; text-shadow: 0 2px 10px #000, 0 0 2px #000; }
 .region-title h2 { font-size: 1.8em; color: var(--gold2); }
+.region-here { margin-top: .3em; font-weight: 800; color: #fff; }
 .toast-wrap { position: absolute; bottom: 1em; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; gap: .4em; align-items: center; pointer-events: none; z-index: 50; }
 .toast { padding: .55em 1.1em; border-radius: .7em; background: rgba(10,14,30,.92); border: 1px solid var(--line); animation: toast 2.8s forwards; font-weight: 700; }
 @keyframes toast { 0% { opacity: 0; transform: translateY(10px); } 8%, 85% { opacity: 1; transform: none; } 100% { opacity: 0; } }
@@ -138,7 +139,6 @@ input.text { font: inherit; padding: .5em .8em; border-radius: .5em; border: 1px
 .town-btn { width: 8.5em; height: 7em; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .3em; font-weight: 800; font-size: 1.05em; }
 .town-btn .ico { font-size: 2.2em; filter: drop-shadow(0 3px 3px rgba(0,0,0,.6)); }
 .town-btn:hover { border-color: var(--gold); transform: translateY(-2px); }
-.loading { position: absolute; inset: 0; display: grid; place-items: center; font-family: Cinzel, serif; font-size: 1.4em; }
 
 /* ===================================================================== Monster book (built from the DIB UI kit) */
 .kb-root { position: absolute; inset: 0; z-index: 18; overflow: hidden; background: #2b4a1c; animation: fade .2s; }
@@ -346,3 +346,29 @@ table.list td, table.list th { border-bottom: 1px solid rgba(214,160,92,.35); }
 .chip.el img { height: 1.35em; margin: -.3em 0 -.3em -.25em; filter: drop-shadow(0 1px 1px rgba(0,0,0,.6)); }
 .stars { display: inline-flex; align-items: center; gap: 1px; color: #fff; font-weight: 800; }
 .stars img { height: 1.05em; filter: drop-shadow(0 1px 1px rgba(80,40,0,.55)); }
+
+/* ===================================================================== Dungeon (original layout)
+   Black screen, "Caught x/y" top-left, the carved plaque with the floor top-centre, the M button in the top-right
+   corner, the blue "Next bonus" panel running off the bottom edge and the hero level on a dark wooden tab. */
+.hud.dun { top: 0; left: auto; right: 0; }
+.hud.dun .hud-stats { display: none; }
+.hud.dun .dun-leave { order: 1; }
+.hud.dun .m-btn { order: 2; width: 5.6em; height: 5.5em; }
+.hud.dun .m-menu { left: auto; right: .5em; top: 5.9em; }
+#ui > .dun-ui { position: absolute; inset: 0; pointer-events: none; }
+.dun-caught { position: absolute; left: .3em; top: .15em; font: 900 1.95em Arial, Helvetica, sans-serif; color: #fff; text-shadow: var(--ink); }
+.dun-plaque { position: absolute; left: 50%; top: .3em; transform: translateX(-50%); width: 24em; height: 6.85em; display: flex; align-items: center;
+  justify-content: center; padding: 0 1.6em 0 4.6em; background: url(/assets/ui/kit/plank.png) center / 100% 100% no-repeat;
+  filter: drop-shadow(0 .2em .3em rgba(0,0,0,.6)); }
+.dun-plaque span { font: 700 1.24em Arial, Helvetica, sans-serif; color: #1d1409; white-space: nowrap; text-shadow: 0 1px 0 rgba(255,236,190,.45); }
+.dun-plaque span.long { font-size: 1.05em; }
+.dun-bonus { position: absolute; left: 50%; bottom: -1.2em; transform: translateX(-50%); width: 27.5em; height: 7.6em; display: flex;
+  align-items: center; justify-content: center; padding-bottom: 1.2em; }
+/* the panel's blue is deepened to the original's translucent teal; its frame is drawn on top at full strength */
+.dun-bonus::before, .dun-bonus::after { content: ''; position: absolute; inset: 0; border: 14px solid transparent; }
+.dun-bonus::before { border-image: url(/assets/ui/orig/bk/panel_blue.png) 14 fill stretch; filter: brightness(.55) saturate(1.15) hue-rotate(-14deg); opacity: .88; }
+.dun-bonus::after { border-image: url(/assets/ui/orig/bk/panel_blue.png) 14 stretch; filter: drop-shadow(0 -.1em .3em rgba(0,0,0,.5)); }
+.dun-bonus span { position: relative; z-index: 1; font: 900 2.05em Arial, Helvetica, sans-serif; color: #fff; text-shadow: var(--ink), 0 .06em .12em rgba(0,0,0,.8); white-space: nowrap; }
+.dun-lv { position: absolute; left: 0; bottom: 1.2em; width: 4.45em; height: 2.25em; display: flex; align-items: center; padding-left: .3em;
+  background: url(/assets/dungeon/lv_tab.png) left center / 100% 100% no-repeat; }
+.dun-lv span { font: 900 1.12em Arial, Helvetica, sans-serif; color: #fff; text-shadow: var(--ink); white-space: nowrap; }

@@ -97,6 +97,17 @@ def place(region, mask, rng):
             far = max(free, key=lambda s: min(((s["x"] - t["x"]) * 16) ** 2 + ((s["y"] - t["y"]) * 9) ** 2 for t in taken) * rng.uniform(0.6, 1.0))
             far["kind"] = kind
             taken.append(far)
+    # a Dragon Overlord waits at the far end of its region, not on the doorstep of the town you start in:
+    # it trades places with the ordinary spot farthest from the region's towns (or from its centre)
+    homes = [s for s in spots if s["kind"] == "town"] or [{"x": 0.5, "y": 0.5}]
+    far_from_home = lambda s: min(((s["x"] - t["x"]) * 16) ** 2 + ((s["y"] - t["y"]) * 9) ** 2 for t in homes)
+    for lord in [s for s in spots if s["kind"] == "overlord"]:
+        field = [s for s in spots if s["kind"] == "field"]
+        if field:
+            far = max(field, key=far_from_home)
+            if far_from_home(far) > far_from_home(lord):
+                far["kind"], far["ref"], lord["kind"] = "overlord", lord["ref"], "field"
+                del lord["ref"]
     # snap landmarks onto the painted buildings they belong to
     for ref, (ax, ay) in ANCHORS.get(region["id"], {}).items():
         holder = next((s for s in spots if s.get("ref") == ref), None)

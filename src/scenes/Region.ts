@@ -3,7 +3,8 @@ import { vignette, ambient } from './fx';
 import { data, maps, region, speciesByName, spriteUrl, dungeon as dungeonData, overlord as overlordData } from '../core/data';
 import { S, save, questEvent, hash, exploreState, reveal, rollGem, grantPrize } from '../core/state';
 import type { Spot } from '../core/types';
-import { wildEncounter, breederEncounter, overlordEncounter, rareEncounter, resumeFloor } from '../core/encounters';
+import { wildEncounter, breederEncounter, overlordEncounter, overlordLevel, rareEncounter, resumeFloor } from '../core/encounters';
+import { WalkGrid, FOREST, GRASS, type Pt } from '../core/walkgrid';
 import { hud, openMenu, elChip } from '../ui/menus';
 import { h, layer, toast, confirmBox, dialogue, starsHtml, anyModal } from '../ui/dom';
 import { music, sfx } from '../audio';
@@ -28,31 +29,74 @@ const KIND_STYLE: Record<Spot['kind'], { color: number; label: string }> = {
 const DISCOVERY = new Set<Spot['kind']>(['treasure', 'rare', 'breeder', 'lookout']);
 const DISC_ART: Partial<Record<Spot['kind'], string>> = { treasure: 'disc_chest', rare: 'disc_lair', breeder: 'disc_tent', lookout: 'disc_tower' };
 const BREEDERS = ['Rowan the Wanderer', 'Old Mira', 'Kestrel', 'Brannoc', 'Sable', 'Tamsin', 'Hollis', 'Wren'];
-const FOG_R = 420;          // radius of the clearing around each explored spot (world px)
+const FOG_R = 420;          // radius of the clearing around the hero and every explored spot (world px)
 const MINI_W = 256, MINI_H = 144;
+// free roaming
+const CELL = 24;            // walk-grid cell (world px); the grid is read from the painting itself
+const SPEED = 300;          // hero walking speed (world px per second)
+const REVEAL_R = 340;       // landmarks this close to the hero come out of the fog
+const TRAIL = 160;          // walked ground is remembered on a grid this coarse, so its fog stays lifted
+const TOUCH_R = 70;         // standing this close to a landmark offers its actions
+const SAFE_R = 330;         // no wild monsters this close to a town
+const ENCOUNTER_GAP = 36;   // cells to walk after a battle before the next one can start
+const ENCOUNTER_P = 0.016;  // chance per cell walked through meadow (forest x1.6, roads and rock x0.3)
+const grids = new Map<string, WalkGrid>();
+let stepsSinceBattle = ENCOUNTER_GAP; // module level: survives the scene restart a battle causes
 
 export class RegionScene extends Phaser.Scene {
   constructor() { super('Region'); }
   private token!: Phaser.GameObjects.Container;
-  private moving = false;
+  private heroImg?: Phaser.GameObjects.Image;
   private markers = new Map<number, Phaser.GameObjects.Container>();
   private fog!: Phaser.GameObjects.RenderTexture;
   private view?: Phaser.GameObjects.Graphics;
+  private grid!: WalkGrid;
+  private ready = false;
+  private frozen = false;     // a battle or scene change is under way
+  private walking = false;
+  private route: Pt[] = [];
+  private target?: Spot;      // landmark tapped: its action runs on arrival
+  private near?: Spot;        // landmark within reach
+  private lastCell = -1;
+  private lastTrail = -1;
+  private skipSpot = -1;      // a discovery just declined: not offered again until you step away
+  private hereKey = '';
   private WW = 2560;
   private WH = 1440;
   private drag = { on: false, moved: false, x: 0, y: 0, sx: 0, sy: 0, mini: false };
-  private keys?: Phaser.Types.Input.Keyboard.CursorKeys;
+  private keys?: Record<'up' | 'down' | 'left' | 'right' | 'w' | 'a' | 's' | 'd', Phaser.Input.Keyboard.Key>;
 
   private P(s: Spot) { return { x: s.x * this.WW, y: s.y * this.WH }; }
   private seen(id: number) { return exploreState(S.location.region).seen.includes(id); }
   private isDone(s: Spot) { return exploreState(S.location.region).done.includes(s.id); }
-  /** Spots the token walks through without stopping: wild areas and discoveries already claimed. */
-  private passable(s: Spot) { return s.kind === 'field' || (DISCOVERY.has(s.kind) && this.isDone(s)); }
+  private here(): Pt { return { x: this.token.x, y: this.token.y }; }
+  private spots() { return maps()[S.location.region].spots; }
+  private dist(a: Pt, b: Pt) { return Math.hypot(a.x - b.x, a.y - b.y); }
 
   create() {
+    this.ready = false;
+    this.events.once('shutdown', () => { this.ready = false; });
     this.view = undefined;
     this.keys = undefined;
     loadMap(this, S.location.region, () => this.build());
+  }
+
+  /** The walkable ground of a region, read from its painting once per session. */
+  private walkGrid(id: string) {
+    let g = grids.get(id);
+    if (g) return g;
+    const cols = Math.ceil(this.WW / CELL), rows = Math.ceil(this.WH / CELL);
+    const cv = document.createElement('canvas');
+    cv.width = cols;
+    cv.height = rows;
+    const ctx = cv.getContext('2d', { willReadFrequently: true })!;
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(this.textures.get(`map_${id}`).getSourceImage() as CanvasImageSource, 0, 0, cols, rows);
+    const m = maps()[id];
+    g = WalkGrid.fromPixels(ctx.getImageData(0, 0, cols, rows).data, cols, rows, CELL, m.spots.map((s) => this.P(s)), m.edges);
+    grids.set(id, g);
+    return g;
   }
 
   private build() {
@@ -60,30 +104,45 @@ export class RegionScene extends Phaser.Scene {
     const m = maps()[r.id];
     const { width, height } = this.scale;
     music('world');
-    this.moving = false;
     this.markers.clear();
     this.view = undefined;
+    this.frozen = false;
+    this.walking = false;
+    this.route = [];
+    this.target = undefined;
+    this.near = undefined;
+    this.lastCell = this.lastTrail = this.skipSpot = -1;
+    this.hereKey = '';
     // the 4K painting is shown at full resolution: the region is a world three screens wide that scrolls
     const bg = this.add.image(0, 0, `map_${r.id}`).setOrigin(0);
     const k = Math.max(width * 3 / bg.width, height * 3 / bg.height);
     bg.setScale(k);
     this.WW = bg.width * k;
     this.WH = bg.height * k;
+    this.grid = this.walkGrid(r.id);
     const cam = this.cameras.main;
     cam.setBounds(0, 0, this.WW, this.WH);
     const vig = vignette(this, 0.45).setScrollFactor(0);
     const amb = ambient(this, 0xffffff, 14).setScrollFactor(0);
     cam.fadeIn(350);
 
-    // where you stand, the roads out of it and any quest targets are always known
+    // where the hero stands: the exact spot they last walked to, else the landmark they arrived at
+    const here0 = m.spots[S.location.spot] ?? m.spots[0];
+    let start: Pt = S.location.x != null && S.location.y != null ? { x: S.location.x * this.WW, y: S.location.y * this.WH } : this.P(here0);
+    if (!this.grid.canStand(start)) {
+      const c = this.grid.nearestWalkable(...this.grid.clampCell(start));
+      if (c) start = this.grid.center(...c);
+    }
+
+    // what is around you and any quest targets are always known
     const questSpots = new Map<number, string>();
     for (const q of S.quests) if (q.goal.kind === 'battle' && q.goal.region === r.id && q.progress < 1 && q.goal.spot != null) questSpots.set(q.goal.spot, q.id);
-    const here0 = m.spots[S.location.spot] ?? m.spots[0];
-    reveal(r.id, [here0.id, ...this.neighbours(here0.id), ...questSpots.keys()]);
+    reveal(r.id, [here0.id, ...m.spots.filter((s) => this.dist(this.P(s), start) < REVEAL_R).map((s) => s.id), ...questSpots.keys()]);
 
-    for (const s of m.spots) this.markers.set(s.id, this.marker(s, questSpots.has(s.id)));
+    // open country has no marker of its own (monsters lurk anywhere wild); landmarks and quest targets do
+    for (const s of m.spots) if (s.kind !== 'field' || questSpots.has(s.id)) this.markers.set(s.id, this.marker(s, questSpots.has(s.id)));
 
-    // fog of war: a dark layer with soft clearings punched out around every explored spot
+    // fog of war: a dark layer with soft clearings punched out around explored spots and walked ground
     if (!this.textures.exists('fog_brush')) {
       const c = this.textures.createCanvas('fog_brush', FOG_R * 2, FOG_R * 2)!;
       const ctx = c.getContext();
@@ -96,23 +155,27 @@ export class RegionScene extends Phaser.Scene {
     }
     this.fog = this.add.renderTexture(0, 0, this.WW, this.WH).setOrigin(0).setDepth(6);
     this.fog.fill(0x0a1522, 0.82);
-    for (const id of exploreState(r.id).seen) this.clearFog(m.spots[id]);
+    const e = exploreState(r.id);
+    for (const id of e.seen) this.clearFog(m.spots[id]);
+    const tcols = Math.ceil(this.WW / TRAIL);
+    for (const t of e.trail ?? []) this.fog.erase('fog_brush', (t % tcols + 0.5) * TRAIL - FOG_R, (Math.floor(t / tcols) + 0.5) * TRAIL - FOG_R);
 
-    // player token = lead monster
+    // the hero on the map = the lead monster, bobbing as it goes
     const lead = S.party[0];
     const sp = species(lead.species);
-    const here = this.P(here0);
-    this.token = this.add.container(here.x, here.y).setDepth(10);
+    this.token = this.add.container(start.x, start.y).setDepth(10);
     const halo = this.add.circle(0, 0, 26, 0xf6c453, 0.25).setStrokeStyle(2, 0xf6c453);
     this.token.add(halo);
     this.tweens.add({ targets: halo, scale: 1.3, alpha: 0.1, duration: 1100, repeat: -1 });
+    this.heroImg = undefined;
     loadSprites(this, [sp.sprite], () => {
       const img = this.add.image(0, -24, `spr_${sp.sprite}`);
       img.setScale(Math.min(64 / img.width, 64 / img.height)).setFlipX(true);
       this.token.add(img);
+      this.heroImg = img;
       this.tweens.add({ targets: img, y: -30, duration: 700, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
     });
-    cam.centerOn(here.x, here.y);
+    cam.centerOn(start.x, start.y);
 
     // minimap: a second camera that sees the whole region, with the main view outlined on it
     const mx = width - MINI_W - 14, my = 60;
@@ -142,27 +205,228 @@ export class RegionScene extends Phaser.Scene {
       cam.stopFollow();
       cam.setScroll(this.drag.sx - dx, this.drag.sy - dy);
     });
-    this.input.on('pointerup', () => { this.drag.on = false; });
-    this.keys = this.input.keyboard?.createCursorKeys();
+    // tapping open ground walks there; markers handle their own taps
+    this.input.on('pointerup', (p: Phaser.Input.Pointer, over: Phaser.GameObjects.GameObject[]) => {
+      const tap = this.drag.on && !this.drag.moved;
+      this.drag.on = false;
+      if (!tap || over.length || anyModal() || this.frozen) return;
+      const w = cam.getWorldPoint(p.x, p.y);
+      this.goTo({ x: w.x, y: w.y });
+    });
+    // movement keys are read without capturing them, so typing in text boxes still works
+    this.keys = this.input.keyboard?.addKeys({ up: 'UP', down: 'DOWN', left: 'LEFT', right: 'RIGHT', w: 'W', a: 'A', s: 'S', d: 'D' }, false) as RegionScene['keys'];
 
     if (!S.visited.includes(r.id)) S.visited.push(r.id);
     save();
+    this.ready = true;
+    this.near = this.landmarkNear(start);
     this.ui();
     if (questSpots.size) toast('⚔ marks a quest target in this region.');
-    else if (exploreState(r.id).seen.length <= 5) toast('Drag the map to look around. Unexplored land is hidden in fog.');
+    else if (!(e.trail ?? []).length) {
+      toast(r.id === 'southern_alvalon'
+        ? 'Tap the ground (or use the arrow keys) to walk. Wild monsters hide in the woods and meadows — the forest west of Corova is a good place to train.'
+        : 'Tap the ground to walk. Wild monsters hide in the forests and open country.');
+    }
   }
 
-  update() {
+  update(_t: number, delta: number) {
+    if (!this.ready) return;
     const cam = this.cameras.main;
     const k = this.keys;
-    if (k && !anyModal()) {
-      const vx = (k.right.isDown ? 1 : 0) - (k.left.isDown ? 1 : 0), vy = (k.down.isDown ? 1 : 0) - (k.up.isDown ? 1 : 0);
-      if (vx || vy) { cam.stopFollow(); cam.setScroll(cam.scrollX + vx * 14, cam.scrollY + vy * 14); }
-    }
+    const dt = Math.min(delta, 50) / 1000;
+    const busy = this.frozen || anyModal();
+    const vx = k ? (k.right.isDown || k.d.isDown ? 1 : 0) - (k.left.isDown || k.a.isDown ? 1 : 0) : 0;
+    const vy = k ? (k.down.isDown || k.s.isDown ? 1 : 0) - (k.up.isDown || k.w.isDown ? 1 : 0) : 0;
+    if (!busy && (vx || vy)) {
+      this.route = [];
+      this.target = undefined;
+      const len = Math.hypot(vx, vy), s = SPEED * dt;
+      this.step((vx / len) * s, (vy / len) * s);
+    } else if (!busy && this.route.length) {
+      const t = this.route[0];
+      const dx = t.x - this.token.x, dy = t.y - this.token.y, d = Math.hypot(dx, dy), s = SPEED * dt;
+      if (d <= s) {
+        this.place(t.x, t.y);
+        this.route.shift();
+        if (!this.route.length && !this.frozen) this.reached();
+      } else this.place(this.token.x + (dx / d) * s, this.token.y + (dy / d) * s);
+    } else if (this.walking && !busy) this.stopped();
     const v = cam.worldView;
     this.view?.clear().lineStyle((this.WW / MINI_W) * 2, 0xffffff, 0.95).strokeRect(v.x, v.y, v.width, v.height);
   }
 
+  // ---------------------------------------------------------------- walking
+  /** Walk to a point (around water and cliffs); with a landmark, use it on arrival. */
+  goTo(p: Pt, spot?: Spot) {
+    const path = this.grid.path(this.here(), p);
+    if (!path) return toast('There is no way across from here.');
+    this.route = path;
+    this.target = spot;
+  }
+
+  /** Keyboard walking: slide along shores instead of stopping dead. */
+  private step(dx: number, dy: number) {
+    const x = this.token.x, y = this.token.y;
+    if (this.grid.canStand({ x: x + dx, y: y + dy })) this.place(x + dx, y + dy);
+    else if (dx && this.grid.canStand({ x: x + dx, y })) this.place(x + dx, y);
+    else if (dy && this.grid.canStand({ x, y: y + dy })) this.place(x, y + dy);
+  }
+
+  private place(x: number, y: number) {
+    const ox = this.token.x;
+    this.token.setPosition(Phaser.Math.Clamp(x, 0, this.WW - 1), Phaser.Math.Clamp(y, 0, this.WH - 1));
+    if (this.heroImg && Math.abs(x - ox) > 0.5) this.heroImg.setFlipX(x > ox);
+    if (!this.walking) {
+      this.walking = true;
+      this.cameras.main.startFollow(this.token, true, 0.12, 0.12);
+    }
+    this.moved();
+  }
+
+  /** Everything that happens as the hero covers ground. */
+  private moved() {
+    const r = region(S.location.region);
+    const p = this.here();
+    // walked ground stays clear of fog
+    const tcols = Math.ceil(this.WW / TRAIL);
+    const tx = Math.floor(p.x / TRAIL), ty = Math.floor(p.y / TRAIL), t = ty * tcols + tx;
+    if (t !== this.lastTrail) {
+      this.lastTrail = t;
+      const e = exploreState(r.id);
+      e.trail ??= [];
+      if (!e.trail.includes(t)) {
+        e.trail.push(t);
+        this.fog.erase('fog_brush', (tx + 0.5) * TRAIL - FOG_R, (ty + 0.5) * TRAIL - FOG_R);
+      }
+    }
+    // landmarks come into view as you approach them
+    const fresh = this.spots().filter((s) => !this.seen(s.id) && this.dist(this.P(s), p) < REVEAL_R).map((s) => s.id);
+    if (fresh.length) this.explore(fresh);
+    // walking into a hidden discovery or a quest target sets it off
+    const quest = S.quests.find((q) => q.goal.kind === 'battle' && q.goal.region === r.id && q.progress < 1 && q.goal.spot != null
+      && this.dist(this.P(this.spots()[q.goal.spot]), p) < TOUCH_R * 0.7);
+    const disc = this.spots().find((s) => DISCOVERY.has(s.kind) && !this.isDone(s) && this.seen(s.id) && this.dist(this.P(s), p) < TOUCH_R * 0.7);
+    const trigger = quest ? this.spots()[quest.goal.spot!] : disc;
+    if (this.skipSpot >= 0 && this.dist(this.P(this.spots()[this.skipSpot]), p) > TOUCH_R) this.skipSpot = -1;
+    if (trigger && !this.frozen && trigger.id !== this.skipSpot) {
+      this.skipSpot = trigger.id;
+      this.halt();
+      S.location.spot = trigger.id;
+      return this.arrive(trigger, false);
+    }
+    // wild monsters: a chance for every cell of open country crossed
+    const [cx, cy] = this.grid.cellOf(p);
+    const cell = cy * this.grid.cols + cx;
+    if (cell !== this.lastCell) {
+      this.lastCell = cell;
+      stepsSinceBattle++;
+      if (this.rollEncounter(p)) return;
+    }
+    const near = this.landmarkNear(p);
+    const key = `${near?.id ?? -1}:${this.areaLabel(p)}`;
+    if (key !== this.hereKey) { this.near = near; this.hereKey = key; this.ui(); }
+  }
+
+  private reached() {
+    const s = this.target;
+    this.target = undefined;
+    this.stopped();
+    if (s) {
+      S.location.spot = s.id;
+      this.arrive(s, true);
+    }
+  }
+
+  private halt() {
+    this.route = [];
+    this.target = undefined;
+    this.stopped();
+  }
+
+  private stopped() {
+    this.walking = false;
+    this.cameras.main.stopFollow();
+    this.savePosition();
+  }
+
+  /** Remember exactly where the hero stands (and the nearest spot, for everything keyed by spot). */
+  private savePosition() {
+    const p = this.here();
+    const nearest = this.spots().reduce((a, b) => (this.dist(this.P(b), p) < this.dist(this.P(a), p) ? b : a));
+    S.location = { region: S.location.region, spot: nearest.id, x: +(p.x / this.WW).toFixed(4), y: +(p.y / this.WH).toFixed(4) };
+    save();
+  }
+
+  private landmarkNear(p: Pt) {
+    let best: Spot | undefined, bd = TOUCH_R;
+    for (const s of this.spots()) {
+      if (s.kind === 'field' || (DISCOVERY.has(s.kind) && this.isDone(s))) continue;
+      const d = this.dist(this.P(s), p);
+      if (d < bd) { bd = d; best = s; }
+    }
+    return best;
+  }
+
+  private nearTown(p: Pt) { return this.spots().some((s) => s.kind === 'town' && this.dist(this.P(s), p) < SAFE_R); }
+
+  /** 0 at the edge of town … 1 far out in the wilds: wild monsters grow stronger the further you roam. */
+  private depth(p: Pt) {
+    const towns = this.spots().filter((s) => s.kind === 'town');
+    if (!towns.length) return 0.5;
+    const d = Math.min(...towns.map((s) => this.dist(this.P(s), p)));
+    return Phaser.Math.Clamp((d - SAFE_R) / (Math.hypot(this.WW, this.WH) * 0.45), 0, 1);
+  }
+
+  private wildLevel(p: Pt) {
+    const [lo, hi] = region(S.location.region).levels;
+    return Math.round(lo + (hi - lo) * this.depth(p));
+  }
+
+  private areaLabel(p: Pt) {
+    if (this.nearTown(p)) return 'Safe near town';
+    const g = this.grid.groundAt(p);
+    const name = g === FOREST ? 'Forest' : g === GRASS ? 'Meadow' : this.grid.bare ? 'Wilds' : 'Trail';
+    return `${name} · monsters around Lv ${this.wildLevel(p)}`;
+  }
+
+  private rollEncounter(p: Pt) {
+    if (this.frozen || stepsSinceBattle < ENCOUNTER_GAP || this.nearTown(p)) return false;
+    const g = this.grid.groundAt(p);
+    const f = g === FOREST ? 1.6 : g === GRASS || this.grid.bare ? 1 : 0.3;
+    if (!rng.chance(ENCOUNTER_P * f)) return false;
+    this.halt();
+    this.hunt();
+    return true;
+  }
+
+  private clearFog(s: Spot) {
+    const p = this.P(s);
+    this.fog.erase('fog_brush', p.x - FOG_R, p.y - FOG_R);
+  }
+
+  /** Mark spots as explored: lift the fog, fade their markers in and pay the full-map bonus. */
+  private explore(ids: number[]) {
+    const r = region(S.location.region);
+    const m = maps()[r.id];
+    const fresh = ids.filter((id) => !this.seen(id));
+    if (!reveal(r.id, fresh)) return;
+    for (const id of fresh) {
+      this.clearFog(m.spots[id]);
+      const c = this.markers.get(id);
+      if (c) { c.setVisible(true).setAlpha(0); this.tweens.add({ targets: c, alpha: 1, duration: 500 }); }
+    }
+    const e = exploreState(r.id);
+    if (e.seen.length >= m.spots.length && !e.done.includes(-1)) {
+      e.done.push(-1);
+      const silver = 250 * (r.tier + 1);
+      S.silver += silver;
+      S.items.golden += 1;
+      sfx('magic');
+      toast(`🗺 ${r.name} fully explored! +${silver} Silver and a Golden Egg`);
+    }
+    save();
+    this.ui();
+  }
   private marker(s: Spot, quest: boolean) {
     const st = KIND_STYLE[s.kind];
     const p = this.P(s);
@@ -214,59 +478,34 @@ export class RegionScene extends Phaser.Scene {
     return c;
   }
 
-  private clearFog(s: Spot) {
-    const p = this.P(s);
-    this.fog.erase('fog_brush', p.x - FOG_R, p.y - FOG_R);
-  }
-
-  /** Mark spots as explored: lift the fog, fade their markers in and pay the full-map bonus. */
-  private explore(ids: number[]) {
-    const r = region(S.location.region);
-    const m = maps()[r.id];
-    const fresh = ids.filter((id) => !this.seen(id));
-    if (!reveal(r.id, fresh)) return;
-    for (const id of fresh) {
-      this.clearFog(m.spots[id]);
-      const c = this.markers.get(id);
-      if (c) { c.setVisible(true).setAlpha(0); this.tweens.add({ targets: c, alpha: 1, duration: 500 }); }
-    }
-    const e = exploreState(r.id);
-    if (e.seen.length >= m.spots.length && !e.done.includes(-1)) {
-      e.done.push(-1);
-      const silver = 250 * (r.tier + 1);
-      S.silver += silver;
-      S.items.golden += 1;
-      sfx('magic');
-      toast(`🗺 ${r.name} fully explored! +${silver} Silver and a Golden Egg`);
-    }
-    save();
-    this.ui();
-  }
-
   ui() {
+    if (!this.ready) return;
     const r = region(S.location.region);
     const m = maps()[r.id];
-    const spot = m.spots[S.location.spot];
+    const spot = this.near;
     const refresh = () => this.ui();
     const e = exploreState(r.id);
     const pct = Math.round((e.seen.length / m.spots.length) * 100);
     const found = m.spots.filter((s) => DISCOVERY.has(s.kind) && e.done.includes(s.id)).length;
     const total = m.spots.filter((s) => DISCOVERY.has(s.kind)).length;
-    const doneDisc = !!spot && DISCOVERY.has(spot.kind) && this.isDone(spot);
+    const p = this.here();
+    const wild = !this.nearTown(p);
     hud((k) => openMenu(k, refresh), [h('button', { class: 'btn small gold', onClick: () => toWorld() }, '🗺 World')]);
     const pool = r.monsters.slice(0, 14).map((n) => speciesByName(n)).filter(Boolean);
     layer('scene', h('div', {},
       h('div', { class: 'region-title' }, h('h2', {}, r.name), h('div', {}, `Wild monsters Lv ${r.levels[0]}–${r.levels[1]}`),
-        h('div', { class: 'explore-bar' }, h('i', { style: { width: `${pct}%` } }), h('span', {}, `Explored ${pct}% · Discoveries ${found}/${total}`))),
+        h('div', { class: 'explore-bar' }, h('i', { style: { width: `${pct}%` } }), h('span', {}, `Explored ${pct}% · Discoveries ${found}/${total}`)),
+        h('div', { class: 'region-here' }, `📍 ${this.areaLabel(p)}`)),
       h('div', { class: 'region-actions' },
-        spot?.kind === 'field' || doneDisc ? h('button', { class: 'btn green', onClick: () => this.hunt() }, '⚔ Hunt here') : null,
-        spot && DISCOVERY.has(spot.kind) && !doneDisc ? h('button', { class: 'btn gold', onClick: () => this.discover(spot) }, `✦ ${KIND_STYLE[spot.kind].label}`) : null,
-        spot?.kind === 'town' ? h('button', { class: 'btn gold', onClick: () => toTown(spot.ref!) }, `Enter ${spot.ref}`) : null,
+        spot?.kind === 'town' ? h('button', { class: 'btn gold', onClick: () => this.arrive(spot, true) }, `Enter ${spot.ref}`) : null,
         spot?.kind === 'dungeon' ? h('button', { class: 'btn red', onClick: () => this.enterDungeon(spot.ref!) }, `Enter ${spot.ref}`) : null,
         spot?.kind === 'overlord' && !S.overlords.includes(spot.ref!) ? h('button', { class: 'btn red', onClick: () => this.challengeOverlord(spot.ref!) }, `Challenge ${spot.ref}`) : null,
         spot?.kind === 'dock' ? h('button', { class: 'btn gold', onClick: () => this.sail(spot.ref!) }, `⛵ Sail to ${region(spot.ref!).name}`) : null,
+        spot?.kind === 'exit' ? h('button', { class: 'btn gold', onClick: () => this.arrive(spot, true) }, `→ ${region(spot.ref!).name}`) : null,
+        spot && DISCOVERY.has(spot.kind) && !this.isDone(spot) ? h('button', { class: 'btn gold', onClick: () => this.discover(spot) }, `✦ ${KIND_STYLE[spot.kind].label}`) : null,
+        wild ? h('button', { class: 'btn green', onClick: () => { this.halt(); this.hunt(); } }, '⚔ Look for monsters') : null,
         h('button', { class: 'btn icon gold', title: 'Centre on me', 'aria-label': 'Centre on me', onClick: () => this.recenter() }, '◎'),
-        h('span', { class: 'chip panel' }, 'Drag to look around · tap a marker to travel')),
+        h('span', { class: 'chip panel' }, 'Tap the ground to walk · arrow keys / WASD · drag to look around')),
       h('div', { class: 'region-info panel' },
         h('b', {}, 'Monsters sighted'),
         h('div', { class: 'row', style: { flexWrap: 'wrap', gap: '.25em', marginTop: '.4em' } },
@@ -281,71 +520,26 @@ export class RegionScene extends Phaser.Scene {
     cam.pan(this.token.x, this.token.y, 400, 'Sine.easeInOut');
   }
 
-  neighbours(id: number) {
-    const m = maps()[S.location.region];
-    return m.edges.filter(([a, b]) => a === id || b === id).map(([a, b]) => (a === id ? b : a));
-  }
-
+  /** Tap a landmark: walk to it and use it (or use it at once when already there). */
   clickSpot(s: Spot) {
-    if (this.moving || anyModal() || !this.seen(s.id)) return;
-    if (s.id === S.location.spot) return this.arrive(s, true);
-    const path = this.route(S.location.spot, s.id);
-    if (!path) return toast('No known road leads there yet — explore closer.');
-    this.walk(path);
-  }
-
-  /** Shortest road through explored spots. */
-  route(from: number, to: number): number[] | null {
-    const prev = new Map<number, number>([[from, -1]]);
-    const q = [from];
-    while (q.length) {
-      const c = q.shift()!;
-      if (c === to) break;
-      for (const n of this.neighbours(c)) if (!prev.has(n) && this.seen(n)) { prev.set(n, c); q.push(n); }
+    if (this.frozen || anyModal() || !this.seen(s.id)) return;
+    if (this.dist(this.P(s), this.here()) < TOUCH_R) {
+      this.halt();
+      S.location.spot = s.id;
+      return this.arrive(s, true);
     }
-    if (!prev.has(to)) return null;
-    const path: number[] = [];
-    for (let c = to; c !== from; c = prev.get(c)!) path.unshift(c);
-    return path;
-  }
-
-  /** Walk spot by spot with the camera following; each step lifts the fog around it. */
-  walk(path: number[]) {
-    const m = maps()[S.location.region];
-    const cam = this.cameras.main;
-    this.moving = true;
-    cam.startFollow(this.token, false, 0.08, 0.08);
-    const stop = (s: Spot) => {
-      this.moving = false;
-      cam.stopFollow();
-      save();
-      this.arrive(s, false);
-    };
-    const stepTo = (i: number) => {
-      const s = m.spots[path[i]];
-      const p = this.P(s);
-      sfx('step');
-      this.tweens.add({
-        targets: this.token, x: p.x, y: p.y, duration: 380, ease: 'Sine.inOut',
-        onComplete: () => {
-          S.location.spot = s.id;
-          this.explore([s.id, ...this.neighbours(s.id)]);
-          const last = i === path.length - 1;
-          if (last || !this.passable(s) || (s.kind === 'field' && rng.chance(0.18))) return stop(s);
-          stepTo(i + 1);
-        },
-      });
-    };
-    stepTo(0);
+    this.goTo(this.P(s), s);
   }
 
   arrive(s: Spot, tapped: boolean) {
+    if (this.frozen) return;
     this.ui();
     const r = region(S.location.region);
     const quest = S.quests.find((q) => q.goal.kind === 'battle' && q.goal.region === r.id && q.goal.spot === s.id && q.progress < 1);
     if (quest) {
+      this.frozen = true;
       const enc = breederEncounter(r.id, quest.goal.npc ?? 'Rogue Breeder', hash(quest.id), quest.goal.species);
-      return dialogue([{ who: quest.goal.npc, text: `So the Guild sent you? Let's see what your monsters are made of!` }]).then(() =>
+      return void dialogue([{ who: quest.goal.npc, text: `So the Guild sent you? Let's see what your monsters are made of!` }]).then(() =>
         fight(enc, (res) => {
           if (res.outcome === 0) { quest.progress = 1; save(); toast(`Quest target defeated! Report back to ${quest.town}.`); }
           toRegion();
@@ -353,28 +547,32 @@ export class RegionScene extends Phaser.Scene {
     }
     if (DISCOVERY.has(s.kind) && !this.isDone(s)) return void this.discover(s);
     switch (s.kind) {
-      case 'field': case 'treasure': case 'rare': case 'breeder': case 'lookout':
-        if (tapped || rng.chance(0.62)) this.hunt();
-        else toast('All quiet… for now.');
+      case 'field': this.hunt(); break;
+      case 'treasure': case 'rare': case 'breeder': case 'lookout':
+        if (tapped) toast(`${KIND_STYLE[s.kind].label} — already explored.`);
         break;
       case 'town':
+        if (!tapped) break;
         S.lastTown = { region: r.id, spot: s.id };
         save();
         questEvent('visit', s.ref);
         toTown(s.ref!);
         break;
-      case 'dungeon': this.enterDungeon(s.ref!); break;
+      case 'dungeon': if (tapped) this.enterDungeon(s.ref!); break;
       case 'overlord':
+        if (!tapped) break;
         if (!S.overlords.includes(s.ref!)) this.challengeOverlord(s.ref!);
         else toast(`${s.ref} has already been defeated.`);
         break;
       case 'dock':
-        this.sail(s.ref!);
+        if (tapped) this.sail(s.ref!);
         break;
       case 'exit': {
+        if (!tapped) break;
         const next = region(s.ref!);
         const nm = maps()[next.id];
         const entry = nm.spots.find((x) => x.kind === 'exit' && x.ref === r.id) ?? nm.spots[0];
+        this.frozen = true;
         S.location = { region: next.id, spot: entry.id };
         save();
         this.cameras.main.fadeOut(300, 0, 0, 0);
@@ -383,6 +581,7 @@ export class RegionScene extends Phaser.Scene {
       }
     }
   }
+
 
   private claim(s: Spot) {
     const e = exploreState(S.location.region);
@@ -413,6 +612,7 @@ export class RegionScene extends Phaser.Scene {
       case 'rare': {
         const enc = rareEncounter(r.id, seed);
         if (!(await confirmBox(`Something big stirs in the lair… a rare ${enc.name} (Lv ${enc.team[0].level})! Fight it?`, 'Fight!'))) return;
+        this.frozen = true;
         fight(enc, (res) => {
           if (res.outcome === 0) { this.claim(s); toast('The lair falls quiet.'); }
           toRegion();
@@ -421,6 +621,7 @@ export class RegionScene extends Phaser.Scene {
       }
       case 'breeder': {
         const name = BREEDERS[seed % BREEDERS.length];
+        this.frozen = true;
         await dialogue([{ who: name, text: `A traveller out here? I raise monsters in the wilds of ${r.name}. Beat my team and I'll give you an egg from my camp!` }]);
         fight(breederEncounter(r.id, name, seed), (res) => {
           if (res.outcome === 0) { this.claim(s); S.items.egg += 1; save(); toast(`${name} hands you a Monster Egg 🥚`); }
@@ -457,6 +658,7 @@ export class RegionScene extends Phaser.Scene {
     const tough = dest.levels[0] > Math.max(...S.party.map((p) => p.level)) + 10;
     await dialogue([{ who: 'Ferryman', text: `Fair winds today! I can sail you from ${here.name} to ${dest.name}.${tough ? ` Mind you, the monsters there are around Lv ${dest.levels[0]}–${dest.levels[1]}.` : ''}` }]);
     if (!(await confirmBox(`Set sail for ${dest.name}?`, 'Set sail'))) return;
+    this.frozen = true;
     const m = maps()[to];
     const pier = m.spots.find((x) => x.kind === 'dock' && x.ref === here.id) ?? m.spots[0];
     S.location = { region: to, spot: pier.id };
@@ -473,9 +675,12 @@ export class RegionScene extends Phaser.Scene {
   }
 
   hunt() {
+    if (this.frozen) return;
+    this.frozen = true;
+    stepsSinceBattle = 0;
     sfx('encounter');
     this.cameras.main.flash(250, 255, 255, 255);
-    const enc = wildEncounter(S.location.region, S.location.spot);
+    const enc = wildEncounter(S.location.region, S.location.spot, undefined, this.depth(this.here()));
     this.time.delayedCall(250, () => fight(enc));
   }
 
@@ -489,8 +694,12 @@ export class RegionScene extends Phaser.Scene {
 
   async challengeOverlord(name: string) {
     const o = overlordData(name)!;
+    const lv = overlordLevel(name);
+    const best = Math.max(...S.party.map((p) => p.level));
     await dialogue([{ who: name, text: o.about ? o.about.slice(0, 220) : `I am ${name}, Dragon Overlord of ${o.region}. Turn back, little breeder.` }]);
-    if (!(await confirmBox(`Battle the Dragon Overlord ${name}? (a ${o.form} of immense power)`, 'Fight!'))) return;
+    const warn = best < lv - 3 ? ` Your strongest monster is only Lv ${best} — train in the wilds first!` : '';
+    if (!(await confirmBox(`Battle Dragon Overlord ${name}? (${o.form}, Lv ${lv})${warn}`, 'Fight!', !!warn))) return;
+    this.frozen = true;
     fight(overlordEncounter(name), (res) => {
       if (res.outcome === 0 && !S.overlords.includes(name)) {
         S.overlords.push(name);
