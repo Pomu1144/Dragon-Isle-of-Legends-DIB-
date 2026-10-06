@@ -74,3 +74,27 @@ describe('battle engine', () => {
     expect(b.tryCapture(goblin.key, 'gold').length).toBe(0);
   });
 });
+
+describe('custom evolutions', () => {
+  it('Dark Panther and Archangel evolve into the new line and the new monsters can fight', async () => {
+    const { evolve } = await import('../src/core/monster');
+    const { species, speciesByName } = await import('../src/core/data');
+    const panther = makeMonster('Dark Panther', 75);
+    expect(evolve(panther)?.name).toBe('Moonreaver');
+    const angel = makeMonster('Archangel', 100);
+    expect(evolve(angel)?.name).toBe('Seraph');
+    expect(evolve(angel)?.name).toBe('Empyrean');
+    expect(species(angel.species).name).toBe('Empyrean');
+    for (const n of ['Moonreaver', 'Seraph', 'Empyrean']) expect(speciesByName(n)?.sprite).toMatch(/^22[5-7]\.png$/);
+    const rng = new Rng(9);
+    const b = new Battle([makeMonster('Empyrean', 100, rng), makeMonster('Moonreaver', 100, rng), makeMonster('Seraph', 100, rng)],
+      [makeMonster('Divine', 100, rng), makeMonster('Behemoth', 100, rng), makeMonster('Archdemon', 100, rng)], { rng });
+    for (let i = 0; i < 400 && b.over === null; i++) {
+      const c = b.next([]);
+      if (!c) break;
+      const ch = b.choose(c);
+      for (const e of b.act(c, ch.ability, ch.target)) if (e.t === 'damage' || e.t === 'heal') expect(Number.isFinite(e.amount)).toBe(true);
+    }
+    expect(b.over).not.toBeNull();
+  });
+});

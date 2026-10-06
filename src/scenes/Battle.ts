@@ -78,7 +78,8 @@ export class BattleScene extends Phaser.Scene {
     const root = this.add.container(p.x, p.y).setDepth(10 + p.y / 10);
     const box = (c.boss ? 300 : 175) * (c.slot === 0 ? 1.05 : 0.92);
     const img = this.add.image(0, 0, `spr_${sp.sprite}`).setOrigin(0.5, 1);
-    const scale = Math.min(box / img.width, box / img.height, c.boss ? 3 : 2.2);
+    // fit height to the box but let wide creatures (wings, tails) spread up to 1.6x wider
+    const scale = Math.min(box / img.height, (box * 1.6) / img.width, c.boss ? 3 : 2.2);
     img.setScale(scale).setFlipX(c.side === 0);
     const height = img.height * scale;
     const ring = this.add.ellipse(0, 0, img.width * scale * 0.9, 26, 0xf6c453, 0).setStrokeStyle(3, 0xf6c453, 0);

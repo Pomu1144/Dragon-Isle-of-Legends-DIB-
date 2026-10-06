@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { coverBg, ambient, vignette } from './fx';
 import { h, layer, modal, dialogue, toast } from '../ui/dom';
 import { hasSave, load, newGame, S, STARTERS } from '../core/state';
-import { speciesByName, spriteUrl } from '../core/data';
+import { data, speciesByName, spriteUrl } from '../core/data';
 import { music, sfx, setAudio, unlockAudio } from '../audio';
 import { toRegion, toTown } from '../nav';
 import { elChip } from '../ui/menus';
@@ -21,7 +21,7 @@ export class TitleScene extends Phaser.Scene {
       h('div', { class: 'row' },
         cont ? h('button', { class: 'btn gold', style: { fontSize: '1.3em', padding: '.6em 2em' }, onClick: () => { start(); if (load()) { setAudio(S.settings.music, S.settings.sfx); toRegion(); } } }, 'Continue') : null,
         h('button', { class: `btn ${cont ? '' : 'gold'}`, style: { fontSize: '1.3em', padding: '.6em 2em' }, onClick: () => { start(); this.newGameDialog(); } }, 'New Game')),
-      h('div', { class: 'muted', style: { textShadow: '0 1px 4px #000' } }, '224 monsters · 16 regions · 13 dungeons · 12 Dragon Overlords')));
+      h('div', { class: 'muted', style: { textShadow: '0 1px 4px #000' } }, `${data().monsters.length} monsters · ${data().regions.length} regions · ${data().dungeons.length} dungeons · ${data().overlords.length} Dragon Overlords`)));
   }
 
   newGameDialog() {

@@ -78,7 +78,7 @@ export function dialogue(lines: { who?: string; text: string }[]): Promise<void>
   });
 }
 
-export const starsHtml = (n: number) => '★'.repeat(Math.floor(n)) + (n % 1 ? '½' : '');
+export const starsHtml = (n: number) => (n > 5 ? `★ ${n}` : '★'.repeat(Math.floor(n)) + (n % 1 ? '½' : ''));
 
 /** replaceChildren that tolerates null/false entries. */
 export function fill(el: HTMLElement, ...kids: (Child | Child[])[]) {

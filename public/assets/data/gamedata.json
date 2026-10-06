@@ -1673,12 +1673,7 @@
 "tu": 130,
 "target": "allAllies",
 "text": "Removes Poison",
-"cleanse": "bad",
-"poison": {
-"tu": 300,
-"element": null,
-"power": 0.6
-}
+"cleanse": "bad"
 },
 {
 "name": "Double Venom",
@@ -2103,12 +2098,7 @@
 "tu": 130,
 "target": "allAllies",
 "text": "Removes Sleep & Poison",
-"cleanse": "bad",
-"poison": {
-"tu": 300,
-"element": null,
-"power": 0.6
-}
+"cleanse": "bad"
 },
 {
 "name": "Wing Cutter",
@@ -2524,11 +2514,7 @@
 "tu": 100,
 "target": "allAllies",
 "text": "Removes Sleep",
-"cleanse": "bad",
-"status": {
-"type": "sleep",
-"tu": 300
-}
+"cleanse": "bad"
 },
 {
 "name": "Ooze",
@@ -2583,11 +2569,7 @@
 "tu": 100,
 "target": "allAllies",
 "text": "Removes Sleep",
-"cleanse": "bad",
-"status": {
-"type": "sleep",
-"tu": 300
-}
+"cleanse": "bad"
 },
 {
 "name": "Ooze",
@@ -3859,12 +3841,7 @@
 "tu": 130,
 "target": "allAllies",
 "text": "Removes Sleep & Poison",
-"cleanse": "bad",
-"poison": {
-"tu": 300,
-"element": null,
-"power": 0.6
-}
+"cleanse": "bad"
 },
 {
 "name": "Wing Cutter",
@@ -6313,8 +6290,8 @@
 "name": "Archangel",
 "element": "Life",
 "stars": 9.0,
-"evolveLevel": null,
-"evolveInto": null,
+"evolveLevel": 70,
+"evolveInto": "Seraph",
 "location": "Evolves from Angel at level 54",
 "obtain": "*Evolves from Angel at level 54. *Recieve from an egg.",
 "lore": "Archangels are one if not the highest class of all Angels.",
@@ -6324,15 +6301,7 @@
 "tu": 100,
 "target": "allAllies",
 "text": "Removes: Sleep, Paralyze,Poison, Confuse",
-"poison": {
-"tu": 300,
-"element": null,
-"power": 0.6
-},
-"status": {
-"type": "sleep",
-"tu": 300
-}
+"cleanse": "bad"
 },
 {
 "name": "Judgement",
@@ -6439,11 +6408,7 @@
 "tu": 100,
 "target": "allAllies",
 "text": "Removes effect: Sleep",
-"cleanse": "bad",
-"status": {
-"type": "sleep",
-"tu": 300
-}
+"cleanse": "bad"
 },
 {
 "name": "Explosion",
@@ -6468,16 +6433,7 @@
 "tu": 130,
 "target": "allAllies",
 "text": "Removes effect: Sleep, Poison",
-"cleanse": "bad",
-"poison": {
-"tu": 300,
-"element": null,
-"power": 0.6
-},
-"status": {
-"type": "sleep",
-"tu": 300
-}
+"cleanse": "bad"
 }
 ],
 "category": "Humanoid",
@@ -6765,7 +6721,8 @@
 "name": "DeSoul",
 "tu": 250,
 "target": "self",
-"text": "Removes a soul from a monster and summons that soul's creator for the duration of the battle."
+"text": "Removes a soul from a monster and summons that soul's creator for the duration of the battle.",
+"cleanse": "bad"
 },
 {
 "name": "Reincarnate",
@@ -7111,8 +7068,8 @@
 "name": "Dark Panther",
 "element": "Death",
 "stars": 8.0,
-"evolveLevel": null,
-"evolveInto": null,
+"evolveLevel": 75,
+"evolveInto": "Moonreaver",
 "location": "Obtained as a reward for the quest Recipe for Destruction (perform every recipe combination).",
 "obtain": "Obtained as a reward for the quest Recipe for Destruction (perform every recipe combination). This quest is given by the Old Sage.",
 "lore": "",
@@ -9040,11 +8997,7 @@
 "tu": 100,
 "target": "allAllies",
 "text": "Removes Sleep",
-"cleanse": "bad",
-"status": {
-"type": "sleep",
-"tu": 300
-}
+"cleanse": "bad"
 },
 {
 "name": "Dark Matter",
@@ -9273,11 +9226,7 @@
 "tu": 100,
 "target": "allAllies",
 "text": "Removes effect: Sleep",
-"cleanse": "bad",
-"status": {
-"type": "sleep",
-"tu": 300
-}
+"cleanse": "bad"
 },
 {
 "name": "Pharaoh's Curse",
@@ -9345,11 +9294,7 @@
 "tu": 100,
 "target": "allAllies",
 "text": "Removes Effect: Sleep",
-"cleanse": "bad",
-"status": {
-"type": "sleep",
-"tu": 300
-}
+"cleanse": "bad"
 },
 {
 "name": "Easy Target",
@@ -9733,12 +9678,7 @@
 "tu": 130,
 "target": "allAllies",
 "text": "Removes effects: Sleep & Poison",
-"cleanse": "bad",
-"poison": {
-"tu": 300,
-"element": null,
-"power": 0.6
-}
+"cleanse": "bad"
 }
 ],
 "category": null,
@@ -10115,16 +10055,7 @@
 "tu": 130,
 "target": "allAllies",
 "text": "Removes effects: Sleep, Poison",
-"cleanse": "bad",
-"poison": {
-"tu": 300,
-"element": null,
-"power": 0.6
-},
-"status": {
-"type": "sleep",
-"tu": 300
-}
+"cleanse": "bad"
 }
 ],
 "category": null,
@@ -10163,7 +10094,8 @@
 "name": "DeSoul",
 "tu": 250,
 "target": "self",
-"text": "Removes a Soul Stone from a monster and summons that stone's creator for the duration of the battle."
+"text": "Removes a Soul Stone from a monster and summons that stone's creator for the duration of the battle.",
+"cleanse": "bad"
 },
 {
 "name": "Haste",
@@ -13350,6 +13282,228 @@
 },
 "sprite": "224.png",
 "spriteSource": "SnowMan-hd.png"
+},
+{
+"id": 225,
+"name": "Moonreaver",
+"element": "Death",
+"stars": 9.5,
+"evolveLevel": null,
+"evolveInto": null,
+"location": "Evolves from Dark Panther at level 75.",
+"obtain": "",
+"lore": "When a Dark Panther hunts beneath enough eclipses, its pelt hardens into bone-white crescents and moonlight burns along its veins. Moonreavers stalk only on moonless nights, when nothing can see them coming.",
+"abilities": [
+{
+"name": "Crescent Rend",
+"tu": 130,
+"target": "foe",
+"kind": "physical",
+"element": "Death",
+"power": 1.6,
+"mods": {
+"def": -0.12
+},
+"text": "Heavy Physical Damage (Death), lowers Defense"
+},
+{
+"name": "Night Hunt",
+"tu": 130,
+"target": "foe",
+"kind": "physical",
+"element": "Death",
+"power": 1.25,
+"perKill": 25,
+"text": "Physical Damage (Death), +25% damage per kill made in battle"
+},
+{
+"name": "Eclipse",
+"tu": 180,
+"target": "allFoes",
+"kind": "magical",
+"element": "Death",
+"power": 0.95,
+"text": "Magical Damage (Death) to all foes"
+},
+{
+"name": "Lunar Howl",
+"tu": 160,
+"target": "allFoes",
+"mods": {
+"atk": -0.15,
+"mag": -0.15
+},
+"text": "Lowers all foes' Attack and Magic"
+},
+{
+"name": "Death Sentence",
+"tu": 50,
+"target": "foe",
+"status": {
+"type": "doom",
+"tu": 500
+},
+"text": "Target is killed after 500 TUs"
+}
+],
+"category": null,
+"types": [],
+"base": {
+"hp": 82,
+"atk": 64,
+"mag": 52,
+"spd": 66,
+"def": 68,
+"res": 62
+},
+"sprite": "225.png",
+"spriteSource": "custom/moonreaver.png",
+"custom": true
+},
+{
+"id": 226,
+"name": "Seraph",
+"element": "Life",
+"stars": 9.5,
+"evolveLevel": 100,
+"evolveInto": "Empyrean",
+"location": "Evolves from Archangel at level 70.",
+"obtain": "",
+"lore": "An Archangel that has carried a fragment of the sun for a hundred battles. The light it holds can mend any wound, or burn the darkness out of a demon's heart.",
+"abilities": [
+{
+"name": "Radiant Orb",
+"tu": 130,
+"target": "foe",
+"kind": "magical",
+"element": "Life",
+"power": 1.7,
+"vs": {
+"demonic": 100
+},
+"text": "Magical Damage (Life), +100% vs. Demonic"
+},
+{
+"name": "Judgement",
+"tu": 250,
+"target": "allFoes",
+"kind": "magical",
+"element": "Life",
+"power": 1.1,
+"text": "Magical Damage (Life) to all foes"
+},
+{
+"name": "Halo Mend",
+"tu": 160,
+"target": "allAllies",
+"healPower": 1.1,
+"text": "Heals all allies"
+},
+{
+"name": "Angelic Wind",
+"tu": 100,
+"target": "allAllies",
+"cleanse": "bad",
+"text": "Removes Sleep, Paralyze, Poison, Confuse from all allies"
+},
+{
+"name": "Mighty Guard",
+"tu": 160,
+"target": "allAllies",
+"mods": {
+"def": 0.15,
+"res": 0.15
+},
+"text": "Raises all allies' Defense and Resist"
+}
+],
+"category": null,
+"types": [
+"divine"
+],
+"base": {
+"hp": 120,
+"atk": 40,
+"mag": 70,
+"spd": 92,
+"def": 62,
+"res": 80
+},
+"sprite": "226.png",
+"spriteSource": "custom/seraph.png",
+"custom": true
+},
+{
+"id": 227,
+"name": "Empyrean",
+"element": "Life",
+"stars": 10,
+"evolveLevel": null,
+"evolveInto": null,
+"location": "Evolves from Seraph at level 100.",
+"obtain": "",
+"lore": "The final ascension of the angel line. Six wings, a crown of crescent moons and a heart that is a living sun. Legends say Dragon Island was born at dawn beneath its gaze.",
+"abilities": [
+{
+"name": "Sunfall Judgement",
+"tu": 200,
+"target": "allFoes",
+"kind": "magical",
+"element": "Life",
+"power": 1.35,
+"vs": {
+"demonic": 100
+},
+"text": "Magical Damage (Life) to all foes, +100% vs. Demonic"
+},
+{
+"name": "Celestial Requiem",
+"tu": 220,
+"target": "foe",
+"kind": "magical",
+"element": "Life",
+"power": 2.8,
+"text": "Massive Magical Damage (Life)"
+},
+{
+"name": "Sanctum",
+"tu": 200,
+"target": "allAllies",
+"healPower": 1.4,
+"cleanse": "bad",
+"text": "Heals all allies and removes bad effects"
+},
+{
+"name": "Wings of Dawn",
+"tu": 130,
+"target": "allAllies",
+"haste": 30,
+"text": "Speeds up all allies' actions by 30%"
+},
+{
+"name": "Divine Grace",
+"tu": null,
+"target": "self",
+"immune": true,
+"passive": true,
+"text": "Immune from all bad status effects"
+}
+],
+"category": null,
+"types": [
+"divine"
+],
+"base": {
+"hp": 140,
+"atk": 50,
+"mag": 92,
+"spd": 100,
+"def": 78,
+"res": 100
+},
+"sprite": "227.png",
+"spriteSource": "custom/empyrean.png",
+"custom": true
 }
 ],
 "regions": [

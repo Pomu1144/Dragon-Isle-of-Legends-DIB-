@@ -19,7 +19,7 @@ npm test           # headless battle-engine + balance tests (vitest)
 
 | System | Details |
 | --- | --- |
-| **Monsters** | All **224** wiki monsters: sprites, element, stars, base stats, abilities and evolution chains (Hatchling → Dragonling → Dragon → Wyrm…) |
+| **Monsters** | All **224** wiki monsters: sprites, element, stars, base stats, abilities and evolution chains (Hatchling → Dragonling → Dragon → Wyrm…). Plus 3 original evolutions: **Moonreaver** (Dark Panther, Lv 75), and **Seraph** (Archangel, Lv 70) → **Empyrean** (Lv 100) |
 | **Battles** | Time-unit (CTB) combat as in the original. Up to 3 monsters per side are on the field with reserves behind them. Every wiki ability is modelled: physical/magical damage, the 7-element wheel, buffs/debuffs, stun, sleep, paralyze, confuse, doom, poison, taunt, disguise, no-guard, immunity, life-drain, recoil, reflect, per-kill and per-TU scaling, clones with shared HP, sacrifices, random summons and escape. Includes a turn-order timeline, auto-battle and 1–3× speed |
 | **Capturing** | Card, Silver Card and Gold Card. Lower HP and status effects raise the odds. One attempt per monster, as in the original |
 | **World** | 16 regions on the original 4×4 island layout, each a Higgsfield-painted map. About 240 walkable spots are placed on land automatically from each painting's land mask, with roads between neighbouring regions |
@@ -40,6 +40,14 @@ npm run data                                                               # -> 
 ```
 
 `tools/build_data.py` parses the wiki tables (Monster List, stat tables, ability tables, recipes, towns, dungeons, overlords, shop, licenses, eggs, soul stones). It also normalises two kinds of stats into one level curve: pages that list level-1 stats and pages that list S+ rank stats. Ability damage and buff numbers become coefficients of the caster's stats, so every move scales with level. `tools/place_spots.py` finds land in each Higgsfield region painting and places the walkable spots and roads on it.
+
+## Adding your own monsters
+
+Original monsters live in `tools/custom/monsters.json`, with their art in `tools/custom/sprites/`. `npm run data` merges them into the roster and links them to their pre-evolution with `evolvesFrom` and `evolveLevel`. To cut art out of a flat black background:
+
+```bash
+python3 tools/cutout_black.py my_art.jpg tools/custom/sprites/my_monster.png
+```
 
 ## Project layout
 

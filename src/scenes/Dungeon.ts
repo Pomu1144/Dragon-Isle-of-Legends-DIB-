@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { coverBg, vignette, ambient } from './fx';
-import { dungeon as dungeonData } from '../core/data';
+import { data, dungeon as dungeonData } from '../core/data';
 import { S, save, rollGem, hash } from '../core/state';
 import { dungeonEncounter, dungeonBoss, FINALE } from '../core/encounters';
 import { hud, openMenu } from '../ui/menus';
@@ -160,7 +160,7 @@ export class DungeonScene extends Phaser.Scene {
       { who: 'Caius', text: 'Impossible… the Sanctuary has fallen to a single breeder?' },
       { who: 'Old Sage', text: `You did it, ${S.hero}. The plot against Olympia is crushed, and every breeder on Dragon Island will know your name.` },
       { who: 'Old Sage', text: 'Yet the island still hides secrets — the Unknown Relic in Swinedene has unsealed, and the Abyss beneath Wesburn has no bottom…' },
-      { who: '', text: `★ THE END ★  — You are a Legend of Dragon Isle. (${S.caught.length}/224 monsters caught, ${S.overlords.length}/12 Overlords defeated)` },
+      { who: '', text: `★ THE END ★  — You are a Legend of Dragon Isle. (${S.caught.length}/${data().monsters.length} monsters caught, ${S.overlords.length}/12 Overlords defeated)` },
     ]);
     toRegion();
   }

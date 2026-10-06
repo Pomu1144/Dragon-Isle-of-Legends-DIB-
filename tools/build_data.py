@@ -111,6 +111,11 @@ def parse_effect(name, tu, target, eff):
     e = eff
     el = lambda s: next((x for x in ELEMENTS if x.lower() in s.lower()), None)
     a = {"name": name, "tu": tu, "target": target, "text": eff}
+    if re.match(r"\s*removes?\b", e, re.I) and not re.search(r"damage", e, re.I):
+        a["cleanse"] = "all" if re.search(r"all effects", e, re.I) else "bad"
+        if target == "passive" or tu is None:
+            a["passive"] = True
+        return a
     m = re.search(r"(\d+)\s*-\s*(\d+)\s*(?:\w+\s+)?(physical|magical)?\s*(?:damage|dmg)", e, re.I)
     if not m:
         m = re.search(r"(\d+)\s*-\s*(\d+)\s*(physical|magical)?", e, re.I) if re.search(r"damage", e, re.I) and not re.search(r"^\s*(poison|deals \w+ damage over)", e, re.I) else None
@@ -416,6 +421,24 @@ for m in monsters:
     else:
         m["sprite"] = None
         missing.append(m["name"])
+
+# ---------------------------------------------------------------- custom (non-wiki) monsters
+CUSTOM = os.path.join(os.path.dirname(__file__), "custom")
+if os.path.exists(os.path.join(CUSTOM, "monsters.json")):
+    for c in json.load(open(os.path.join(CUSTOM, "monsters.json")))["monsters"]:
+        dst = f"{c['id']:03d}.png"
+        shutil.copy(os.path.join(CUSTOM, "sprites", c["sprite"]), os.path.join(SPR, dst))
+        parent = byname[c["evolvesFrom"]] if c.get("evolvesFrom") in byname else None
+        m = {"id": c["id"], "name": c["name"], "element": c["element"], "stars": c["stars"], "evolveLevel": None, "evolveInto": None,
+             "location": f"Evolves from {c['evolvesFrom']} at level {c['evolveLevel']}." if parent else "", "obtain": "", "lore": c.get("lore", ""),
+             "abilities": c["abilities"], "category": None, "types": c.get("types", []), "base": c["base"], "sprite": dst,
+             "spriteSource": "custom/" + c["sprite"], "custom": True}
+        monsters = [x for x in monsters if x["id"] != c["id"]] + [m]
+        byname[m["name"]] = m
+        byid[m["id"]] = m
+        names[m["name"].lower()] = m
+        if parent:
+            parent["evolveLevel"], parent["evolveInto"] = c["evolveLevel"], c["name"]
 
 # ---------------------------------------------------------------- regions / towns / dungeons
 REGIONS = [  # 4x4 grid exactly as on the in-game world map, with progression tier 0..15
