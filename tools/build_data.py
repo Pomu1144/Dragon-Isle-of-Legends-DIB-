@@ -567,12 +567,15 @@ OVERLORD_FALLBACK = {"Apophis": "Eastern Gracia", "Arkanis": "Norwoods", "Garuga
 for o, r in OVERLORD_FALLBACK.items():
     if o in overlords and not overlords[o]["region"]:
         overlords[o]["region"] = r
-OVERLORD_FORM = {"Arashi": "Drake", "Arkanis": "Gold Wyrm", "Ormr": "Bone Dragon", "Nagendra": "Orochi", "Quetzalcoatl": "Quetzlecoatl",
+OVERLORD_FORM = {"Arashi": "Red Dragonling", "Arkanis": "Gold Wyrm", "Ormr": "Bone Dragon", "Nagendra": "Orochi", "Quetzalcoatl": "Quetzlecoatl",
                  "Xiuhcoatl": "Red Wyrm"}
 for o, f in OVERLORD_FORM.items():
     if o in overlords and not overlords[o]["form"]:
         mm = find_monster(f) or find_monster("White Wyrm")
         overlords[o]["form"] = mm["name"]
+# in the original game Arashi, the first Overlord, fights with a Red Dragonling (not the Drake the wiki lists)
+if "Arashi" in overlords:
+    overlords["Arashi"]["form"] = "Red Dragonling"
 
 regions = []
 for name, x, y, tier in REGIONS:
