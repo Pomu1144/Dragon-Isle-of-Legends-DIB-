@@ -340,3 +340,29 @@ table.list td, table.list th { border-bottom: 1px solid rgba(214,160,92,.35); }
 .pointer::before { content: ''; position: absolute; inset: 0; background: url(assets/ui/orig/bk/arrow.png) center / contain no-repeat; transform: rotate(90deg); }
 .wheel .seg .wl { display: inline-flex; align-items: center; gap: .1em; }
 .wheel .seg .wl img { height: 1.9em; }
+
+/* ===================================================================== Dungeon (original layout)
+   Black screen, "Caught x/y" top-left, the carved plaque with the floor top-centre, the M button in the top-right
+   corner, the blue "Next bonus" panel running off the bottom edge and the hero level on a dark wooden tab. */
+.hud.dun { top: 0; left: auto; right: 0; }
+.hud.dun .hud-stats { display: none; }
+.hud.dun .dun-leave { order: 1; }
+.hud.dun .m-btn { order: 2; width: 5.6em; height: 5.5em; }
+.hud.dun .m-menu { left: auto; right: .5em; top: 5.9em; }
+#ui > .dun-ui { position: absolute; inset: 0; pointer-events: none; }
+.dun-caught { position: absolute; left: .3em; top: .15em; font: 900 1.95em Arial, Helvetica, sans-serif; color: #fff; text-shadow: var(--ink); }
+.dun-plaque { position: absolute; left: 50%; top: .3em; transform: translateX(-50%); width: 24em; height: 6.85em; display: flex; align-items: center;
+  justify-content: center; padding: 0 1.6em 0 4.6em; background: url(assets/ui/kit/plank.png) center / 100% 100% no-repeat;
+  filter: drop-shadow(0 .2em .3em rgba(0,0,0,.6)); }
+.dun-plaque span { font: 700 1.24em Arial, Helvetica, sans-serif; color: #1d1409; white-space: nowrap; text-shadow: 0 1px 0 rgba(255,236,190,.45); }
+.dun-plaque span.long { font-size: 1.05em; }
+.dun-bonus { position: absolute; left: 50%; bottom: -1.2em; transform: translateX(-50%); width: 27.5em; height: 7.6em; display: flex;
+  align-items: center; justify-content: center; padding-bottom: 1.2em; }
+/* the panel's blue is deepened to the original's translucent teal; its frame is drawn on top at full strength */
+.dun-bonus::before, .dun-bonus::after { content: ''; position: absolute; inset: 0; border: 14px solid transparent; }
+.dun-bonus::before { border-image: url(assets/ui/orig/bk/panel_blue.png) 14 fill stretch; filter: brightness(.55) saturate(1.15) hue-rotate(-14deg); opacity: .88; }
+.dun-bonus::after { border-image: url(assets/ui/orig/bk/panel_blue.png) 14 stretch; filter: drop-shadow(0 -.1em .3em rgba(0,0,0,.5)); }
+.dun-bonus span { position: relative; z-index: 1; font: 900 2.05em Arial, Helvetica, sans-serif; color: #fff; text-shadow: var(--ink), 0 .06em .12em rgba(0,0,0,.8); white-space: nowrap; }
+.dun-lv { position: absolute; left: 0; bottom: 1.2em; width: 4.45em; height: 2.25em; display: flex; align-items: center; padding-left: .3em;
+  background: url(assets/dungeon/lv_tab.png) left center / 100% 100% no-repeat; }
+.dun-lv span { font: 900 1.12em Arial, Helvetica, sans-serif; color: #fff; text-shadow: var(--ink); white-space: nowrap; }
