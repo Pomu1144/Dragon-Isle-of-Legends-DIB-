@@ -220,3 +220,123 @@ input.text { font: inherit; padding: .5em .8em; border-radius: .5em; border: 1px
 .explore-bar { position: relative; width: 17em; height: 1.25em; margin: .35em auto 0; border-radius: .7em; background: rgba(0,0,0,.55); border: 2px solid #f6d27a; overflow: hidden; }
 .explore-bar i { position: absolute; left: 0; top: 0; bottom: 0; background: linear-gradient(#9be15d, #3fa34d); }
 .explore-bar span { position: relative; display: block; font: 800 .78em/1.6em Arial, sans-serif; color: #fff; text-shadow: 0 0 3px #000, 0 1px 0 #000; }
+
+/* ===================================================================== Painted UI skin
+   Every control is drawn with art painted to match the original UI kits (tools/ref_ui/buttons, sliced by
+   tools/ref_ui/slice_buttons.py): bronze riveted buttons in four enamels, round bronze medallions for icon
+   buttons, and thin bronze-framed strips for labels. Text follows the kit: heavy white Arial with a dark
+   outline. Slices are in source pixels; the rendered frame size is set by border-width. */
+:root {
+  --ink: 0 0 2px #000, 0 0 2px #000, 0 1px 0 #000, 1px 0 0 #000, -1px 0 0 #000, 0 -1px 0 #000;
+  --ink-soft: 0 0 3px rgba(0,0,0,.9), 0 1px 0 #000;
+}
+.btn {
+  --skin: url(assets/ui/btn/blue.png);
+  position: relative; display: inline-flex; align-items: center; justify-content: center; gap: .35em;
+  background: none; border-radius: 0; box-shadow: none;
+  /* the art's corner braces are deep, so they are drawn larger (border-image-width) than the layout border:
+     text sits over the enamel and the short middle band barely stretches */
+  border-style: solid; border-color: transparent; border-width: .42em .95em;
+  border-image: var(--skin) 50 58 fill / .95em 1.1em stretch;
+  padding: .12em .1em; min-height: 2.3em;
+  font: 900 1em/1.15 Arial, Helvetica, sans-serif; color: #fff; text-shadow: var(--ink); letter-spacing: .01em;
+  filter: drop-shadow(0 .14em .18em rgba(0,0,0,.55));
+  transition: transform .08s, filter .15s;
+}
+.btn.gold { --skin: url(assets/ui/btn/gold.png); color: #fff; }
+.btn.green { --skin: url(assets/ui/btn/green.png); }
+.btn.red { --skin: url(assets/ui/btn/red.png); }
+.btn:hover { filter: brightness(1.13) drop-shadow(0 .14em .18em rgba(0,0,0,.55)); }
+.btn:active { transform: translateY(.08em); filter: brightness(.9) drop-shadow(0 .06em .08em rgba(0,0,0,.55)); }
+.btn[disabled] { filter: grayscale(.85) brightness(.82) contrast(.9) drop-shadow(0 .14em .18em rgba(0,0,0,.45)); opacity: .82; cursor: not-allowed; transform: none; }
+.btn.small { font-size: .86em; }
+/* icon-only buttons are round bronze medallions */
+.btn.icon { --skin: url(assets/ui/btn/round_blue.png); border: 0; border-image: none; padding: 0; min-height: 0;
+  width: 2.5em; height: 2.5em; background: var(--skin) center / contain no-repeat; font-size: 1.05em; line-height: 1; }
+.btn.icon.small { width: 2.1em; height: 2.1em; font-size: .95em; }
+.btn.icon.gold { --skin: url(assets/ui/btn/round_gold.png); }
+.btn.icon.red { --skin: url(assets/ui/btn/round_red.png); }
+.btn.icon.close { --skin: url(assets/ui/btn/round_slate.png); font-size: 0; }
+.btn.icon.close::after { content: ''; position: absolute; inset: 24%; background: url(assets/ui/orig/bk/close.png) center / contain no-repeat; }
+/* labels, hints, HUD badge and toasts sit on thin bronze-framed strips */
+.chip { background: none; border-radius: 0; border-style: solid; border-color: transparent; border-width: .42em .5em;
+  border-image: url(assets/ui/btn/strip_slate.png) 20 26 fill stretch; padding: 0 .25em; font: 800 .8em/1.25 Arial, Helvetica, sans-serif;
+  color: #fff; text-shadow: var(--ink-soft); }
+.chip.el { border-image: none; border: 0; border-radius: .35em; padding: .1em .5em; text-shadow: none; }
+.chip.panel { backdrop-filter: none; box-shadow: none; border-image: url(assets/ui/btn/strip_parch.png) 20 26 fill stretch; color: #3a2410;
+  text-shadow: 0 1px 0 rgba(255,240,205,.6); filter: drop-shadow(0 .12em .15em rgba(0,0,0,.5)); }
+.hud-stats { background: none; border-radius: 0; border-style: solid; border-color: transparent; border-width: .45em .6em;
+  border-image: url(assets/ui/btn/strip_slate.png) 20 26 fill stretch; padding: 0 .3em; filter: drop-shadow(0 .12em .18em rgba(0,0,0,.5)); }
+.toast { background: none; border-radius: 0; border-style: solid; border-color: transparent; border-width: .55em .75em;
+  border-image: url(assets/ui/btn/strip_slate.png) 20 26 fill stretch; padding: .05em .4em; font: 800 1em Arial, Helvetica, sans-serif;
+  color: #fff; text-shadow: var(--ink-soft); filter: drop-shadow(0 .2em .3em rgba(0,0,0,.6)); }
+/* tabs: blue buttons, the selected one turns gold */
+.tab { --skin: url(assets/ui/btn/blue.png); background: none; border-radius: 0; border-style: solid; border-color: transparent;
+  border-width: .4em .95em; border-image: var(--skin) 50 58 fill / .95em 1.1em stretch; padding: .1em 0; font: 900 .88em/1.15 Arial, Helvetica, sans-serif;
+  color: #fff; text-shadow: var(--ink); filter: drop-shadow(0 .1em .14em rgba(0,0,0,.5)); }
+.tab.on { --skin: url(assets/ui/btn/gold.png); color: #fff; background: none; }
+.tab:hover { filter: brightness(1.12) drop-shadow(0 .1em .14em rgba(0,0,0,.5)); }
+/* panels and modals use the kit's bronze-framed blue panel */
+.panel { background: none; border-radius: 0; box-shadow: none; backdrop-filter: none; border: 14px solid transparent;
+  border-image: url(assets/ui/orig/bk/panel_blue.png) 14 fill stretch; color: #fff; filter: drop-shadow(0 .35em .6em rgba(0,0,0,.55)); }
+.panel .muted, .modal .muted { color: #d9eef7; }
+.modal { font-family: Arial, Helvetica, sans-serif; text-shadow: var(--ink-soft); }
+.modal header { border-bottom: 0; padding: .2em .4em .6em; }
+.modal header h2 { position: relative; padding: .35em 1.7em .35em 2.9em; min-width: 9.5em; font: 900 1.25em/1.2 'Crimson Pro', Georgia, serif; color: #2b1d0e;
+  text-shadow: 0 1px 0 rgba(255,240,210,.6); background: url(assets/ui/kit/plank.png) center / 100% 100% no-repeat; letter-spacing: .02em; }
+.modal .body { padding: .4em .5em .2em; }
+.dlg.panel { border-image: url(assets/ui/orig/bk/panel_parch.png) 16 fill stretch; border-width: 16px; color: #2b1d0e;
+  font: 700 1.02em/1.35 Arial, Helvetica, sans-serif; text-shadow: none; }
+.dlg .who { font: 900 1.05em Arial, Helvetica, sans-serif; color: #7a2a12; }
+.dlg .muted { color: #6b5233; }
+/* battle / M menu items: parchment rows like the kit's parchment insets */
+.m-menu { background: none; border-radius: 0; box-shadow: none; border: 14px solid transparent; border-image: url(assets/ui/orig/bk/panel_blue.png) 14 fill stretch;
+  filter: drop-shadow(0 .4em .6em rgba(0,0,0,.5)); }
+.bt-mi { background: none; border-radius: 0; border-style: solid; border-color: transparent; border-width: .42em .5em;
+  border-image: url(assets/ui/btn/strip_parch.png) 20 26 fill stretch; padding: .05em .3em; color: #2b1d0e; text-shadow: 0 1px 0 rgba(255,240,205,.6); }
+.bt-mi:hover:not([disabled]) { filter: brightness(1.08); }
+.bt-mi.on { background: none; border-image: url(assets/ui/btn/gold.png) 50 58 fill / .95em 1.1em stretch; color: #fff; text-shadow: var(--ink); }
+.bt-mi.red { background: none; border-image: url(assets/ui/btn/red.png) 50 58 fill / .95em 1.1em stretch; color: #fff; text-shadow: var(--ink); }
+input.text { border-radius: 0; background: none; border-style: solid; border-color: transparent; border-width: .45em .6em;
+  border-image: url(assets/ui/btn/strip_parch.png) 20 26 fill stretch; padding: .1em .3em; color: #2b1d0e; font: 800 1em Arial, Helvetica, sans-serif; outline: none; }
+/* status chips that used to be flat colour fills now use the green/gold enamel skins */
+.chip.good, .chip.gold { border-width: .32em .7em; padding: .05em 0; color: #fff; text-shadow: var(--ink); }
+.chip.good { border-image: url(assets/ui/btn/green.png) 50 58 fill / .72em .84em stretch; }
+.chip.gold { border-image: url(assets/ui/btn/gold.png) 50 58 fill / .72em .84em stretch; }
+.hud-cards { display: inline-flex; align-items: center; gap: .2em; }
+.hud-cards img { height: 1.25em; filter: drop-shadow(0 1px 1px rgba(0,0,0,.6)); }
+/* checkboxes are medallions: slate when off, green when on */
+input[type=checkbox] { appearance: none; -webkit-appearance: none; width: 1.7em; height: 1.7em; margin: 0; cursor: pointer;
+  background: url(assets/ui/btn/round_slate.png) center / contain no-repeat; filter: drop-shadow(0 .08em .12em rgba(0,0,0,.5)); }
+input[type=checkbox]:checked { background-image: url(assets/ui/btn/round_green.png); }
+select.text { font: 800 .95em Arial, Helvetica, sans-serif; color: #2b1d0e; background: none; border-radius: 0; border-style: solid; border-color: transparent;
+  border-width: .4em .55em; border-image: url(assets/ui/btn/strip_parch.png) 20 26 fill stretch; padding: 0 .2em; outline: none; }
+/* list rows and info cards are parchment insets, like the kit's parchment labels */
+.abil { background: none; border-radius: 0; border-style: solid; border-color: transparent; border-width: 12px;
+  border-image: url(assets/ui/orig/bk/panel_parch.png) 16 fill stretch; padding: .2em .6em; color: #2b1d0e; text-shadow: none;
+  font-family: Arial, Helvetica, sans-serif; }
+.abil b, .abil h3 { color: #6e2a0e; }
+.abil .muted { color: #5c4630; }
+.abil .stars { color: #a8730b; }
+/* monster cards: teal enamel in a thin bronze frame, gold glow when selected */
+.mcard { background: none; border-radius: 0; border-style: solid; border-color: transparent; border-width: .5em;
+  border-image: url(assets/ui/btn/strip_teal.png) 20 26 fill stretch; padding: .1em; color: #fff; text-shadow: var(--ink-soft); }
+.mcard:hover { border-color: transparent; filter: brightness(1.08); }
+.mcard.sel { border-color: transparent; box-shadow: none; filter: drop-shadow(0 0 .35em rgba(255,214,107,.95)); }
+.mcard .lv { color: #ffe08a; }
+/* progress bars use the kit's bronze bar casing */
+.bar { height: .95em; background: none; border-radius: 0; overflow: hidden; border-style: solid; border-color: transparent; border-width: .2em .32em;
+  border-image: url(assets/ui/orig/bk/bar_empty.png) 12 18 fill stretch; }
+.bar > i { border-radius: 0; background: linear-gradient(180deg, #8fe0ff, #2f86c8 55%, #1f5f99); box-shadow: inset 0 1px 0 rgba(255,255,255,.4); }
+.stat-row .bar > i { background: linear-gradient(180deg, #ffd27a, #e3861d 55%, #a85a10); }
+.explore-bar { height: 1.35em; background: none; border: 0; border-radius: 0; overflow: visible; border-style: solid; border-color: transparent;
+  border-width: .22em .36em; border-image: url(assets/ui/orig/bk/bar_empty.png) 12 18 fill stretch; }
+.explore-bar i { background: linear-gradient(180deg, #b9ef7a, #4fae3a 55%, #2c7a24); }
+.explore-bar span { line-height: 1.1em; }
+table.list td, table.list th { border-bottom: 1px solid rgba(214,160,92,.35); }
+/* egg wheel: bronze rim and the kit's arrow as the pointer */
+.wheel { border: .55em solid #a8743a; box-shadow: 0 0 0 .15em #3a2410, inset 0 0 0 .15em #3a2410, 0 0 30px rgba(246,196,83,.35); }
+.pointer { position: relative; width: 1.7em; height: 1.9em; border: 0; filter: drop-shadow(0 2px 2px #000); }
+.pointer::before { content: ''; position: absolute; inset: 0; background: url(assets/ui/orig/bk/arrow.png) center / contain no-repeat; transform: rotate(90deg); }
+.wheel .seg .wl { display: inline-flex; align-items: center; gap: .1em; }
+.wheel .seg .wl img { height: 1.9em; }

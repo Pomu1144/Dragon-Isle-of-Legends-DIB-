@@ -71,30 +71,48 @@ export class DungeonScene extends Phaser.Scene {
     const cur = rooms.find((x) => x.id === visit!.at)!;
     const g = this.add.graphics().setDepth(2);
     (g as any).__room = true;
+    // corridors are bronze-edged passages, like the kit's frames
     for (const a of rooms) for (const b of rooms) if (a.id < b.id && this.adj(a, b)) {
       const pa = this.pos(a), pb = this.pos(b);
-      g.lineStyle(14, 0x1a1f33, 0.9).lineBetween(pa.x, pa.y, pb.x, pb.y);
-      g.lineStyle(6, 0x8fa5d8, 0.35).lineBetween(pa.x, pa.y, pb.x, pb.y);
+      g.lineStyle(18, 0x2a1a0c, 0.95).lineBetween(pa.x, pa.y, pb.x, pb.y);
+      g.lineStyle(12, 0x9a6a34, 1).lineBetween(pa.x, pa.y, pb.x, pb.y);
+      g.lineStyle(6, 0x3b3328, 1).lineBetween(pa.x, pa.y, pb.x, pb.y);
     }
-    const icon: Record<Room['kind'], string> = { start: '🚪', battle: '⚔', chest: '🎁', empty: '', stairs: '🔽', boss: '💀' };
+    // rooms are painted stone tiles: gold-lit where you stand, lit once explored or reachable, dark otherwise
+    const art: Partial<Record<Room['kind'], string>> = { chest: 'disc_chest', boss: 'disc_lair' };
+    const glyph: Record<Room['kind'], string> = { start: '⌂', battle: '⚔', chest: '', empty: '', stairs: '▼', boss: '' };
+    const T = 112;
     for (const r of rooms) {
       const p = this.pos(r);
       const reachable = this.adj(r, cur);
       const here = r === cur;
-      const box = this.add.rectangle(p.x, p.y, 120, 86, here ? 0x3b4f8c : 0x161b2e, 0.92).setStrokeStyle(3, here ? 0xf6c453 : reachable ? 0x9fb8ff : 0x39405a).setDepth(3);
-      (box as any).__room = true;
-      const show = r.done && r.kind !== 'stairs' && r.kind !== 'boss' ? (r.kind === 'start' ? '🚪' : '·') : icon[r.kind];
-      const t = this.add.text(p.x, p.y, show, { fontSize: '34px', color: '#fff' }).setOrigin(0.5).setDepth(4);
-      (t as any).__room = true;
-      if (reachable || here) box.setInteractive({ useHandCursor: true }).on('pointerdown', () => this.enter(r));
-      if (reachable) this.tweens.add({ targets: box, alpha: 0.75, duration: 700, yoyo: true, repeat: -1 });
+      const key = here ? 'btn_room_gold' : r.done || reachable ? 'btn_room_lit' : 'btn_room_dark';
+      const tile = this.add.image(p.x, p.y, key).setDisplaySize(T, T).setDepth(3);
+      (tile as any).__room = true;
+      if (!here && !reachable && r.done) tile.setTint(0xb8b0a0);
+      const cleared = r.done && r.kind !== 'stairs' && r.kind !== 'boss';
+      const pic = cleared ? undefined : art[r.kind];
+      if (pic) {
+        const src = this.textures.get(pic).getSourceImage();
+        const im = this.add.image(p.x, p.y + 4, pic).setScale(70 / Math.max(src.width, src.height)).setDepth(4);
+        (im as any).__room = true;
+      }
+      const show = cleared ? (r.kind === 'start' ? '⌂' : '✓') : glyph[r.kind];
+      if (show) {
+        const t = this.add.text(p.x, p.y, show, { fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold', fontSize: cleared ? '30px' : '40px',
+          color: r.kind === 'battle' && !cleared ? '#ffdfd0' : '#fff2c8', stroke: '#1a0e04', strokeThickness: 6 }).setOrigin(0.5).setDepth(4);
+        if (cleared) t.setAlpha(0.7);
+        (t as any).__room = true;
+      }
+      if (reachable || here) tile.setInteractive({ useHandCursor: true }).on('pointerdown', () => this.enter(r));
+      if (reachable) this.tweens.add({ targets: tile, alpha: 0.78, duration: 700, yoyo: true, repeat: -1 });
     }
     const refresh = () => this.draw();
     hud((k) => openMenu(k, refresh), [h('button', { class: 'btn small red', onClick: () => { visit = null; toRegion(); } }, '⬆ Leave dungeon')]);
     const d = dungeonData(this.name)!;
     layer('scene', h('div', {},
       h('div', { class: 'region-title' }, h('h2', {}, this.name), h('div', {}, `Floor ${this.floor}${d.floors < 999 ? ` / ${d.floors}` : ''}${this.floor % 5 === 1 && this.floor > 1 ? ' · Waypoint' : ''}`)),
-      h('div', { class: 'region-info panel' }, h('b', {}, 'Dungeon'), h('div', { class: 'muted' }, 'Tap an adjacent room. ⚔ battles, 🎁 treasure, 🔽 stairs down, 💀 guardian. Waypoints every 5 floors let you resume deeper next time.'))));
+      h('div', { class: 'region-info panel' }, h('b', {}, 'Dungeon'), h('div', { class: 'muted' }, 'Tap a glowing room next to you. ⚔ battles, a chest holds treasure, ▼ stairs lead down, the lair hides the guardian. Waypoints every 5 floors let you resume deeper next time.'))));
   }
 
   enter(r: Room) {

@@ -11,7 +11,7 @@ export const setGame = (g: Phaser.Game) => (game = g);
 const SCENES = ['Title', 'World', 'Region', 'Battle', 'Town', 'Dungeon'];
 export function go(key: string, data?: object) {
   closeAllModals();
-  for (const l of ['hud', 'scene', 'dialogue', 'battle', 'title']) clearLayer(l);
+  for (const l of ['hud', 'scene', 'dialogue', 'battle', 'battlemenu', 'abinfo', 'title']) clearLayer(l);
   for (const k of SCENES) if (k !== key && game.scene.isActive(k)) game.scene.stop(k);
   game.scene.start(key, data);
 }

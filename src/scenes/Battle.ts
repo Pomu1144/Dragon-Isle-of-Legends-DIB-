@@ -507,7 +507,9 @@ export class BattleScene extends Phaser.Scene {
     if (!v) return;
     const c = v.center();
     const from = P(80, 80);
-    const card = this.add.rectangle(from.x, from.y, 44, 58, 0xf0f4ff).setStrokeStyle(3, this.capturing === 'gold' ? 0xf6c453 : 0xffffff).setDepth(140);
+    // the thrown card is the kit's capture card, tinted for silver/gold cards
+    const card = this.add.image(from.x, from.y, 'bk_minicard').setDisplaySize(50, 60).setDepth(140);
+    if (this.capturing === 'gold') card.setTint(0xffe08a); else if (this.capturing === 'silver') card.setTint(0xdfe8f5);
     await this.tw({ targets: card, x: c.x, y: c.y, angle: 720, duration: 450, ease: 'Quad.out' });
     this.burst(c.x, c.y, 0xffffff, 26);
     await this.tw({ targets: v.img, scale: v.baseScale * 0.15, alpha: 0.4, duration: 280 });
@@ -768,7 +770,7 @@ export class BattleScene extends Phaser.Scene {
         const m = S.party.find((x) => x.uid === r.uid) ?? null;
         return h('div', { class: 'abil row' }, m ? h('img', { src: spriteUrl(species(m.species)), style: { height: '2.6em' } }) : null,
           h('b', {}, r.name), h('span', {}, r.to > r.from ? `Lv ${r.from} → ${r.to}` : ''),
-          r.evolved ? h('span', { class: 'chip', style: { background: 'var(--gold)', color: '#241400' } }, `✨ Evolved into ${r.evolved}!`) : null,
+          r.evolved ? h('span', { class: 'chip gold' }, `✨ Evolved into ${r.evolved}!`) : null,
           r.hero ? h('span', { class: 'chip' }, `Hero +${r.hero} Lv`) : null);
       });
       if (reports.some((r) => r.evolved)) sfx('evolve'); else if (reports.length) sfx('levelup');
@@ -776,7 +778,7 @@ export class BattleScene extends Phaser.Scene {
         h('header', {}, h('h2', {}, title)),
         h('div', { class: 'body col' },
           outcome === 0 ? h('div', { class: 'row' }, h('span', { class: 'coin' }), h('b', {}, `+${silver} silver`), gold ? h('span', { class: 'coin g' }) : null, gold ? h('b', {}, `+${gold} gold`) : null,
-            egg ? h('span', { class: 'chip', style: { background: 'var(--gold)', color: '#241400' } }, egg === 'golden' ? '🥚 Golden Egg!' : '🥚 Egg!') : null) : null,
+            egg ? h('span', { class: 'chip gold' }, egg === 'golden' ? '🥚 Golden Egg!' : '🥚 Egg!') : null) : null,
           outcome === 1 ? h('p', {}, 'Your monsters are exhausted. You retreat to the last town you visited.') : null,
           ...captured.map((m) => h('div', { class: 'abil row' }, h('img', { src: spriteUrl(species(m.species)), style: { height: '2.6em' } }),
             h('b', {}, `Captured ${species(m.species).name}!`), h('span', {}, `Lv ${m.level} · Rank ${rankName(m.rank)}`), elChip(species(m.species).element))),

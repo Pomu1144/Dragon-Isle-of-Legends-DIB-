@@ -116,9 +116,9 @@ export class RegionScene extends Phaser.Scene {
 
     // minimap: a second camera that sees the whole region, with the main view outlined on it
     const mx = width - MINI_W - 14, my = 60;
-    const frame = this.add.graphics().setScrollFactor(0).setDepth(80);
-    frame.fillStyle(0x000000, 0.55).fillRoundedRect(mx - 6, my - 6, MINI_W + 12, MINI_H + 12, 8);
-    frame.lineStyle(3, 0xf6d27a, 1).strokeRoundedRect(mx - 4, my - 4, MINI_W + 8, MINI_H + 8, 6);
+    // bronze-framed slate strip from the painted UI set, nine-sliced around the minimap
+    const frame = this.add.nineslice(mx + MINI_W / 2, my + MINI_H / 2, 'btn_strip_slate', undefined, MINI_W + 22, MINI_H + 22, 26, 26, 20, 20)
+      .setScrollFactor(0).setDepth(80);
     const view = this.add.graphics().setDepth(90);
     const mini = this.cameras.add(mx, my, MINI_W, MINI_H).setZoom(MINI_W / this.WW).setBounds(0, 0, this.WW, this.WH);
     mini.centerOn(this.WW / 2, this.WH / 2);
@@ -170,10 +170,12 @@ export class RegionScene extends Phaser.Scene {
     const defeatedOverlord = s.kind === 'overlord' && s.ref && S.overlords.includes(s.ref);
     const field = s.kind === 'field';
     const done = DISCOVERY.has(s.kind) && this.isDone(s);
-    const ring = this.add.circle(0, 0, field ? 11 : 30, st.color, field ? (defeatedOverlord ? 0.35 : 0.9) : 0.001);
-    if (field) ring.setStrokeStyle(3, 0xffffff, 0.95);
-    c.add(this.add.ellipse(2, field ? 6 : 14, field ? 34 : 70, field ? 14 : 22, 0x000000, field ? 0.35 : 0.22));
+    // invisible hit area; the visible marker is painted art
+    const ring = this.add.circle(0, 0, field ? 18 : 30, 0x000000, 0.001);
+    c.add(this.add.ellipse(2, field ? 9 : 14, field ? 30 : 70, field ? 11 : 22, 0x000000, field ? 0.35 : 0.22));
     c.add(ring);
+    // wild areas are small bronze medallions with green enamel, like the kit's round buttons
+    if (field) c.add(this.add.image(0, 0, 'btn_round_green').setDisplaySize(26, 26));
     // towns, dungeons, overlords, roads and discoveries use painted map art instead of plain markers
     const art = (key: string, sc: number, x = 0, y = 0) => { const im = this.add.image(x, y, key).setScale(sc).setOrigin(0.5, 0.85); c.add(im); return im; };
     if (s.kind === 'town') { art('town_house_a', 0.32, -26, 6); art('town_house_b', 0.3, 26, 2); art('town_warp_house', 0.3, 0, 22); }
@@ -192,15 +194,14 @@ export class RegionScene extends Phaser.Scene {
         this.tweens.add({ targets: glint, alpha: 0.3, scale: 2.4, duration: 900, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
       }
     }
-    if (field) {
-      const flag = this.add.text(-2, -30, '⚑', { fontSize: '26px', color: '#3bdc6a', stroke: '#063', strokeThickness: 3 }).setOrigin(0.5);
-      c.add(flag);
-      this.tweens.add({ targets: flag, angle: { from: -6, to: 6 }, duration: 900 + (s.id % 5) * 120, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
-    }
     if (quest) {
-      const q = this.add.text(0, -40, '⚔', { fontSize: '28px', color: '#ff5050', stroke: '#000', strokeThickness: 5 }).setOrigin(0.5);
+      // quest targets: a red medallion with crossed swords bobbing over the spot
+      const q = this.add.container(0, -40, [
+        this.add.image(0, 0, 'btn_round_red').setDisplaySize(34, 34),
+        this.add.text(0, 1, '⚔', { fontFamily: 'Arial, sans-serif', fontSize: '19px', color: '#fff', stroke: '#2a0a06', strokeThickness: 4 }).setOrigin(0.5),
+      ]);
       c.add(q);
-      this.tweens.add({ targets: q, y: -48, duration: 600, yoyo: true, repeat: -1 });
+      this.tweens.add({ targets: q, y: -48, duration: 600, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
     }
     if (!field) {
       const label = s.kind === 'exit' ? `→ ${region(s.ref!).name}` : s.kind === 'dock' ? `⛵ ${region(s.ref!).name}`
@@ -264,7 +265,7 @@ export class RegionScene extends Phaser.Scene {
         spot?.kind === 'dungeon' ? h('button', { class: 'btn red', onClick: () => this.enterDungeon(spot.ref!) }, `Enter ${spot.ref}`) : null,
         spot?.kind === 'overlord' && !S.overlords.includes(spot.ref!) ? h('button', { class: 'btn red', onClick: () => this.challengeOverlord(spot.ref!) }, `Challenge ${spot.ref}`) : null,
         spot?.kind === 'dock' ? h('button', { class: 'btn gold', onClick: () => this.sail(spot.ref!) }, `⛵ Sail to ${region(spot.ref!).name}`) : null,
-        h('button', { class: 'btn small', onClick: () => this.recenter() }, '◎ Me'),
+        h('button', { class: 'btn icon gold', title: 'Centre on me', 'aria-label': 'Centre on me', onClick: () => this.recenter() }, '◎'),
         h('span', { class: 'chip panel' }, 'Drag to look around · tap a marker to travel')),
       h('div', { class: 'region-info panel' },
         h('b', {}, 'Monsters sighted'),

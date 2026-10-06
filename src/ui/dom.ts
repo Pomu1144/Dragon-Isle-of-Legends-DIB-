@@ -42,7 +42,7 @@ export function modal(title: string, body: HTMLElement | ((close: () => void) =>
   };
   const content = typeof body === 'function' ? body(close) : body;
   const box = h('div', { class: 'modal panel', style: opts.width ? { width: opts.width } : undefined },
-    h('header', {}, h('h2', {}, title), h('div', { class: 'grow' }), ...(opts.actions ?? []), h('button', { class: 'btn small', onClick: () => { sfx('back'); close(); } }, '✕')),
+    h('header', {}, h('h2', {}, title), h('div', { class: 'grow' }), ...(opts.actions ?? []), h('button', { class: 'btn icon small close', title: 'Close', 'aria-label': 'Close', onClick: () => { sfx('back'); close(); } }, '✕')),
     h('div', { class: 'body' }, content));
   const back = h('div', { class: 'modal-back' }, box);
   back.addEventListener('pointerdown', (e) => { if (e.target === back) close(); });
@@ -59,6 +59,24 @@ export function confirmBox(msg: string, yes: string = 'Yes'): Promise<boolean> {
     const close = modal('Confirm', (c) => h('div', { class: 'col' }, h('p', {}, msg), h('div', { class: 'row', style: { justifyContent: 'flex-end' } },
       h('button', { class: 'btn', onClick: () => { done = true; c(); res(false); } }, 'Cancel'),
       h('button', { class: 'btn gold', onClick: () => { done = true; c(); res(true); } }, yes))), { width: '28em', onClose: () => !done && res(false) });
+    void close;
+  });
+}
+
+/** In-game text prompt (replaces the browser's window.prompt so it matches the painted UI). */
+export function promptBox(title: string, label: string, initial = '', maxLength = 40): Promise<string | null> {
+  return new Promise((res) => {
+    let done = false;
+    const input = h('input', { class: 'text', value: initial, maxlength: String(maxLength), 'aria-label': label });
+    const close = modal(title, (c) => {
+      const ok = () => { done = true; c(); res(input.value); };
+      input.addEventListener('keydown', (e) => { if (e.key === 'Enter') ok(); });
+      return h('div', { class: 'col' }, h('label', { class: 'col' }, h('span', {}, label), input),
+        h('div', { class: 'row', style: { justifyContent: 'flex-end' } },
+          h('button', { class: 'btn', onClick: () => { done = true; c(); res(null); } }, 'Cancel'),
+          h('button', { class: 'btn gold', onClick: ok }, 'OK')));
+    }, { width: '28em', onClose: () => !done && res(null) });
+    setTimeout(() => { input.focus(); input.select(); }, 30);
     void close;
   });
 }

@@ -81,7 +81,7 @@ export class TownScene extends Phaser.Scene {
     hud((k) => openMenu(k, refresh));
     const ready = S.quests.filter((q) => q.town === this.name && questDone(q)).length;
     layer('scene', h('div', {},
-      h('div', { class: 'town-name' }, this.name, ready ? h('span', { class: 'chip', style: { background: 'var(--gold)', color: '#241400', marginLeft: '.5em' } }, `📜 ${ready} ready at the Guild`) : null),
+      h('div', { class: 'town-name' }, this.name, ready ? h('span', { class: 'chip gold', style: { marginLeft: '.5em' } }, `📜 ${ready} ready at the Guild`) : null),
       h('div', { class: 'town-sub' }, t.region)));
   }
 
@@ -242,7 +242,7 @@ export class TownScene extends Phaser.Scene {
     const sorted = data().regions.slice().sort((a, b) => a.tier - b.tier);
     const body = h('div', { class: 'col' },
       h('p', {}, 'Battle through the tournament classes. Every win awards an egg; the final classes award Golden Eggs.'),
-      h('div', { class: 'row', style: { flexWrap: 'wrap' } }, ...CLASSES.map((c, i) => h('span', { class: 'chip', style: i < cls ? { background: 'var(--good)', color: '#032' } : i === cls ? { background: 'var(--gold)', color: '#241400' } : {} }, `${c} class`))),
+      h('div', { class: 'row', style: { flexWrap: 'wrap' } }, ...CLASSES.map((c, i) => h('span', { class: `chip ${i < cls ? 'good' : i === cls ? 'gold' : ''}` }, `${c} class`))),
       cls < CLASSES.length ? h('button', { class: 'btn gold', onClick: () => {
         const reg = sorted[Math.min(15, Math.round(cls * 1.45))];
         const team = breederTeam(reg.id, new Rng(cls * 977), 3 + Math.floor(cls / 2), 4);

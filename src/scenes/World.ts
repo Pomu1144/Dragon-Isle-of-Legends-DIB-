@@ -52,9 +52,9 @@ export class WorldScene extends Phaser.Scene {
     // minimap of the whole world, with the current view outlined
     const MINI_H = Math.round((MINI_W * this.H) / this.W);
     const mx = width - MINI_W - 14, my = 60;
-    const frame = this.add.graphics().setScrollFactor(0).setDepth(80);
-    frame.fillStyle(0x000000, 0.55).fillRoundedRect(mx - 6, my - 6, MINI_W + 12, MINI_H + 12, 8);
-    frame.lineStyle(3, 0xf6d27a, 1).strokeRoundedRect(mx - 4, my - 4, MINI_W + 8, MINI_H + 8, 6);
+    // bronze-framed slate strip from the painted UI set, nine-sliced around the minimap
+    const frame = this.add.nineslice(mx + MINI_W / 2, my + MINI_H / 2, 'btn_strip_slate', undefined, MINI_W + 22, MINI_H + 22, 26, 26, 20, 20)
+      .setScrollFactor(0).setDepth(80);
     const view = this.add.graphics().setDepth(90);
     // the frame lives on an unzoomed UI camera (scroll-factor-0 objects still scale with camera zoom)
     const ui = this.cameras.add(0, 0, width, height);
@@ -99,9 +99,9 @@ export class WorldScene extends Phaser.Scene {
     refresh();
     layer('scene', h('div', {},
       h('div', { class: 'region-actions' },
-        h('button', { class: 'btn small', onClick: () => zoomBy(1.3) }, '＋'),
-        h('button', { class: 'btn small', onClick: () => zoomBy(1 / 1.3) }, '－'),
-        h('button', { class: 'btn small', onClick: () => cam.pan(here.x, here.y, 500, 'Sine.easeInOut') }, '◎ Me'),
+        h('button', { class: 'btn icon', title: 'Zoom in', 'aria-label': 'Zoom in', onClick: () => zoomBy(1.3) }, '＋'),
+        h('button', { class: 'btn icon', title: 'Zoom out', 'aria-label': 'Zoom out', onClick: () => zoomBy(1 / 1.3) }, '－'),
+        h('button', { class: 'btn icon gold', title: 'Centre on me', 'aria-label': 'Centre on me', onClick: () => cam.pan(here.x, here.y, 500, 'Sine.easeInOut') }, '◎'),
         h('span', { class: 'chip panel' }, 'Drag to explore the world · scroll or ＋/－ to zoom · tap a region to travel')),
       h('div', { class: 'region-info panel', style: { width: '20em' } }, h('b', {}, 'The World'),
         h('div', { class: 'muted' }, `${S.visited.length} of ${data().regions.length} regions discovered. The Dragon Isle lies in the south-west; boats from its docks reach the Underworld and the Frontier lands to the north and east.`))));
@@ -130,7 +130,8 @@ export class WorldScene extends Phaser.Scene {
     const here = r.id === cur.id;
     const adjacent = !r.sea && !cur.sea && realmOf(r) === realmOf(cur) && Math.abs(r.x - cur.x) + Math.abs(r.y - cur.y) === 1;
     const c = this.add.container(at.x, at.y).setDepth(10);
-    const ring = this.add.circle(0, 0, 13, here ? 0xffd54f : visited ? 0xffffff : 0x6f7f95, 1).setStrokeStyle(3, 0x1a1208, 1);
+    // pins are painted bronze medallions: gold where you are, ivory once visited, slate while undiscovered
+    const ring = this.add.image(0, 0, here ? 'btn_round_gold' : visited ? 'btn_round_ivory' : 'btn_round_slate').setDisplaySize(30, 30);
     if (here) {
       const halo = this.add.circle(0, 0, 22, 0xffd54f, 0.35).setStrokeStyle(2, 0xffd54f);
       c.add(halo);
@@ -143,7 +144,7 @@ export class WorldScene extends Phaser.Scene {
     const info = this.add.text(0, 18, visited || here ? sub : `Lv ${r.levels[0]}–${r.levels[1]}`, { fontFamily: 'Arial, Helvetica, sans-serif', fontSize: '12px', color: '#e8f4ff', stroke: '#000', strokeThickness: 4 }).setOrigin(0.5, 0);
     c.add([label, info]);
     if (r.overlords.length) c.add(this.add.text(16, -8, r.overlords.every((o) => S.overlords.includes(o)) ? '🐲✔' : '🐲', { fontSize: '16px' }).setOrigin(0, 0.5));
-    ring.setInteractive({ useHandCursor: true, hitArea: new Phaser.Geom.Circle(0, 0, 24), hitAreaCallback: Phaser.Geom.Circle.Contains });
+    ring.setInteractive({ useHandCursor: true });
     ring.on('pointerover', () => c.setScale(c.scale * 1.12)).on('pointerout', () => this.fitPins());
     ring.on('pointerup', () => {
       if (this.drag.moved) return;

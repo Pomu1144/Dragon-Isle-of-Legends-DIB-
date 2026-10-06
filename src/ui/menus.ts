@@ -5,7 +5,7 @@ import {
   S, save, partySize, heroLevel, heroXpFor, skillPoints, heroBonus, GEM_SHAPES, gemSlotsUnlocked, destroyForSoul, equipSoul,
   eggPrizes, grantPrize, questDone, exportSave, importSave, findMon, allMonsters, EggPrize, fuse,
 } from '../core/state';
-import { h, modal, toast, confirmBox, starsHtml, layer, anyModal, fill } from './dom';
+import { h, modal, toast, confirmBox, promptBox, starsHtml, layer, anyModal, fill } from './dom';
 import { sfx, setAudio } from '../audio';
 import { openBook } from './book';
 
@@ -74,7 +74,7 @@ export function hud(onMenu: (k: string) => void, extra: HTMLElement[] = []) {
     menu,
     h('div', { class: 'hud-stats' }, h('span', { class: 'hero-lv' }, `Lv ${heroLevel()}`), h('b', {}, S.hero),
       coin(), h('b', {}, S.silver.toLocaleString()), coin(true), h('b', {}, S.gold.toLocaleString()),
-      h('span', { title: 'Capture cards' }, `🂠 ${S.items.card}/${S.items.silver}/${S.items.gold}`)),
+      h('span', { class: 'hud-cards', title: 'Capture cards (normal / silver / gold)' }, h('img', { src: 'assets/ui/orig/bk/minicard.png', alt: '' }), `${S.items.card}/${S.items.silver}/${S.items.gold}`)),
     ...extra));
 }
 
@@ -115,7 +115,7 @@ export function monsterActions(m: MonsterInst, changed: () => void, deselect: ()
       inParty ? h('button', { class: 'btn small', disabled: idx <= 0, onClick: () => { S.party.splice(idx, 1); S.party.splice(idx - 1, 0, m); save(); changed(); } }, '▲ Move up') : null,
       inParty ? h('button', { class: 'btn small', disabled: S.party.length <= 1, onClick: () => { S.party.splice(idx, 1); S.storage.push(m); save(); deselect(); changed(); } }, 'To storage')
         : h('button', { class: 'btn small green', disabled: S.party.length >= partySize(), onClick: () => { S.storage = S.storage.filter((x) => x !== m); S.party.push(m); save(); deselect(); changed(); } }, 'To party'),
-      h('button', { class: 'btn small', onClick: () => { const n = prompt('Nickname', displayName(m)); if (n != null) { m.nick = n.trim().slice(0, 16) || undefined; save(); changed(); } } }, 'Rename'),
+      h('button', { class: 'btn small', onClick: () => { void promptBox('Rename', 'Nickname', displayName(m), 16).then((n) => { if (n != null) { m.nick = n.trim().slice(0, 16) || undefined; save(); changed(); } }); } }, 'Rename'),
       h('button', {
         class: 'btn small red', disabled: S.party.length <= 1 && inParty, onClick: async () => {
           if (await confirmBox(`Destroy ${displayName(m)} to extract its soul stone? This is permanent.`, 'Destroy')) {
@@ -184,8 +184,10 @@ export function openEgg(type: 'egg' | 'golden', done: () => void) {
   const prizes = eggPrizes(type);
   const n = prizes.length;
   const label = (p: EggPrize) => p.kind === 'monster' ? h('img', { src: spriteUrl(species(p.species)) })
-    : h('span', {}, { silver: `${p.kind === 'silver' ? (p as any).amount : ''}🪙`, gold: `${(p as any).amount}G`, card: '🂠×5', silverCard: '🂠S', goldCard: '🂠G', gem: '💎' }[p.kind as 'gem']);
-  const colors = ['#2a3f7a', '#3b2a6a', '#1f5a5a', '#6a3a2a'];
+    : /card/i.test(p.kind) ? h('span', { class: 'wl' }, h('img', { src: 'assets/ui/orig/bk/minicard.png', alt: '' }), { card: '×5', silverCard: 'S', goldCard: 'G' }[p.kind as 'card'])
+    : h('span', {}, { silver: `${p.kind === 'silver' ? (p as any).amount : ''}🪙`, gold: `${(p as any).amount}G`, card: '', silverCard: '', goldCard: '', gem: '💎' }[p.kind as 'gem']);
+  // segment colours are the four button enamels
+  const colors = ['#2c6a80', '#7a2626', '#2d6b3d', '#a06a1a'];
   const wheel = h('div', { class: 'wheel', style: { background: `conic-gradient(${prizes.map((_, i) => `${colors[i % 4]} ${(i / n) * 360}deg ${((i + 1) / n) * 360}deg`).join(',')})` } },
     ...prizes.map((p, i) => { const s = h('div', { class: 'seg', style: { transform: `rotate(${(i + 0.5) * (360 / n) - 90}deg)` } }, label(p)); return s; }));
   let angle = 0, speed = 22, stopping = false, raf = 0, finished = false, prevT = performance.now();
@@ -223,7 +225,7 @@ export function questsMenu() {
     S.quests.length ? null : h('p', { class: 'muted' }, 'No active quests. Visit a town Guild to accept up to 3 quests.'),
     ...S.quests.map((q) => h('div', { class: 'abil' },
       h('div', { class: 'row' }, h('b', {}, q.title), h('span', { class: 'chip' }, q.type), h('span', { class: 'chip' }, `from ${q.town}`), h('span', { class: 'grow' }),
-        questDone(q) ? h('span', { class: 'chip', style: { background: 'var(--good)', color: '#032' } }, 'Complete! Return to the guild') : h('span', { class: 'muted' }, questGoalText(q))),
+        questDone(q) ? h('span', { class: 'chip good' }, 'Complete! Return to the guild') : h('span', { class: 'muted' }, questGoalText(q))),
       h('div', { class: 'muted' }, q.text))),
     h('div', { class: 'muted' }, `Quests completed: ${S.questCount} · Dragon Overlords defeated: ${S.overlords.length}/${data().overlords.length}`));
   modal('Quest Log', body, { width: '50em' });
@@ -284,7 +286,7 @@ export function systemMenu() {
     h('div', { class: 'row' }, h('span', {}, 'Battle speed'), ...[1, 2, 3].map((s) => h('button', { class: `btn small ${S.settings.speed === s ? 'gold' : ''}`, onClick: () => { S.settings.speed = s; save(); close(); systemMenu(); } }, `${s}x`))),
     h('div', { class: 'row' }, h('button', { class: 'btn', onClick: () => { save(); toast('Game saved'); } }, '💾 Save now'),
       h('button', { class: 'btn', onClick: () => { navigator.clipboard?.writeText(exportSave()); toast('Save code copied to clipboard'); } }, 'Export save code'),
-      h('button', { class: 'btn', onClick: () => { const c = prompt('Paste save code'); if (c) { try { importSave(c); location.reload(); } catch { toast('Invalid save code'); } } } }, 'Import save')),
+      h('button', { class: 'btn', onClick: () => { void promptBox('Import save', 'Paste your save code', '', 100000).then((c) => { if (c) { try { importSave(c); location.reload(); } catch { toast('Invalid save code'); } } }); } }, 'Import save')),
     h('p', { class: 'muted', style: { fontSize: '.85em' } }, 'Dragon Isle of Legends is a non-commercial fan rebuild of Dragon Island Blue. Monster art and data from the Dragon Island Blue Fandom wiki (CC BY-SA); original monster designs belong to their creators. Maps & backgrounds generated with Higgsfield.'),
     h('button', { class: 'btn red', onClick: async () => { if (await confirmBox('Delete your save and start over?', 'Delete')) { localStorage.removeItem('dragon-isle-save-v1'); location.reload(); } } }, 'Delete save')), { width: '40em' });
 }

@@ -91,6 +91,15 @@ python3 tools/ref_ui/slice_battle_kit.py .cache/battle_kit_rgba.png public/asset
 
 The discovery markers (chest, tent, tower, lair) were generated with Higgsfield on white and are keyed the same way: `python3 tools/ref_ui/discoveries.py` reads `tools/ref_ui/disc/*.png` and writes `public/assets/ui/orig/disc/`.
 
+**Painted controls.** No control in the game uses plain CSS gradients, flat pills or browser dialogs. Every button, tab, chip, toggle, list row, progress bar and map marker uses art painted with Higgsfield, with the two UI kits (`kit.png`, `battle_kit.png`) as the style reference. That art is:
+
+- bronze riveted buttons in blue (neutral), gold (primary), green (go) and red (danger)
+- round bronze medallions for icon buttons, toggles and map pins
+- thin bronze-framed parchment, slate and teal strips for labels, the HUD and toasts
+- stone tiles for dungeon rooms
+
+A three-judge panel (style fidelity, 9-slice behaviour, legibility) chose between two candidate button sets. `python3 tools/ref_ui/slice_buttons.py` keys the sheets in `tools/ref_ui/buttons/` and cuts them into `public/assets/ui/btn/`. The "Painted UI skin" section of `src/style.css` applies them as `border-image` 9-slices, and Phaser uses `nineslice` for the minimap frames. `node tools/ui_shots.mjs OUT_DIR` (with `npm run dev` running) screenshots every screen for visual review.
+
 The battle matches `battle_reference2.png`:
 
 - **Your turn:** the left box shows the acting monster with its name and HP. The middle panel turns into its ability cards, each with TU and an ⓘ button that opens a parchment popup. Card art shows the kind of move: arrow for a quick physical hit, double arrow for a heavy or support move, flame for magic, and "???" for an empty slot.

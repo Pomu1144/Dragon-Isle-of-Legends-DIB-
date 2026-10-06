@@ -13,6 +13,8 @@ import * as nav from './nav';
 import * as state from './core/state';
 import * as enc from './core/encounters';
 import * as flow from './flow';
+import * as menus from './ui/menus';
+import * as dom from './ui/dom';
 
 async function start() {
   const loading = h('div', { class: 'loading' }, 'Summoning dragons…');
@@ -29,6 +31,6 @@ async function start() {
     render: { antialias: true, pixelArt: false },
     scene: [BootScene, TitleScene, WorldScene, RegionScene, BattleScene, TownScene, DungeonScene],
   });
-  if (import.meta.env.DEV) Object.assign(window as any, { __game: game, __nav: nav, __state: state, __enc: enc, __flow: flow });
+  if (import.meta.env.DEV) Object.assign(window as any, { __game: game, __nav: nav, __state: state, __enc: enc, __flow: flow, __menus: menus, __dom: dom });
 }
 start();
