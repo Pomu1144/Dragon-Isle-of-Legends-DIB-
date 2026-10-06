@@ -1,0 +1,1602 @@
+{
+ "terrain_promenade-straight_main-01": {
+  "cat": "terrain",
+  "w": 488.0,
+  "h": 141.1,
+  "origin": [
+   0.4964,
+   1.6237
+  ],
+  "footprint": {
+   "x": -177,
+   "y": -59,
+   "w": 354,
+   "h": 59
+  },
+  "desc": "Seam-friendly straight pale limestone promenade strip with restrained blue diamond inlays; walkable surface only."
+ },
+ "terrain_promenade-junction_cross-01": {
+  "cat": "terrain",
+  "w": 439.4,
+  "h": 317.1,
+  "origin": [
+   0.5011,
+   0.992
+  ],
+  "footprint": {
+   "x": -177,
+   "y": -59,
+   "w": 354,
+   "h": 59
+  },
+  "desc": "Four-way pale limestone promenade junction with restrained azure compass-diamond inlay."
+ },
+ "terrain_terrace-stairway_wide-01": {
+  "cat": "terrain",
+  "w": 461.8,
+  "h": 321.9,
+  "origin": [
+   0.4997,
+   0.9593
+  ],
+  "footprint": {
+   "x": -84,
+   "y": -33,
+   "w": 167,
+   "h": 33
+  },
+  "desc": "Wide shallow limestone stairway linking two residential terraces; railings excluded for modular placement."
+ },
+ "terrain_terrace-platform_medium-01": {
+  "cat": "terrain",
+  "w": 461.8,
+  "h": 268.2,
+  "origin": [
+   0.4678,
+   1.0705
+  ],
+  "footprint": {
+   "x": -177,
+   "y": -59,
+   "w": 354,
+   "h": 59
+  },
+  "desc": "Rectangular raised limestone terrace floor with clean modular edges and subtle wear."
+ },
+ "terrain_canal-edge_straight-01": {
+  "cat": "terrain",
+  "w": 475.8,
+  "h": 263.0,
+  "origin": [
+   0.4835,
+   1.0901
+  ],
+  "footprint": {
+   "x": -84,
+   "y": -33,
+   "w": 167,
+   "h": 33
+  },
+  "desc": "Straight limestone canal retaining edge with a dark inset water-side face; no water attached."
+ },
+ "architecture_waterside-residence_gable-01": {
+  "cat": "architecture",
+  "w": 354.6,
+  "h": 365.8,
+  "origin": [
+   0.4985,
+   0.9676
+  ],
+  "footprint": {
+   "x": -177,
+   "y": -59,
+   "w": 354,
+   "h": 59
+  },
+  "desc": "Compact two-story waterside residence with ivory Gothic walls, steep navy gable roof, warm windows and flower boxes."
+ },
+ "architecture_waterside-residence_terrace-02": {
+  "cat": "architecture",
+  "w": 316.4,
+  "h": 423.0,
+  "origin": [
+   0.4972,
+   0.9796
+  ],
+  "footprint": {
+   "x": -151,
+   "y": -69,
+   "w": 302,
+   "h": 69
+  },
+  "desc": "Narrow terrace residence with limestone lower story, dark timber upper frame, navy roof and warm windows."
+ },
+ "architecture_bakery-cafe_main-01": {
+  "cat": "architecture",
+  "w": 451.8,
+  "h": 368.6,
+  "origin": [
+   0.498,
+   0.96
+  ],
+  "footprint": {
+   "x": -160,
+   "y": -55,
+   "w": 321,
+   "h": 55
+  },
+  "desc": "Open-front bakery-cafe with navy fabric canopy, pastry display, dark timber framing and amber lanterns; no readable signage."
+ },
+ "architecture_artisan-workshop_main-01": {
+  "cat": "architecture",
+  "w": 448.9,
+  "h": 355.0,
+  "origin": [
+   0.498,
+   0.997
+  ],
+  "footprint": {
+   "x": -160,
+   "y": -55,
+   "w": 321,
+   "h": 55
+  },
+  "desc": "Open-front artisan workshop with carved timber structure, workbench, crates and navy canopy; no readable signage."
+ },
+ "architecture_apothecary-shop_main-01": {
+  "cat": "architecture",
+  "w": 400.3,
+  "h": 421.9,
+  "origin": [
+   0.4892,
+   0.9821
+  ],
+  "footprint": {
+   "x": -137,
+   "y": -65,
+   "w": 274,
+   "h": 65
+  },
+  "desc": "Small apothecary storefront with amber-lit shelves, glass bottles and a simple flask emblem without words."
+ },
+ "architecture_healing-spring-pavilion_main-01": {
+  "cat": "architecture",
+  "w": 330.8,
+  "h": 406.1,
+  "origin": [
+   0.4951,
+   1.0204
+  ],
+  "footprint": {
+   "x": -137,
+   "y": -65,
+   "w": 274,
+   "h": 65
+  },
+  "desc": "Octagonal open healing-spring pavilion in ivory limestone, navy domed roof and clear central crystal fountain."
+ },
+ "architecture_canal-bridge_arched-01": {
+  "cat": "architecture",
+  "w": 452.3,
+  "h": 292.6,
+  "origin": [
+   0.4997,
+   1.0276
+  ],
+  "footprint": {
+   "x": -138,
+   "y": -48,
+   "w": 276,
+   "h": 48
+  },
+  "desc": "Small arched ivory limestone footbridge with charcoal wrought-iron balustrades and navy hanging banner; no water."
+ },
+ "architecture_terrace-balustrade_straight-01": {
+  "cat": "architecture",
+  "w": 360.4,
+  "h": 248.0,
+  "origin": [
+   0.4921,
+   1.0304
+  ],
+  "footprint": {
+   "x": -116,
+   "y": -40,
+   "w": 232,
+   "h": 40
+  },
+  "desc": "Modular straight ivory limestone balustrade section with charcoal iron infill."
+ },
+ "architecture_terrace-balustrade_corner-01": {
+  "cat": "architecture",
+  "w": 385.1,
+  "h": 250.4,
+  "origin": [
+   0.4814,
+   1.0208
+  ],
+  "footprint": {
+   "x": -116,
+   "y": -40,
+   "w": 232,
+   "h": 40
+  },
+  "desc": "Ninety-degree modular terrace balustrade corner matching the straight section."
+ },
+ "architecture_canal-arch-foundation_main-01": {
+  "cat": "architecture",
+  "w": 396.8,
+  "h": 310.0,
+  "origin": [
+   0.4977,
+   0.983
+  ],
+  "footprint": {
+   "x": -138,
+   "y": -48,
+   "w": 276,
+   "h": 48
+  },
+  "desc": "Heavy ivory limestone canal arch foundation used below the lowest terrace; open arch fully cut out in alpha."
+ },
+ "props_ward-lamppost_single-01": {
+  "cat": "props",
+  "w": 39.1,
+  "h": 199.7,
+  "origin": [
+   0.5482,
+   0.96
+  ],
+  "footprint": {
+   "x": -22,
+   "y": -20,
+   "w": 45,
+   "h": 20
+  },
+  "desc": "Tall charcoal wrought-iron lamppost with one contained warm amber glass lantern."
+ },
+ "props_ward-banner_navy-01": {
+  "cat": "props",
+  "w": 151.2,
+  "h": 257.8,
+  "origin": [
+   0.4667,
+   1.029
+  ],
+  "footprint": {
+   "x": -32,
+   "y": -28,
+   "w": 63,
+   "h": 28
+  },
+  "desc": "Hanging deep navy cloth banner with a simple original pale azure geometric ward crest; no letters."
+ },
+ "props_flower-planter_stone-01": {
+  "cat": "props",
+  "w": 290.2,
+  "h": 200.0,
+  "origin": [
+   0.4707,
+   0.983
+  ],
+  "footprint": {
+   "x": -52,
+   "y": -20,
+   "w": 104,
+   "h": 20
+  },
+  "desc": "Ivory stone planter overflowing with white and pale-blue flowers and muted greenery."
+ },
+ "props_cafe-table-set_two-seat-01": {
+  "cat": "props",
+  "w": 291.6,
+  "h": 182.2,
+  "origin": [
+   0.4733,
+   1.0791
+  ],
+  "footprint": {
+   "x": -52,
+   "y": -20,
+   "w": 104,
+   "h": 20
+  },
+  "desc": "Small dark timber outdoor cafe table with two chairs and simple ceramic service."
+ },
+ "props_artisan-crate-stack_tools-01": {
+  "cat": "props",
+  "w": 199.0,
+  "h": 171.2,
+  "origin": [
+   0.4955,
+   1.0655
+  ],
+  "footprint": {
+   "x": -52,
+   "y": -20,
+   "w": 104,
+   "h": 20
+  },
+  "desc": "Compact stack of wooden supply crates, rolled cloth and artisan hand tools."
+ },
+ "vegetation_white-blossom-tree_mature-01": {
+  "cat": "vegetation",
+  "w": 361.5,
+  "h": 328.2,
+  "origin": [
+   0.4919,
+   0.9821
+  ],
+  "footprint": {
+   "x": -33,
+   "y": -24,
+   "w": 66,
+   "h": 24
+  },
+  "desc": "Mature flowering tree with deep muted foliage, dense ivory blossoms and complete trunk silhouette."
+ },
+ "vegetation_white-blossom-tree_slender-02": {
+  "cat": "vegetation",
+  "w": 286.7,
+  "h": 430.1,
+  "origin": [
+   0.5,
+   0.96
+  ],
+  "footprint": {
+   "x": -26,
+   "y": -30,
+   "w": 52,
+   "h": 30
+  },
+  "desc": "Slender flowering tree variant with ivory blossoms and asymmetric canopy for terrace placement."
+ },
+ "vegetation_terrace-ivy_trailing-01": {
+  "cat": "vegetation",
+  "w": 244.2,
+  "h": 302.3,
+  "origin": [
+   0.4842,
+   0.96
+  ],
+  "footprint": {
+   "x": -22,
+   "y": -21,
+   "w": 45,
+   "h": 21
+  },
+  "desc": "Reusable trailing ivy and white blossom cluster for walls and railings; no wall attached."
+ },
+ "vegetation_cypress-shrub_tall-01": {
+  "cat": "vegetation",
+  "w": 86.7,
+  "h": 321.4,
+  "origin": [
+   0.5025,
+   1.0093
+  ],
+  "footprint": {
+   "x": -20,
+   "y": -24,
+   "w": 41,
+   "h": 24
+  },
+  "desc": "Tall narrow deep-green cypress shrub in a restrained ivory stone pot."
+ },
+ "effects_canal-water_straight-01": {
+  "cat": "effects",
+  "w": 603.2,
+  "h": 169.3,
+  "origin": [
+   0.5,
+   1.081
+  ],
+  "footprint": {
+   "x": -217,
+   "y": -54,
+   "w": 434,
+   "h": 54
+  },
+  "desc": "Seam-friendly straight strip of clear azure canal water with pale reflections; flat surface tile, intentionally opaque within tile."
+ },
+ "effects_waterfall_medium-01": {
+  "cat": "effects",
+  "w": 298.5,
+  "h": 367.8,
+  "origin": [
+   0.509,
+   0.8556
+  ],
+  "footprint": {
+   "x": -127,
+   "y": -72,
+   "w": 254,
+   "h": 72
+  },
+  "desc": "Medium vertical azure waterfall with white foam, transparent outside flowing water, designed for a one-terrace drop."
+ },
+ "effects_waterfall-basin_small-01": {
+  "cat": "effects",
+  "w": 366.3,
+  "h": 288.9,
+  "origin": [
+   0.507,
+   0.8543
+  ],
+  "footprint": {
+   "x": -166,
+   "y": -55,
+   "w": 332,
+   "h": 55
+  },
+  "desc": "Small curved pool and white foam impact ring for the base of a terrace waterfall."
+ },
+ "effects_healing-crystal-glow_idle-01": {
+  "cat": "effects",
+  "w": 249.6,
+  "h": 338.0,
+  "origin": [
+   0.4877,
+   0.8447
+  ],
+  "footprint": {
+   "x": -89,
+   "y": -35,
+   "w": 178,
+   "h": 35
+  },
+  "desc": "Restrained cool-azure magical glow and particles around a central diamond crystal; transparent effect layer."
+ },
+ "npcs_baker_idle-south-01": {
+  "cat": "npcs",
+  "w": 27.7,
+  "h": 79.7,
+  "origin": [
+   0.4927,
+   0.96
+  ],
+  "footprint": {
+   "x": -12,
+   "y": -16,
+   "w": 24,
+   "h": 16
+  },
+  "desc": "Friendly Lower Ward baker in refined navy-and-ivory work clothes, full-body idle pose facing south-east."
+ },
+ "npcs_artisan_idle-south-01": {
+  "cat": "npcs",
+  "w": 24.9,
+  "h": 79.6,
+  "origin": [
+   0.5023,
+   0.96
+  ],
+  "footprint": {
+   "x": -12,
+   "y": -16,
+   "w": 24,
+   "h": 16
+  },
+  "desc": "Lower Ward craftsperson in dark apron with small hand tool, full-body idle pose facing south-east."
+ },
+ "npcs_apothecary_idle-south-01": {
+  "cat": "npcs",
+  "w": 32.9,
+  "h": 78.6,
+  "origin": [
+   0.471,
+   0.9735
+  ],
+  "footprint": {
+   "x": -12,
+   "y": -16,
+   "w": 24,
+   "h": 16
+  },
+  "desc": "Lower Ward apothecary in ivory-and-navy layered attire with a small satchel, full-body idle pose facing south-east."
+ },
+ "npcs_resident_idle-south-01": {
+  "cat": "npcs",
+  "w": 30.4,
+  "h": 79.1,
+  "origin": [
+   0.4933,
+   0.967
+  ],
+  "footprint": {
+   "x": -12,
+   "y": -16,
+   "w": 24,
+   "h": 16
+  },
+  "desc": "Ordinary Lower Ward resident in understated cool-toned town clothing, full-body idle pose facing south-east."
+ },
+ "terrain_plaza-paving_mosaic-01": {
+  "cat": "terrain",
+  "w": 491.5,
+  "h": 327.7,
+  "origin": [
+   0.5,
+   0.96
+  ],
+  "footprint": {
+   "x": -177,
+   "y": -59,
+   "w": 354,
+   "h": 59
+  },
+  "desc": "Large ornate pale-ivory limestone plaza paving section with the reference's restrained central azure compass-diamond mosaic."
+ },
+ "terrain_promenade-narrow_straight-01": {
+  "cat": "terrain",
+  "w": 162.6,
+  "h": 327.7,
+  "origin": [
+   0.5098,
+   0.96
+  ],
+  "footprint": {
+   "x": -177,
+   "y": -59,
+   "w": 354,
+   "h": 59
+  },
+  "desc": "Narrow straight limestone residential promenade strip matching the central route, with small azure diamond inlays and clean modular edges."
+ },
+ "terrain_promenade-junction_tee-01": {
+  "cat": "terrain",
+  "w": 463.7,
+  "h": 315.5,
+  "origin": [
+   0.5017,
+   0.997
+  ],
+  "footprint": {
+   "x": -177,
+   "y": -59,
+   "w": 354,
+   "h": 59
+  },
+  "desc": "T-shaped limestone promenade junction with restrained central azure compass inlay; ground surface only."
+ },
+ "terrain_promenade-turn_left-01": {
+  "cat": "terrain",
+  "w": 371.8,
+  "h": 305.9,
+  "origin": [
+   0.4828,
+   1.0283
+  ],
+  "footprint": {
+   "x": -177,
+   "y": -59,
+   "w": 354,
+   "h": 59
+  },
+  "desc": "Left-turning ninety-degree limestone promenade section with consistent joints and subtle azure inlay; ground surface only."
+ },
+ "terrain_promenade-turn_right-01": {
+  "cat": "terrain",
+  "w": 390.1,
+  "h": 288.6,
+  "origin": [
+   0.4988,
+   1.0045
+  ],
+  "footprint": {
+   "x": -177,
+   "y": -59,
+   "w": 354,
+   "h": 59
+  },
+  "desc": "Right-turning ninety-degree limestone promenade section with consistent joints and subtle azure inlay; ground surface only."
+ },
+ "terrain_promenade-endcap_south-01": {
+  "cat": "terrain",
+  "w": 465.9,
+  "h": 269.4,
+  "origin": [
+   0.5014,
+   1.0487
+  ],
+  "footprint": {
+   "x": -177,
+   "y": -59,
+   "w": 354,
+   "h": 59
+  },
+  "desc": "Broad finished south-facing promenade endcap leading into a stair landing, with centered azure compass motif; no stairs or railings."
+ },
+ "terrain_stair-landing_main-01": {
+  "cat": "terrain",
+  "w": 465.6,
+  "h": 261.4,
+  "origin": [
+   0.501,
+   1.049
+  ],
+  "footprint": {
+   "x": -177,
+   "y": -59,
+   "w": 354,
+   "h": 59
+  },
+  "desc": "Rectangular limestone landing used between terrace stair flights, flat walkable top surface with clean attachment edges."
+ },
+ "terrain_terrace-stairway_narrow-02": {
+  "cat": "terrain",
+  "w": 268.8,
+  "h": 244.2,
+  "origin": [
+   0.4762,
+   1.0839
+  ],
+  "footprint": {
+   "x": -84,
+   "y": -33,
+   "w": 167,
+   "h": 33
+  },
+  "desc": "Narrow shallow limestone stair flight for residential side terraces; stairs only, no railings."
+ },
+ "terrain_terrace-stairway_side-03": {
+  "cat": "terrain",
+  "w": 297.6,
+  "h": 293.8,
+  "origin": [
+   0.4677,
+   1.0197
+  ],
+  "footprint": {
+   "x": -84,
+   "y": -33,
+   "w": 167,
+   "h": 33
+  },
+  "desc": "Short side-access limestone stair flight matching the reference's small elevated residences; stairs only, no railings."
+ },
+ "terrain_retaining-wall_low-straight-01": {
+  "cat": "terrain",
+  "w": 411.5,
+  "h": 185.0,
+  "origin": [
+   0.514,
+   1.3271
+  ],
+  "footprint": {
+   "x": -84,
+   "y": -33,
+   "w": 167,
+   "h": 33
+  },
+  "desc": "Low straight ivory limestone terrace retaining wall with cool blue-gray recessed blocks and a clean top ledge."
+ },
+ "terrain_retaining-wall_tall-straight-02": {
+  "cat": "terrain",
+  "w": 294.7,
+  "h": 325.4,
+  "origin": [
+   0.506,
+   0.9597
+  ],
+  "footprint": {
+   "x": -84,
+   "y": -33,
+   "w": 167,
+   "h": 33
+  },
+  "desc": "Tall straight limestone terrace face with layered masonry blocks, cool recesses, and subtle age; no arch or railing."
+ },
+ "terrain_retaining-wall_inner-corner-01": {
+  "cat": "terrain",
+  "w": 410.9,
+  "h": 240.3,
+  "origin": [
+   0.5008,
+   1.1425
+  ],
+  "footprint": {
+   "x": -84,
+   "y": -33,
+   "w": 167,
+   "h": 33
+  },
+  "desc": "Concave inner ninety-degree retaining-wall corner joining two terrace faces in the fixed three-quarter projection."
+ },
+ "terrain_retaining-wall_outer-corner-01": {
+  "cat": "terrain",
+  "w": 390.4,
+  "h": 315.2,
+  "origin": [
+   0.5,
+   0.998
+  ],
+  "footprint": {
+   "x": -84,
+   "y": -33,
+   "w": 167,
+   "h": 33
+  },
+  "desc": "Convex outer ninety-degree retaining-wall corner joining two terrace faces in the fixed three-quarter projection."
+ },
+ "terrain_retaining-wall_curve-left-01": {
+  "cat": "terrain",
+  "w": 438.1,
+  "h": 275.5,
+  "origin": [
+   0.4996,
+   1.057
+  ],
+  "footprint": {
+   "x": -84,
+   "y": -33,
+   "w": 167,
+   "h": 33
+  },
+  "desc": "Smooth left-curving limestone retaining-wall segment following a canal bend."
+ },
+ "terrain_retaining-wall_curve-right-01": {
+  "cat": "terrain",
+  "w": 466.9,
+  "h": 303.0,
+  "origin": [
+   0.4736,
+   1.0381
+  ],
+  "footprint": {
+   "x": -84,
+   "y": -33,
+   "w": 167,
+   "h": 33
+  },
+  "desc": "Smooth right-curving limestone retaining-wall segment following a canal bend."
+ },
+ "terrain_terrace-pillar_main-01": {
+  "cat": "terrain",
+  "w": 147.0,
+  "h": 261.8,
+  "origin": [
+   0.5,
+   0.9889
+  ],
+  "footprint": {
+   "x": -47,
+   "y": -28,
+   "w": 94,
+   "h": 28
+  },
+  "desc": "Square structural limestone terrace pier with stepped cap and dark inset base, matching the repeated supports in the reference."
+ },
+ "architecture_stair-railing_slope-left-01": {
+  "cat": "architecture",
+  "w": 373.4,
+  "h": 266.2,
+  "origin": [
+   0.4652,
+   0.96
+  ],
+  "footprint": {
+   "x": -116,
+   "y": -40,
+   "w": 232,
+   "h": 40
+  },
+  "desc": "Left-side sloped stair railing with ivory limestone posts and charcoal Gothic iron infill; no stairs."
+ },
+ "architecture_stair-railing_slope-right-01": {
+  "cat": "architecture",
+  "w": 319.0,
+  "h": 254.5,
+  "origin": [
+   0.5045,
+   1.0041
+  ],
+  "footprint": {
+   "x": -116,
+   "y": -40,
+   "w": 232,
+   "h": 40
+  },
+  "desc": "Right-side sloped stair railing with ivory limestone posts and charcoal Gothic iron infill; no stairs."
+ },
+ "architecture_terrace-balustrade_curve-left-02": {
+  "cat": "architecture",
+  "w": 375.4,
+  "h": 246.0,
+  "origin": [
+   0.5007,
+   1.0381
+  ],
+  "footprint": {
+   "x": -116,
+   "y": -40,
+   "w": 232,
+   "h": 40
+  },
+  "desc": "Left-curving modular terrace balustrade with limestone posts and charcoal Gothic iron arches."
+ },
+ "architecture_terrace-balustrade_curve-right-03": {
+  "cat": "architecture",
+  "w": 374.9,
+  "h": 217.6,
+  "origin": [
+   0.4674,
+   1.1494
+  ],
+  "footprint": {
+   "x": -116,
+   "y": -40,
+   "w": 232,
+   "h": 40
+  },
+  "desc": "Right-curving modular terrace balustrade with limestone posts and charcoal Gothic iron arches."
+ },
+ "terrain_waterfall-wall-opening_main-01": {
+  "cat": "terrain",
+  "w": 441.0,
+  "h": 319.4,
+  "origin": [
+   0.4949,
+   0.985
+  ],
+  "footprint": {
+   "x": -177,
+   "y": -59,
+   "w": 354,
+   "h": 59
+  },
+  "desc": "Terrace wall section containing a single constructed spillway opening and masonry waterfall lip; no water effect."
+ },
+ "terrain_lower-cascade-arch-wall_main-01": {
+  "cat": "terrain",
+  "w": 469.4,
+  "h": 319.7,
+  "origin": [
+   0.4765,
+   0.983
+  ],
+  "footprint": {
+   "x": -84,
+   "y": -33,
+   "w": 167,
+   "h": 33
+  },
+  "desc": "Massive lower-terrace limestone wall with a deep open canal arch and cliff-facing foundation geometry; arch interior cut out."
+ },
+ "terrain_central-plaza-transition_north-01": {
+  "cat": "terrain",
+  "w": 299.8,
+  "h": 377.0,
+  "origin": [
+   0.4956,
+   0.991
+  ],
+  "footprint": {
+   "x": -99,
+   "y": -39,
+   "w": 198,
+   "h": 39
+  },
+  "desc": "Wide northbound limestone promenade gateway section continuing toward Central Plaza, with paired attachment points for banners and lamps but no props."
+ },
+ "terrain_cascade-gardens-transition_south-01": {
+  "cat": "terrain",
+  "w": 583.7,
+  "h": 352.6,
+  "origin": [
+   0.5,
+   1.0593
+  ],
+  "footprint": {
+   "x": -99,
+   "y": -39,
+   "w": 198,
+   "h": 39
+  },
+  "desc": "Wide descending southern promenade threshold linking the Lower Ward toward Cascade Gardens, with garden-facing limestone edge and centered path."
+ },
+ "terrain_canal-bank_curve-inner-left-01": {
+  "cat": "terrain",
+  "w": 379.5,
+  "h": 316.8,
+  "origin": [
+   0.4983,
+   0.9798
+  ],
+  "footprint": {
+   "x": -84,
+   "y": -33,
+   "w": 167,
+   "h": 33
+  },
+  "desc": "Inner-left curved limestone canal bank with a dark recessed water-side face; no water."
+ },
+ "terrain_canal-bank_curve-outer-left-01": {
+  "cat": "terrain",
+  "w": 470.7,
+  "h": 299.8,
+  "origin": [
+   0.4779,
+   1.0267
+  ],
+  "footprint": {
+   "x": -84,
+   "y": -33,
+   "w": 167,
+   "h": 33
+  },
+  "desc": "Outer-left curved limestone canal bank with a dark recessed water-side face; no water."
+ },
+ "terrain_canal-bank_curve-inner-right-02": {
+  "cat": "terrain",
+  "w": 469.1,
+  "h": 313.0,
+  "origin": [
+   0.5239,
+   1.0052
+  ],
+  "footprint": {
+   "x": -84,
+   "y": -33,
+   "w": 167,
+   "h": 33
+  },
+  "desc": "Inner-right curved limestone canal bank with a dark recessed water-side face; no water."
+ },
+ "terrain_canal-bank_curve-outer-right-02": {
+  "cat": "terrain",
+  "w": 460.8,
+  "h": 319.4,
+  "origin": [
+   0.4667,
+   0.985
+  ],
+  "footprint": {
+   "x": -84,
+   "y": -33,
+   "w": 167,
+   "h": 33
+  },
+  "desc": "Outer-right curved limestone canal bank with a dark recessed water-side face; no water."
+ },
+ "terrain_canal-bank_endcap-01": {
+  "cat": "terrain",
+  "w": 432.3,
+  "h": 257.0,
+  "origin": [
+   0.5004,
+   1.1196
+  ],
+  "footprint": {
+   "x": -84,
+   "y": -33,
+   "w": 167,
+   "h": 33
+  },
+  "desc": "Finished limestone canal-bank termination with capped masonry and dark recessed water-side face; no water."
+ },
+ "effects_canal-water_curve-left-02": {
+  "cat": "effects",
+  "w": 512.4,
+  "h": 345.8,
+  "origin": [
+   0.4904,
+   0.8188
+  ],
+  "footprint": {
+   "x": -188,
+   "y": -63,
+   "w": 376,
+   "h": 63
+  },
+  "desc": "Left-curving strip of clear deep-azure canal water with pale moonlit reflections; water only, transparent outside."
+ },
+ "effects_canal-water_curve-right-03": {
+  "cat": "effects",
+  "w": 502.9,
+  "h": 319.6,
+  "origin": [
+   0.5024,
+   0.8422
+  ],
+  "footprint": {
+   "x": -188,
+   "y": -63,
+   "w": 376,
+   "h": 63
+  },
+  "desc": "Right-curving strip of clear deep-azure canal water with pale moonlit reflections; water only, transparent outside."
+ },
+ "effects_canal-water_under-bridge-04": {
+  "cat": "effects",
+  "w": 485.9,
+  "h": 291.0,
+  "origin": [
+   0.5059,
+   0.8629
+  ],
+  "footprint": {
+   "x": -188,
+   "y": -63,
+   "w": 376,
+   "h": 63
+  },
+  "desc": "Darkened straight canal-water section with subtle reflected stone and amber lamplight for placement beneath a bridge; water only."
+ },
+ "effects_waterfall-lip_terrace-01": {
+  "cat": "effects",
+  "w": 291.6,
+  "h": 264.3,
+  "origin": [
+   0.4475,
+   0.8748
+  ],
+  "footprint": {
+   "x": -166,
+   "y": -55,
+   "w": 332,
+   "h": 55
+  },
+  "desc": "Thin sheet of azure water beginning over a constructed limestone spillway edge, with delicate white crest foam; water effect only."
+ },
+ "effects_waterfall_tall-02": {
+  "cat": "effects",
+  "w": 189.3,
+  "h": 448.2,
+  "origin": [
+   0.504,
+   0.8431
+  ],
+  "footprint": {
+   "x": -110,
+   "y": -83,
+   "w": 221,
+   "h": 83
+  },
+  "desc": "Tall narrow architectural waterfall for the lowest terrace drop, luminous azure with white streaks and mist; no rocks or natural pond."
+ },
+ "effects_waterfall-foam_impact-01": {
+  "cat": "effects",
+  "w": 460.8,
+  "h": 200.1,
+  "origin": [
+   0.5,
+   1.0055
+  ],
+  "footprint": {
+   "x": -166,
+   "y": -55,
+   "w": 332,
+   "h": 55
+  },
+  "desc": "Wide white-and-pale-blue foam impact ribbon for a waterfall entering a constructed canal; transparent effect only."
+ },
+ "effects_canal-ripple_directional-01": {
+  "cat": "effects",
+  "w": 522.2,
+  "h": 325.4,
+  "origin": [
+   0.5,
+   0.8074
+  ],
+  "footprint": {
+   "x": -89,
+   "y": -35,
+   "w": 178,
+   "h": 35
+  },
+  "desc": "Subtle directional pale-blue ripples and reflective highlights for layering over canal water; transparent effect only."
+ },
+ "architecture_waterside-residence_left-facing-03": {
+  "cat": "architecture",
+  "w": 389.2,
+  "h": 357.1,
+  "origin": [
+   0.5023,
+   0.991
+  ],
+  "footprint": {
+   "x": -177,
+   "y": -59,
+   "w": 354,
+   "h": 59
+  },
+  "desc": "Two-story left-facing waterside residence with pale Gothic limestone, navy slate gable, warm windows, flower boxes, and a readable entrance."
+ },
+ "architecture_waterside-residence_right-facing-04": {
+  "cat": "architecture",
+  "w": 341.3,
+  "h": 360.0,
+  "origin": [
+   0.4884,
+   0.983
+  ],
+  "footprint": {
+   "x": -177,
+   "y": -59,
+   "w": 354,
+   "h": 59
+  },
+  "desc": "Two-story right-facing waterside residence with pale Gothic limestone, navy slate gable, warm windows, flower boxes, and a readable entrance."
+ },
+ "architecture_waterside-residence_narrow-townhouse-05": {
+  "cat": "architecture",
+  "w": 281.5,
+  "h": 537.5,
+  "origin": [
+   0.4949,
+   0.9876
+  ],
+  "footprint": {
+   "x": -118,
+   "y": -88,
+   "w": 236,
+   "h": 88
+  },
+  "desc": "Tall narrow terrace townhouse with ivory lower masonry, dark timber upper framing, steep navy roof, warm windows, and small flower boxes."
+ },
+ "architecture_waterside-residence_upper-terrace-06": {
+  "cat": "architecture",
+  "w": 398.9,
+  "h": 361.1,
+  "origin": [
+   0.4874,
+   0.9801
+  ],
+  "footprint": {
+   "x": -177,
+   "y": -59,
+   "w": 354,
+   "h": 59
+  },
+  "desc": "Refined upper-terrace residence with pointed Gothic windows, taller navy roofline, limestone steps, warm amber interior light, and dense flowers."
+ },
+ "architecture_waterside-residence_corner-townhouse-07": {
+  "cat": "architecture",
+  "w": 343.8,
+  "h": 420.1,
+  "origin": [
+   0.4984,
+   0.9863
+  ],
+  "footprint": {
+   "x": -151,
+   "y": -69,
+   "w": 302,
+   "h": 69
+  },
+  "desc": "Compact corner townhouse designed to terminate a residential row, showing two connected fa\u00e7ades in the fixed three-quarter view."
+ },
+ "architecture_waterside-residence_background-gable-08": {
+  "cat": "architecture",
+  "w": 333.4,
+  "h": 419.8,
+  "origin": [
+   0.5032,
+   0.9872
+  ],
+  "footprint": {
+   "x": -151,
+   "y": -69,
+   "w": 302,
+   "h": 69
+  },
+  "desc": "Small background gable residence with a tall navy roof, pale Gothic window, chimney, and restrained flowering window box."
+ },
+ "architecture_waterside-residence_edge-left-09": {
+  "cat": "architecture",
+  "w": 341.6,
+  "h": 358.6,
+  "origin": [
+   0.5279,
+   0.987
+  ],
+  "footprint": {
+   "x": -177,
+   "y": -59,
+   "w": 354,
+   "h": 59
+  },
+  "desc": "Partial left-edge residential building segment with cropped continuation edge for dense scene framing; complete placement-facing fa\u00e7ade."
+ },
+ "architecture_waterside-residence_edge-right-10": {
+  "cat": "architecture",
+  "w": 369.0,
+  "h": 365.0,
+  "origin": [
+   0.4244,
+   0.9695
+  ],
+  "footprint": {
+   "x": -177,
+   "y": -59,
+   "w": 354,
+   "h": 59
+  },
+  "desc": "Partial right-edge residential building segment with cropped continuation edge for dense scene framing; complete placement-facing fa\u00e7ade."
+ },
+ "architecture_stair-top-cottage_main-01": {
+  "cat": "architecture",
+  "w": 334.4,
+  "h": 360.0,
+  "origin": [
+   0.4736,
+   0.983
+  ],
+  "footprint": {
+   "x": -160,
+   "y": -55,
+   "w": 321,
+   "h": 55
+  },
+  "desc": "Small elegant residence positioned beside an upper stair landing, with ivory Gothic fa\u00e7ade, navy roof, warm doorway, and flower planters."
+ },
+ "props_wall-lantern_amber-01": {
+  "cat": "props",
+  "w": 87.6,
+  "h": 150.5,
+  "origin": [
+   0.5163,
+   1.022
+  ],
+  "footprint": {
+   "x": -27,
+   "y": -17,
+   "w": 54,
+   "h": 17
+  },
+  "desc": "Compact charcoal wrought-iron wall sconce with contained warm amber glass light; isolated mounting fixture."
+ },
+ "props_hanging-shop-lantern_amber-01": {
+  "cat": "props",
+  "w": 95.2,
+  "h": 154.7,
+  "origin": [
+   0.5068,
+   0.96
+  ],
+  "footprint": {
+   "x": -29,
+   "y": -15,
+   "w": 58,
+   "h": 15
+  },
+  "desc": "Ornate hanging charcoal shop lantern on a short bracket with contained warm amber glow."
+ },
+ "props_ward-canopy_wide-01": {
+  "cat": "props",
+  "w": 337.9,
+  "h": 225.3,
+  "origin": [
+   0.5,
+   0.96
+  ],
+  "footprint": {
+   "x": -58,
+   "y": -23,
+   "w": 115,
+   "h": 23
+  },
+  "desc": "Wide deep-navy fabric market canopy with subtle folds, scalloped edge, ropes, and attachment rings; canopy only."
+ },
+ "props_ward-canopy_narrow-02": {
+  "cat": "props",
+  "w": 313.3,
+  "h": 214.9,
+  "origin": [
+   0.4902,
+   1.0062
+  ],
+  "footprint": {
+   "x": -58,
+   "y": -23,
+   "w": 115,
+   "h": 23
+  },
+  "desc": "Narrow deep-navy fabric storefront canopy with subtle folds and clean mounting edge; canopy only."
+ },
+ "props_ward-canopy_angled-03": {
+  "cat": "props",
+  "w": 311.7,
+  "h": 215.4,
+  "origin": [
+   0.458,
+   1.0041
+  ],
+  "footprint": {
+   "x": -58,
+   "y": -23,
+   "w": 115,
+   "h": 23
+  },
+  "desc": "Asymmetrical angled deep-navy shade canopy for a corner workshop terrace, with ropes and natural fabric tension."
+ },
+ "props_flower-pot_round-01": {
+  "cat": "props",
+  "w": 239.0,
+  "h": 239.8,
+  "origin": [
+   0.4937,
+   1.004
+  ],
+  "footprint": {
+   "x": -42,
+   "y": -25,
+   "w": 85,
+   "h": 25
+  },
+  "desc": "Round ivory stone flower pot overflowing with white and pale-blue blossoms and deep muted greenery."
+ },
+ "props_window-flower-box_main-01": {
+  "cat": "props",
+  "w": 318.6,
+  "h": 187.2,
+  "origin": [
+   0.4993,
+   1.0435
+  ],
+  "footprint": {
+   "x": -58,
+   "y": -23,
+   "w": 115,
+   "h": 23
+  },
+  "desc": "Narrow dark window box filled densely with ivory and pale-blue flowers; no window or wall."
+ },
+ "props_railing-flower-box_main-01": {
+  "cat": "props",
+  "w": 324.7,
+  "h": 225.3,
+  "origin": [
+   0.5203,
+   0.96
+  ],
+  "footprint": {
+   "x": -58,
+   "y": -23,
+   "w": 115,
+   "h": 23
+  },
+  "desc": "Long narrow flower box designed to hang from a terrace railing, filled with white blossoms and trailing greenery; no railing."
+ },
+ "props_market-storage-cluster_barrels-baskets-01": {
+  "cat": "props",
+  "w": 243.8,
+  "h": 175.2,
+  "origin": [
+   0.4906,
+   1.0514
+  ],
+  "footprint": {
+   "x": -52,
+   "y": -20,
+   "w": 104,
+   "h": 20
+  },
+  "desc": "Compact artisan storage cluster of muted timber barrels, woven baskets, ceramic jugs, and folded navy cloth."
+ },
+ "props_limestone-bench_main-01": {
+  "cat": "props",
+  "w": 220.8,
+  "h": 152.0,
+  "origin": [
+   0.5145,
+   1.1106
+  ],
+  "footprint": {
+   "x": -52,
+   "y": -20,
+   "w": 104,
+   "h": 20
+  },
+  "desc": "Small elegant pale limestone terrace bench with restrained Gothic carving and clean ground contact."
+ },
+ "props_laundry-line_navy-ivory-01": {
+  "cat": "props",
+  "w": 265.9,
+  "h": 159.7,
+  "origin": [
+   0.48,
+   1.1083
+  ],
+  "footprint": {
+   "x": -47,
+   "y": -18,
+   "w": 94,
+   "h": 18
+  },
+  "desc": "Residential clothesline with a few tasteful navy and ivory linens, dark mounting hooks, and gentle fabric drape."
+ },
+ "props_cafe-chalkboard_blank-01": {
+  "cat": "props",
+  "w": 177.0,
+  "h": 226.0,
+  "origin": [
+   0.4689,
+   1.0177
+  ],
+  "footprint": {
+   "x": -44,
+   "y": -24,
+   "w": 89,
+   "h": 24
+  },
+  "desc": "Small dark timber caf\u00e9 chalkboard sign with a completely blank charcoal writing surface and no readable text."
+ },
+ "vegetation_flowering-shrub_low-01": {
+  "cat": "vegetation",
+  "w": 330.0,
+  "h": 162.1,
+  "origin": [
+   0.488,
+   1.1127
+  ],
+  "footprint": {
+   "x": -30,
+   "y": -16,
+   "w": 61,
+   "h": 16
+  },
+  "desc": "Low dense terrace shrub with muted dark foliage and clusters of ivory and pale-blue flowers."
+ },
+ "vegetation_terrace-hedge_dense-01": {
+  "cat": "vegetation",
+  "w": 388.1,
+  "h": 168.7,
+  "origin": [
+   0.4972,
+   1.0163
+  ],
+  "footprint": {
+   "x": -35,
+   "y": -14,
+   "w": 70,
+   "h": 14
+  },
+  "desc": "Long dense clipped hedge in deep blue-green foliage with scattered small ivory blossoms."
+ },
+ "vegetation_shade-tree_dark-leafy-01": {
+  "cat": "vegetation",
+  "w": 367.4,
+  "h": 335.7,
+  "origin": [
+   0.5,
+   0.96
+  ],
+  "footprint": {
+   "x": -33,
+   "y": -24,
+   "w": 66,
+   "h": 24
+  },
+  "desc": "Medium dark-leafy shade tree with a complete trunk and broad asymmetric canopy for upper residential terraces."
+ },
+ "vegetation_wall-flower-cluster_main-01": {
+  "cat": "vegetation",
+  "w": 337.9,
+  "h": 225.3,
+  "origin": [
+   0.5,
+   0.96
+  ],
+  "footprint": {
+   "x": -30,
+   "y": -16,
+   "w": 61,
+   "h": 16
+  },
+  "desc": "Dense wall-clinging cluster of white and pale-blue flowers with muted trailing greenery; no wall."
+ },
+ "vegetation_foreground-blossom-canopy_dense-01": {
+  "cat": "vegetation",
+  "w": 337.9,
+  "h": 225.3,
+  "origin": [
+   0.5,
+   0.96
+  ],
+  "footprint": {
+   "x": -30,
+   "y": -16,
+   "w": 61,
+   "h": 16
+  },
+  "desc": "Large dense foreground canopy of ivory blossoms and deep leaves for lower-corner scene framing; branches enter from one side."
+ },
+ "vegetation_terrace-ivy_corner-wrap-02": {
+  "cat": "vegetation",
+  "w": 216.9,
+  "h": 225.3,
+  "origin": [
+   0.4959,
+   0.96
+  ],
+  "footprint": {
+   "x": -30,
+   "y": -16,
+   "w": 61,
+   "h": 16
+  },
+  "desc": "L-shaped corner-wrapping ivy and white blossom growth for joining two limestone wall faces; vegetation only."
+ },
+ "prop_crystal-fountain_main": {
+  "cat": "props",
+  "w": 258.7,
+  "h": 239.8,
+  "origin": [
+   0.5,
+   1.0
+  ],
+  "footprint": {
+   "x": -113,
+   "y": -65,
+   "w": 226,
+   "h": 65
+  },
+  "desc": ""
+ },
+ "prop_street-lamp_01": {
+  "cat": "props",
+  "w": 59.4,
+  "h": 202.0,
+  "origin": [
+   0.7476,
+   1.0
+  ],
+  "footprint": {
+   "x": -8,
+   "y": -10,
+   "w": 16,
+   "h": 10
+  },
+  "desc": ""
+ },
+ "vegetation_white-tree_01": {
+  "cat": "vegetation",
+  "w": 222.0,
+  "h": 287.3,
+  "origin": [
+   0.5005,
+   1.0
+  ],
+  "footprint": {
+   "x": -16,
+   "y": -18,
+   "w": 32,
+   "h": 18
+  },
+  "desc": ""
+ },
+ "architecture_market-stall_01": {
+  "cat": "architecture",
+  "w": 388.0,
+  "h": 407.0,
+  "origin": [
+   0.5,
+   1.0
+  ],
+  "footprint": {
+   "x": -168,
+   "y": -72,
+   "w": 336,
+   "h": 72
+  },
+  "desc": ""
+ },
+ "prop_dock-crate_01": {
+  "cat": "props",
+  "w": 82.0,
+  "h": 87.5,
+  "origin": [
+   0.5,
+   1.0
+  ],
+  "footprint": {
+   "x": -35,
+   "y": -24,
+   "w": 70,
+   "h": 24
+  },
+  "desc": ""
+ }
+}
