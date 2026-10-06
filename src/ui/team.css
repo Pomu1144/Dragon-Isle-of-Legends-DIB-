@@ -1,0 +1,87 @@
+/* Monsters / team selector (src/ui/team.ts). The sheet is 1280x720 px and scaled to the stage, so sizes here are
+   in that space. Text follows the original: heavy Arial with a dark outline, titles in pale cyan. Art URLs are set
+   from team.ts so they resolve against the page. */
+.tm-root { position: absolute; inset: 0; z-index: 18; overflow: hidden; background: #050403; animation: fade .2s; }
+.tm-bg { position: absolute; inset: 0; background-repeat: no-repeat; }
+/* the original crops in close on the barn and keeps it dark */
+.tm-root.barn .tm-bg { background-size: 124% auto; background-position: 50% 42%; filter: brightness(.4) saturate(.85); }
+.tm-root.stone .tm-bg { background-size: cover; background-position: center; filter: brightness(.42) saturate(.8); }
+.tm-sheet { position: absolute; left: 0; top: 0; width: 1280px; height: 720px; transform-origin: 0 0; touch-action: none;
+  font-family: Arial, Helvetica, sans-serif; color: #fff; user-select: none;
+  --tm-ink: 0 0 2px #000, 0 0 3px #000, 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 0 2px 1px #000; }
+
+.tm-title { position: absolute; left: 50%; top: 13px; transform: translateX(-50%); font: 900 31px/1 Arial, Helvetica, sans-serif;
+  color: #9accdc; text-shadow: var(--tm-ink); white-space: nowrap; cursor: pointer; z-index: 120; }
+.tm-nav { position: absolute; padding: 0; transform: translate(-50%, -50%); z-index: 120; filter: drop-shadow(0 2px 3px rgba(0,0,0,.55)); transition: filter .12s; }
+.tm-nav img { display: block; height: 100%; }
+.tm-nav.flip img { transform: scaleX(-1); }
+.tm-nav:hover { filter: brightness(1.3) drop-shadow(0 0 6px rgba(120,230,255,.6)); }
+.tm-nav:active img { translate: 0 2px; }
+.tm-first, .tm-last { top: 62px; height: 68px; }
+.tm-prev, .tm-next { top: 62px; height: 62px; }
+.tm-first { left: 290px; } .tm-prev { left: 410px; } .tm-next { left: 870px; } .tm-last { left: 990px; }
+.tm-down { left: 640px; top: 76px; height: 46px; }
+.tm-close { left: 1224px; top: 48px; height: 60px; }
+
+.tm-row { position: absolute; left: 0; width: 1280px; height: 0; }
+.tm-card { position: absolute; left: 549px; top: -91px; width: 182px; height: 182px; transform-origin: 50% 92%; cursor: pointer;
+  transition: transform .3s cubic-bezier(.2,.8,.3,1), opacity .2s; animation: tm-in .25s; }
+@keyframes tm-in { from { opacity: 0; } }
+.tm-card > img { position: absolute; pointer-events: none; -webkit-user-drag: none; }
+.tm-frame { left: 0; top: 0; width: 100%; height: 100%; filter: drop-shadow(0 4px 5px rgba(0,0,0,.45)); }
+.tm-frame.tm-arrows { mix-blend-mode: luminosity; transform: scaleY(-1); filter: none; }
+.tm-spr { left: 9%; top: 9%; width: 82%; height: 82%; object-fit: contain; filter: drop-shadow(0 4px 4px rgba(0,25,35,.5)); }
+.tm-el { right: -4%; bottom: -3%; width: 40%; height: 40%; object-fit: contain; filter: drop-shadow(0 2px 2px rgba(0,0,0,.6)); }
+.tm-soul { left: -5%; bottom: 3%; width: 21%; height: 21%; object-fit: contain; filter: drop-shadow(0 2px 2px rgba(0,0,0,.6)); }
+/* the active row's centre card sits on a dark plate with a light rounded rim */
+.tm-hl { position: absolute; inset: -20px; border: 6px solid #f3f3f0; border-radius: 17px; background: rgba(6,5,4,.62);
+  box-shadow: 0 0 8px rgba(0,0,0,.7), inset 0 0 6px rgba(0,0,0,.6); display: none; }
+.tm-card.hl .tm-hl { display: block; }
+.tm-card.lift { opacity: .3; }
+.tm-row.drop .tm-card.focus { filter: brightness(1.25); }
+.tm-card.tm-drag { position: absolute; z-index: 300; pointer-events: none; transform: scale(.86) rotate(-3deg); transition: none; animation: none;
+  filter: drop-shadow(0 14px 14px rgba(0,0,0,.65)); }
+
+.tm-lab { position: absolute; left: 0; right: 0; z-index: 110; text-align: center; pointer-events: none; font: 900 20px/24px Arial, Helvetica, sans-serif;
+  color: #fff; text-shadow: var(--tm-ink); }
+.tm-lv { display: inline-flex; align-items: center; gap: 3px; }
+.tm-lv img { height: 23px; filter: drop-shadow(0 1px 1px #000); }
+.tm-lv small { font-size: 13px; margin-right: 5px; }
+
+.tm-party { position: absolute; left: 30px; width: 190px; top: 236px; text-align: center; font: 900 37px/1 Arial, Helvetica, sans-serif;
+  color: #9accdc; text-shadow: var(--tm-ink); pointer-events: none; }
+.tm-souls { position: absolute; left: 34px; top: 296px; width: 182px; max-height: 236px; overflow: auto; display: flex; flex-wrap: wrap;
+  justify-content: center; gap: 4px; scrollbar-width: none; }
+.tm-stone { width: 52px; height: 52px; padding: 2px; transition: transform .12s, filter .12s; filter: drop-shadow(0 2px 2px rgba(0,0,0,.6)); }
+.tm-stone img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.tm-stone.sel { transform: scale(1.14); filter: brightness(1.15) drop-shadow(0 0 5px #fff6c0) drop-shadow(0 0 3px #fff); }
+
+/* Sort: dark wood (the grain of the kit's carved plank, stained dark) in a pale rounded rim, like the original */
+.tm-sort { position: absolute; left: 20px; top: 548px; width: 100px; height: 58px; padding: 0; overflow: hidden; border: 3px solid #c4c1ba; border-radius: 10px;
+  font: 900 27px/1 Arial, Helvetica, sans-serif; color: #fff; text-shadow: var(--tm-ink);
+  box-shadow: 0 0 0 1px #15100c, inset 0 0 0 1px rgba(0,0,0,.8), inset 0 0 6px rgba(0,0,0,.6), 0 3px 5px rgba(0,0,0,.6); }
+.tm-sort > span { position: relative; }
+/* turned so the grain runs vertically, as on the original button */
+.tm-sort .tm-wood { position: absolute; inset: -22px 22px; transform: rotate(90deg); background-size: 260% 300%; background-position: 60% 50%;
+  filter: brightness(.3) saturate(1.6) hue-rotate(-20deg) contrast(1.3); }
+.tm-sort:hover .tm-wood { filter: brightness(.4) saturate(1.6) hue-rotate(-20deg) contrast(1.3); }
+.tm-sort:active { translate: 0 2px; }
+.tm-order { position: absolute; left: 24px; top: 641px; font: 400 34px/1 Arial, Helvetica, sans-serif; color: #fff; text-shadow: var(--tm-ink); pointer-events: none; }
+.tm-order b { font-size: .74em; font-weight: 400; vertical-align: .1em; margin: 0 1px; }
+.tm-foot { position: absolute; left: 0; right: 0; top: 675px; text-align: center; font: 900 29px/1 Arial, Helvetica, sans-serif;
+  color: #9accdc; text-shadow: var(--tm-ink); pointer-events: none; }
+
+.m-menu.tm-menu { top: 104px; left: 50%; transform: translateX(-50%); z-index: 200; min-width: 300px; gap: 5px; }
+.tm-menu .bt-mi { font-size: 19px; text-align: center; padding: 3px 10px; }
+
+/* first-visit tutorial: dark navy plate with a pale gold rim, as in the original */
+.tm-tut-back { position: absolute; inset: 0; z-index: 250; }
+.tm-tut { position: absolute; left: 50%; top: 478px; transform: translateX(-50%); width: 760px; padding: 9px 20px 11px; text-align: center;
+  border-radius: 7px; border: 3px solid #cbb57d; background: linear-gradient(180deg, #1c434c, #12323a 55%, #0e2830);
+  box-shadow: 0 0 0 2px #4b3d1d, inset 0 0 0 2px rgba(0,0,0,.4), inset 0 0 18px rgba(0,0,0,.35), 0 6px 16px rgba(0,0,0,.6); }
+.tm-tut-t { font: 900 33px/1.15 Arial, Helvetica, sans-serif; color: #fff; text-shadow: var(--tm-ink); }
+.tm-tut-x { font: 700 18px/1.3 Arial, Helvetica, sans-serif; color: #e2f1f4; text-shadow: var(--tm-ink); margin-top: 4px; }
+.tm-ok { position: absolute; left: 50%; top: 588px; transform: translateX(-50%); }
+.tm-ok .btn { min-width: 100px; min-height: 58px; font-size: 30px; }
+/* toasts would cover the footer: lift them above it while the screen is open */
+#ui:has(> .tm-root) .toast-wrap { bottom: 9.5%; }

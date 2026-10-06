@@ -46,6 +46,7 @@ export function modal(title: string, body: HTMLElement | ((close: () => void) =>
     h('div', { class: 'body' }, content));
   const back = h('div', { class: 'modal-back' }, box);
   back.addEventListener('pointerdown', (e) => { if (e.target === back) close(); });
+  for (const t of ['mousedown', 'touchstart']) back.addEventListener(t, (e) => e.stopPropagation()); // not through to the Phaser scene
   ui().append(back);
   modalStack.push(back);
   return close;
