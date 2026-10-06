@@ -217,3 +217,6 @@ input.text { font: inherit; padding: .5em .8em; border-radius: .5em; border: 1px
   text-shadow: 0 0 3px #000, 0 1px 0 #000; filter: drop-shadow(0 .3em .5em rgba(0,0,0,.45)); }
 .region-info.panel .muted { color: #e6f6ff; }
 .region-title h2 { font-family: Arial, Helvetica, sans-serif; font-weight: 900; color: #fff; text-shadow: 0 0 4px #000, 0 2px 0 #000; }
+.explore-bar { position: relative; width: 17em; height: 1.25em; margin: .35em auto 0; border-radius: .7em; background: rgba(0,0,0,.55); border: 2px solid #f6d27a; overflow: hidden; }
+.explore-bar i { position: absolute; left: 0; top: 0; bottom: 0; background: linear-gradient(#9be15d, #3fa34d); }
+.explore-bar span { position: relative; display: block; font: 800 .78em/1.6em Arial, sans-serif; color: #fff; text-shadow: 0 0 3px #000, 0 1px 0 #000; }

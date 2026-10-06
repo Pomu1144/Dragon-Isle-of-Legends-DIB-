@@ -22,7 +22,7 @@ npm test           # headless battle-engine + balance tests (vitest)
 | **Monsters** | All **224** wiki monsters: sprites, element, stars, base stats, abilities and evolution chains (Hatchling → Dragonling → Dragon → Wyrm…). Plus 3 original evolutions: **Moonreaver** (Dark Panther, Lv 75), and **Seraph** (Archangel, Lv 70) → **Empyrean** (Lv 100) |
 | **Battles** | Time-unit (CTB) combat as in the original. Up to 3 monsters per side are on the field with reserves behind them. Every wiki ability is modelled: physical/magical damage, the 7-element wheel, buffs/debuffs, stun, sleep, paralyze, confuse, doom, poison, taunt, disguise, no-guard, immunity, life-drain, recoil, reflect, per-kill and per-TU scaling, clones with shared HP, sacrifices, random summons and escape. Includes a turn-order timeline, auto-battle and 1–3× speed |
 | **Capturing** | Card, Silver Card and Gold Card. Lower HP and status effects raise the odds. One attempt per monster, as in the original |
-| **World** | 16 regions on the original 4×4 island layout, plus the **Underworld** across the sea (reached by boat from the Saintspring dock, or through the Unknown Relic as in the original), each a Higgsfield-painted map. About 240 walkable spots are placed on land automatically from each painting's land mask, with roads between neighbouring regions |
+| **World** | 16 regions on the original 4×4 island layout, plus the **Underworld** across the sea (reached by boat from the Saintspring dock, or through the Unknown Relic as in the original), each a Higgsfield-painted map shown at full resolution as a scrolling world twice the size of the screen (drag, arrow keys, or tap the minimap). Each region has 36 walkable spots placed on land from the painting's land mask, with roads between neighbouring regions. Unexplored land is hidden under fog of war, which lifts as you walk. Every region also hides 9 discoveries: 4 treasure chests, 2 monster lairs (rare, strong, capturable monsters), 2 breeder camps (battle for an egg) and a lookout tower that reveals the whole map. Exploring 100% of a region pays silver and a Golden Egg |
 | **Towns** | 8 towns (Corova, Westguard, Wesing, Longdale, Lorensia, Dundean, Ilios, Olympia). Each has a Guild with the town's real wiki quests, a Shop with wiki prices, a Recipe Lab, a Warp Gate, and an Arena (license tests) or Tournament where the original had one |
 | **Dungeons** | 13 dungeons (No Man's Castle, Lighthouse, Pirate's Cave, Sanctuary, the endless Abyss…). Procedural floors with battles, treasure, stairs, waypoints, spirit guardians and Fafnir in the Abyss |
 | **Dragon Overlords** | 12 boss fights (Arashi, Apalala, Ladon…), each using the monster form the wiki names |
@@ -86,6 +86,8 @@ python3 tools/ref_ui/slice_town_battle.py .cache/sheet_rgba.png public/assets/ui
 python3 tools/ref_ui/dewhite.py tools/ref_ui/battle_kit.png .cache/battle_kit_rgba.png
 python3 tools/ref_ui/slice_battle_kit.py .cache/battle_kit_rgba.png public/assets/ui/orig/bk
 ```
+
+The discovery markers (chest, tent, tower, lair) were generated with Higgsfield on white and are keyed the same way: `python3 tools/ref_ui/discoveries.py` reads `tools/ref_ui/disc/*.png` and writes `public/assets/ui/orig/disc/`.
 
 The battle matches `battle_reference2.png`:
 

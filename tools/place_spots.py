@@ -11,8 +11,11 @@ from PIL import Image
 
 ASSETS, DATA = sys.argv[1], sys.argv[2]
 gd = json.load(open(os.path.join(DATA, "gamedata.json")))
-GW, GH = 96, 54
-N_SPOTS = 15
+GW, GH = 128, 72
+N_SPOTS = 36          # walkable points per region (the region map is ~2x the screen and scrolls)
+LINK = 20             # max extra-road length, in grid cells
+# hidden discoveries per region (revealed by exploring; see src/scenes/Region.ts)
+DISCOVERIES = [("treasure", 4), ("rare", 2), ("breeder", 2), ("lookout", 1)]
 
 
 def land_mask(path):
@@ -28,7 +31,7 @@ def land_mask(path):
 
 
 def place(region, mask, rng):
-    margin_x, margin_y = 5, 5
+    margin_x, margin_y = 6, 6
     land = [(x, y) for y in range(margin_y, GH - margin_y) for x in range(margin_x, GW - margin_x) if mask[y][x]
             and sum(mask[yy][xx] for yy in range(y - 2, y + 3) for xx in range(x - 2, x + 3)) >= 22]
     if len(land) < N_SPOTS:
@@ -49,7 +52,7 @@ def place(region, mask, rng):
         edges.add(tuple(sorted((a, b))))
     for i in range(n):
         for j in sorted(range(n), key=lambda j: d(i, j))[1:3]:
-            if d(i, j) < 22:
+            if d(i, j) < LINK:
                 edges.add(tuple(sorted((i, j))))
     spots = [{"id": i, "x": round(p[0] / GW, 4), "y": round(p[1] / GH, 4), "kind": "field"} for i, p in enumerate(pts)]
     # exits toward neighbouring regions
@@ -82,6 +85,16 @@ def place(region, mask, rng):
     rng.shuffle(free[2:])
     for (kind, ref), s in zip(specials, free[::2] + free[1::2]):
         s["kind"], s["ref"] = kind, ref
+    # hidden discoveries on ordinary spots, spread out and away from the region's start points
+    taken = [s for s in spots if s["kind"] != "field"]
+    for kind, count in DISCOVERIES:
+        for _ in range(count):
+            free = [s for s in spots if s["kind"] == "field"]
+            if len(free) < 6:
+                break
+            far = max(free, key=lambda s: min(((s["x"] - t["x"]) * 16) ** 2 + ((s["y"] - t["y"]) * 9) ** 2 for t in taken) * rng.uniform(0.6, 1.0))
+            far["kind"] = kind
+            taken.append(far)
     # snap landmarks onto the painted buildings they belong to
     for ref, (ax, ay) in ANCHORS.get(region["id"], {}).items():
         holder = next((s for s in spots if s.get("ref") == ref), None)

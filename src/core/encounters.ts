@@ -48,6 +48,19 @@ export function wildEncounter(regionId: string, spot: number, rng: Rng = R): Enc
   return { kind: 'wild', team, bg: regionBg(r, spot), capturable: true, canFlee: true, reward: { silver } };
 }
 
+/** A lone, strong monster guarding a rare spot: picked from the region's strongest species, capturable. */
+export function rareEncounter(regionId: string, seed: number): Encounter {
+  const rng = new Rng(seed);
+  const r = region(regionId);
+  const pool = [...regionPool(r)].sort((a, b) => b.stars - a.stars);
+  const sp = rng.pick(pool.slice(0, Math.max(1, Math.ceil(pool.length / 4))));
+  const team = [makeMonster(sp, r.levels[1] + 3, rng, rng.int(5, 9))];
+  return {
+    kind: 'wild', name: sp.name, team, bg: regionBg(r, seed), capturable: true, canFlee: true,
+    reward: { silver: 80 + r.tier * 60, gold: 3 + r.tier }, intro: `A rare ${sp.name} blocks the way!`,
+  };
+}
+
 export function breederTeam(regionId: string, rng: Rng, size: number, bonus = 2, prefer?: string): MonsterInst[] {
   const r = region(regionId);
   const pool = regionPool(r);

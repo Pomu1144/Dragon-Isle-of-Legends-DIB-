@@ -39,6 +39,8 @@ export interface SaveData {
   visited: string[];
   stats: { battles: number; wins: number; captures: number; defeated: number };
   ending: boolean;
+  /** per region: spots seen (fog cleared) and discoveries used up (chests opened, breeders beaten, …) */
+  explore: Record<string, { seen: number[]; done: number[] }>;
   settings: { speed: number; auto: boolean; music: boolean; sfx: boolean };
 }
 
@@ -60,6 +62,7 @@ export function load(): boolean {
     const raw = localStorage.getItem(SAVE_KEY);
     if (!raw) return false;
     S = JSON.parse(raw);
+    S.explore ??= {}; // saves from before exploration existed
     return true;
   } catch { return false; }
 }
@@ -80,7 +83,7 @@ export function newGame(hero: string, starter: string) {
     heroXp: 0, skill: {}, bestLevel: {}, seen: [m.species], caught: [m.species], license: -1,
     quests: [], questsDone: [], questCount: 0, overlords: [], dungeons: {},
     location: { region: 'southern_alvalon', spot: start.id }, lastTown: { region: 'southern_alvalon', spot: start.id },
-    visited: ['southern_alvalon'], stats: { battles: 0, wins: 0, captures: 0, defeated: 0 }, ending: false,
+    visited: ['southern_alvalon'], stats: { battles: 0, wins: 0, captures: 0, defeated: 0 }, ending: false, explore: {},
     settings: { speed: 1, auto: false, music: true, sfx: true },
   };
   recordLevel(m);
@@ -302,3 +305,14 @@ export function hash(s: string) {
 }
 
 export function currentRegion() { return region(S.location.region); }
+
+// ------------------------------------------------------------------ exploration
+export function exploreState(regionId: string) {
+  return (S.explore[regionId] ??= { seen: [], done: [] });
+}
+export function reveal(regionId: string, ids: number[]) {
+  const e = exploreState(regionId);
+  let added = 0;
+  for (const id of ids) if (!e.seen.includes(id)) { e.seen.push(id); added++; }
+  return added;
+}

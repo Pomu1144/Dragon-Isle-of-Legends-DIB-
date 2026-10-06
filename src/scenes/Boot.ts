@@ -26,6 +26,8 @@ export class BootScene extends Phaser.Scene {
       this.load.image(`bk_${k}`, `assets/ui/orig/bk/${k}.png`);
     for (const k of ['menu_m', 'leave', 'shop', 'hero', 'warp_emblem', 'emblem_house', 'house_a', 'warp_house', 'house_b', 'monsterpedia', 'monsters', 'signpost', 'trees', 'bigtree', 'bushes', 'farm', 'dock'])
       this.load.image(`town_${k}`, `assets/ui/orig/town/${k}.png`);
+    // discovery markers on the region maps (tools/ref_ui/discoveries.py)
+    for (const k of ['chest', 'tent', 'tower', 'lair']) this.load.image(`disc_${k}`, `assets/ui/orig/disc/${k}.png`);
     // soft particle textures
     const g = this.make.graphics({ x: 0, y: 0 }, false);
     for (let r = 16; r > 0; r--) { g.fillStyle(0xffffff, (1 - r / 16) * 0.25); g.fillCircle(16, 16, r); }

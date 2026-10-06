@@ -76,7 +76,7 @@ export interface GameData {
   characters: Record<string, string>;
 }
 
-export interface Spot { id: number; x: number; y: number; kind: 'field' | 'town' | 'dungeon' | 'overlord' | 'exit' | 'dock'; ref?: string; exit?: string }
+export interface Spot { id: number; x: number; y: number; kind: 'field' | 'town' | 'dungeon' | 'overlord' | 'exit' | 'dock' | 'treasure' | 'rare' | 'breeder' | 'lookout'; ref?: string; exit?: string }
 export type Maps = Record<string, { spots: Spot[]; edges: [number, number][] }>;
 
 /** A monster the player (or an NPC) owns. */
