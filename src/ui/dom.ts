@@ -53,12 +53,12 @@ export function modal(title: string, body: HTMLElement | ((close: () => void) =>
 export const anyModal = () => modalStack.length > 0;
 export function closeAllModals() { modalStack.forEach((m) => m.remove()); modalStack = []; }
 
-export function confirmBox(msg: string, yes: string = 'Yes'): Promise<boolean> {
+export function confirmBox(msg: string, yes: string = 'Yes', danger = false): Promise<boolean> {
   return new Promise((res) => {
     let done = false;
     const close = modal('Confirm', (c) => h('div', { class: 'col' }, h('p', {}, msg), h('div', { class: 'row', style: { justifyContent: 'flex-end' } },
       h('button', { class: 'btn', onClick: () => { done = true; c(); res(false); } }, 'Cancel'),
-      h('button', { class: 'btn gold', onClick: () => { done = true; c(); res(true); } }, yes))), { width: '28em', onClose: () => !done && res(false) });
+      h('button', { class: `btn ${danger ? 'red' : 'gold'}`, onClick: () => { done = true; c(); res(true); } }, yes))), { width: '28em', onClose: () => !done && res(false) });
     void close;
   });
 }
@@ -97,6 +97,12 @@ export function dialogue(lines: { who?: string; text: string }[]): Promise<void>
 }
 
 export const starsHtml = (n: number) => (n > 5 ? `★ ${n}` : '★'.repeat(Math.floor(n)) + (n % 1 ? '½' : ''));
+/** Star rating drawn with the painted star icons (text form kept in the title for tooltips). */
+export function stars(n: number) {
+  const star = (half = false) => h('img', { src: `assets/ui/${half ? 'halfstaricon' : 'staricon'}.png`, alt: '' });
+  const kids = n > 5 ? [star(), `${n}`] : [...Array.from({ length: Math.floor(n) }, () => star()), ...(n % 1 ? [star(true)] : [])];
+  return h('span', { class: 'stars', title: `${n} stars` }, ...kids);
+}
 
 /** replaceChildren that tolerates null/false entries. */
 export function fill(el: HTMLElement, ...kids: (Child | Child[])[]) {

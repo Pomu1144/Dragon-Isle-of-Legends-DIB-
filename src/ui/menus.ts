@@ -5,11 +5,11 @@ import {
   S, save, partySize, heroLevel, heroXpFor, skillPoints, heroBonus, GEM_SHAPES, gemSlotsUnlocked, destroyForSoul, equipSoul,
   eggPrizes, grantPrize, questDone, exportSave, importSave, findMon, allMonsters, EggPrize, fuse,
 } from '../core/state';
-import { h, modal, toast, confirmBox, promptBox, starsHtml, layer, anyModal, fill } from './dom';
+import { h, modal, toast, confirmBox, promptBox, stars, layer, anyModal, fill } from './dom';
 import { sfx, setAudio } from '../audio';
 import { openBook } from './book';
 
-export const elChip = (el: string) => h('span', { class: `chip el el-${el}` }, el);
+export const elChip = (el: string) => h('span', { class: `chip el el-${el}` }, h('img', { src: `assets/ui/element-${el.toLowerCase()}.png`, alt: '' }), el);
 
 export function monCard(m: MonsterInst, opts: { onClick?: () => void; sel?: boolean; extra?: HTMLElement } = {}) {
   const sp = species(m.species);
@@ -19,7 +19,7 @@ export function monCard(m: MonsterInst, opts: { onClick?: () => void; sel?: bool
     h('span', { class: 'rk' }, rankName(m.rank)),
     h('img', { src: spriteUrl(sp), loading: 'lazy', draggable: 'false' }),
     h('div', { class: 'nm' }, displayName(m)),
-    h('div', { class: 'row' }, elChip(sp.element), h('span', { class: 'stars' }, starsHtml(sp.stars))),
+    h('div', { class: 'row' }, elChip(sp.element), stars(sp.stars)),
     h('div', { class: 'bar', title: 'XP' }, h('i', { style: { width: `${Math.min(100, (m.xp / xpToNext(m)) * 100)}%` } })),
     m.soul ? h('div', { class: 'chip' }, `◆ ${m.soul.element} soul`) : null,
     h('div', { class: 'muted', style: { fontSize: '.75em' } }, `HP ${hp} · PWR ${power(m)}`),
@@ -46,7 +46,7 @@ export function speciesDetail(sp: Species, m?: MonsterInst, actions?: HTMLElemen
   return h('div', { class: 'detail' },
     h('div', { class: 'col' },
       h('div', { class: 'portrait' }, h('img', { src: spriteUrl(sp) })),
-      h('div', { class: 'row' }, h('span', { class: 'chip' }, `#${String(sp.id).padStart(3, '0')}`), elChip(sp.element), h('span', { class: 'stars' }, starsHtml(sp.stars))),
+      h('div', { class: 'row' }, h('span', { class: 'chip' }, `#${String(sp.id).padStart(3, '0')}`), elChip(sp.element), stars(sp.stars)),
       sp.types.length ? h('div', { class: 'row' }, ...sp.types.map((t) => h('span', { class: 'chip' }, t))) : null,
       actions ?? null),
     h('div', { class: 'col' },
@@ -118,7 +118,7 @@ export function monsterActions(m: MonsterInst, changed: () => void, deselect: ()
       h('button', { class: 'btn small', onClick: () => { void promptBox('Rename', 'Nickname', displayName(m), 16).then((n) => { if (n != null) { m.nick = n.trim().slice(0, 16) || undefined; save(); changed(); } }); } }, 'Rename'),
       h('button', {
         class: 'btn small red', disabled: S.party.length <= 1 && inParty, onClick: async () => {
-          if (await confirmBox(`Destroy ${displayName(m)} to extract its soul stone? This is permanent.`, 'Destroy')) {
+          if (await confirmBox(`Destroy ${displayName(m)} to extract its soul stone? This is permanent.`, 'Destroy', true)) {
             const s = destroyForSoul(m.uid);
             if (s) { sfx('magic'); toast(`Obtained a ${s.element} soul stone (+${Math.round(s.power * 100)}%)`); save(); deselect(); changed(); }
           }
@@ -145,7 +145,7 @@ export function pediaMenu() {
         return h('div', { class: `mcard ${seen ? '' : 'unknown'}`, onClick: () => seen && modal(s.name, speciesDetail(s), { width: '60em' }) },
           h('span', { class: 'lv' }, `#${String(s.id).padStart(3, '0')}`), caught ? h('span', { class: 'rk' }, '●') : null,
           h('img', { src: spriteUrl(s), loading: 'lazy' }), h('div', { class: 'nm' }, seen ? s.name : '???'),
-          seen ? h('div', { class: 'row' }, elChip(s.element), h('span', { class: 'stars' }, starsHtml(s.stars))) : null);
+          seen ? h('div', { class: 'row' }, elChip(s.element), stars(s.stars)) : null);
       })));
   };
   render();
@@ -288,7 +288,7 @@ export function systemMenu() {
       h('button', { class: 'btn', onClick: () => { navigator.clipboard?.writeText(exportSave()); toast('Save code copied to clipboard'); } }, 'Export save code'),
       h('button', { class: 'btn', onClick: () => { void promptBox('Import save', 'Paste your save code', '', 100000).then((c) => { if (c) { try { importSave(c); location.reload(); } catch { toast('Invalid save code'); } } }); } }, 'Import save')),
     h('p', { class: 'muted', style: { fontSize: '.85em' } }, 'Dragon Isle of Legends is a non-commercial fan rebuild of Dragon Island Blue. Monster art and data from the Dragon Island Blue Fandom wiki (CC BY-SA); original monster designs belong to their creators. Maps & backgrounds generated with Higgsfield.'),
-    h('button', { class: 'btn red', onClick: async () => { if (await confirmBox('Delete your save and start over?', 'Delete')) { localStorage.removeItem('dragon-isle-save-v1'); location.reload(); } } }, 'Delete save')), { width: '40em' });
+    h('button', { class: 'btn red', onClick: async () => { if (await confirmBox('Delete your save and start over?', 'Delete', true)) { localStorage.removeItem('dragon-isle-save-v1'); location.reload(); } } }, 'Delete save')), { width: '40em' });
 }
 
 export { RANKS, speciesByName, townData };

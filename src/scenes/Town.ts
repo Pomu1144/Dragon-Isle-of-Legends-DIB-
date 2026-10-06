@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { data, maps, region, regionByName, species, speciesByName, spriteUrl, town as townData } from '../core/data';
 import { S, save, buildQuest, questDone, questEvent, heroLevel, rollGem, findMon, allMonsters, fuse, partySize } from '../core/state';
 import { arenaEncounter, breederTeam } from '../core/encounters';
-import { h, layer, modal, toast, dialogue, confirmBox, starsHtml, fill } from '../ui/dom';
+import { h, layer, modal, toast, dialogue, confirmBox, stars, fill } from '../ui/dom';
 import { hud, openMenu, questGoalText, openEgg, monCard, elChip } from '../ui/menus';
 import { music, sfx } from '../audio';
 import { toRegion, toTown } from '../nav';
@@ -185,7 +185,7 @@ export class TownScene extends Phaser.Scene {
           const known = (n: string) => S.seen.includes(speciesByName(n)!.id);
           const img = (n: string) => h('img', { src: spriteUrl(speciesByName(n)!), style: { height: '3em', filter: known(n) ? '' : 'brightness(0) opacity(.4)' } });
           return h('div', { class: 'abil row' }, img(r.parts[0]), h('b', {}, '+'), img(r.parts[1]), h('b', {}, '='), img(r.result),
-            h('div', { class: 'col grow', style: { gap: '0' } }, h('b', {}, `${r.parts[0]} + ${r.parts[1]} → ${r.result}`), h('span', { class: 'row' }, elChip(res.element), h('span', { class: 'stars' }, starsHtml(res.stars)))),
+            h('div', { class: 'col grow', style: { gap: '0' } }, h('b', {}, `${r.parts[0]} + ${r.parts[1]} → ${r.result}`), h('span', { class: 'row' }, elChip(res.element), stars(res.stars))),
             h('button', { class: 'btn small gold', disabled: !(pa && pb), onClick: async () => {
               if (!(await confirmBox(`Fuse ${displayName(pa)} (Lv ${pa.level}) and ${displayName(pb!)} (Lv ${pb!.level}) into ${r.result}?`, 'Fuse'))) return;
               if (S.party.length <= 2 && S.party.includes(pa) && S.party.includes(pb!) && allMonsters().length <= 2) return toast('You need at least one other monster.');

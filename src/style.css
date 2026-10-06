@@ -340,3 +340,9 @@ table.list td, table.list th { border-bottom: 1px solid rgba(214,160,92,.35); }
 .pointer::before { content: ''; position: absolute; inset: 0; background: url(assets/ui/orig/bk/arrow.png) center / contain no-repeat; transform: rotate(90deg); }
 .wheel .seg .wl { display: inline-flex; align-items: center; gap: .1em; }
 .wheel .seg .wl img { height: 1.9em; }
+/* element chips carry the painted element medallion on a slate strip; star ratings use the painted stars */
+.chip.el { background: none; border-radius: 0; border-style: solid; border-color: transparent; border-width: .38em .5em;
+  border-image: url(assets/ui/btn/strip_slate.png) 20 26 fill stretch; padding: 0 .15em 0 0; color: #fff; text-shadow: var(--ink-soft); gap: .25em; }
+.chip.el img { height: 1.35em; margin: -.3em 0 -.3em -.25em; filter: drop-shadow(0 1px 1px rgba(0,0,0,.6)); }
+.stars { display: inline-flex; align-items: center; gap: 1px; color: #fff; font-weight: 800; }
+.stars img { height: 1.05em; filter: drop-shadow(0 1px 1px rgba(80,40,0,.55)); }
