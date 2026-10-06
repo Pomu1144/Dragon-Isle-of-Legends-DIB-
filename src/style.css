@@ -181,14 +181,14 @@ input.text { font: inherit; padding: .5em .8em; border-radius: .5em; border: 1px
 .bt-ab2 .d { grid-column: 1 / -1; font-size: .72em; color: #29475e; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .bt-prompt2 { position: absolute; left: 50%; top: 13%; transform: translateX(-50%); font: 900 1.2em Arial, sans-serif; color: #fff; text-shadow: 0 0 4px #000, 0 2px 0 #000; pointer-events: none; }
 .bt-menu { position: absolute; right: 2%; bottom: 33%; display: flex; flex-direction: column; gap: .3em; padding: .9em 1em; z-index: 5; min-width: 13em;
-  border: 14px solid transparent; border-image: url(assets/ui/orig/bk/panel_blue.png) 14 fill stretch; filter: drop-shadow(0 .4em .6em rgba(0,0,0,.5)); }
+  border: 14px solid transparent; border-image: url(/assets/ui/orig/bk/panel_blue.png) 14 fill stretch; filter: drop-shadow(0 .4em .6em rgba(0,0,0,.5)); }
 .bt-mh { font: 900 .85em Arial, sans-serif; color: #fff; text-shadow: 0 0 3px #000, 0 1px 0 #000; margin-top: .2em; }
 .bt-mi.on { background: linear-gradient(180deg, #fff6d0, #f2cf72); }
 .bt-speed { width: 2.6em; height: 2.4em; padding: .15em; border-radius: .4em; background: rgba(0,0,0,.15); }
 .bt-speed img { width: 100%; height: 100%; object-fit: contain; }
 .bt-speed.on { background: rgba(255,226,140,.55); box-shadow: 0 0 0 2px #f2cf72; }
 .parch-pop { position: absolute; left: 50%; bottom: 31%; transform: translateX(-50%); width: min(70%, 30em); padding: .8em 1.1em; z-index: 6;
-  border: 16px solid transparent; border-image: url(assets/ui/orig/bk/panel_parch.png) 16 fill stretch; color: #2b1d0e; font: 700 .95em Arial, sans-serif;
+  border: 16px solid transparent; border-image: url(/assets/ui/orig/bk/panel_parch.png) 16 fill stretch; color: #2b1d0e; font: 700 .95em Arial, sans-serif;
   filter: drop-shadow(0 .4em .6em rgba(0,0,0,.5)); cursor: pointer; }
 .parch-pop .pp-title { font: 900 1.25em Arial, sans-serif; margin-bottom: .2em; }
 .parch-pop .pp-text { margin-top: .35em; font-weight: 600; }
@@ -213,7 +213,7 @@ input.text { font: inherit; padding: .5em .8em; border-radius: .5em; border: 1px
 
 /* info boxes on map screens use the original blue panel */
 .region-info.panel { background: none; border-radius: 0; box-shadow: none; backdrop-filter: none; border: 14px solid transparent;
-  border-image: url(assets/ui/orig/bk/panel_blue.png) 14 fill stretch; color: #fff; font-family: Arial, Helvetica, sans-serif;
+  border-image: url(/assets/ui/orig/bk/panel_blue.png) 14 fill stretch; color: #fff; font-family: Arial, Helvetica, sans-serif;
   text-shadow: 0 0 3px #000, 0 1px 0 #000; filter: drop-shadow(0 .3em .5em rgba(0,0,0,.45)); }
 .region-info.panel .muted { color: #e6f6ff; }
 .region-title h2 { font-family: Arial, Helvetica, sans-serif; font-weight: 900; color: #fff; text-shadow: 0 0 4px #000, 0 2px 0 #000; }
@@ -231,7 +231,7 @@ input.text { font: inherit; padding: .5em .8em; border-radius: .5em; border: 1px
   --ink-soft: 0 0 3px rgba(0,0,0,.9), 0 1px 0 #000;
 }
 .btn {
-  --skin: url(assets/ui/btn/blue.png);
+  --skin: url(/assets/ui/btn/blue.png);
   position: relative; display: inline-flex; align-items: center; justify-content: center; gap: .35em;
   background: none; border-radius: 0; box-shadow: none;
   /* the art's corner braces are deep, so they are drawn larger (border-image-width) than the layout border:
@@ -243,106 +243,106 @@ input.text { font: inherit; padding: .5em .8em; border-radius: .5em; border: 1px
   filter: drop-shadow(0 .14em .18em rgba(0,0,0,.55));
   transition: transform .08s, filter .15s;
 }
-.btn.gold { --skin: url(assets/ui/btn/gold.png); color: #fff; }
-.btn.green { --skin: url(assets/ui/btn/green.png); }
-.btn.red { --skin: url(assets/ui/btn/red.png); }
+.btn.gold { --skin: url(/assets/ui/btn/gold.png); color: #fff; }
+.btn.green { --skin: url(/assets/ui/btn/green.png); }
+.btn.red { --skin: url(/assets/ui/btn/red.png); }
 .btn:hover { filter: brightness(1.13) drop-shadow(0 .14em .18em rgba(0,0,0,.55)); }
 .btn:active { transform: translateY(.08em); filter: brightness(.9) drop-shadow(0 .06em .08em rgba(0,0,0,.55)); }
 .btn[disabled] { filter: grayscale(.85) brightness(.82) contrast(.9) drop-shadow(0 .14em .18em rgba(0,0,0,.45)); opacity: .82; cursor: not-allowed; transform: none; }
 .btn.small { font-size: .86em; }
 /* icon-only buttons are round bronze medallions */
-.btn.icon { --skin: url(assets/ui/btn/round_blue.png); border: 0; border-image: none; padding: 0; min-height: 0;
+.btn.icon { --skin: url(/assets/ui/btn/round_blue.png); border: 0; border-image: none; padding: 0; min-height: 0;
   width: 2.5em; height: 2.5em; background: var(--skin) center / contain no-repeat; font-size: 1.05em; line-height: 1; }
 .btn.icon.small { width: 2.1em; height: 2.1em; font-size: .95em; }
-.btn.icon.gold { --skin: url(assets/ui/btn/round_gold.png); }
-.btn.icon.red { --skin: url(assets/ui/btn/round_red.png); }
-.btn.icon.close { --skin: url(assets/ui/btn/round_slate.png); font-size: 0; }
-.btn.icon.close::after { content: ''; position: absolute; inset: 24%; background: url(assets/ui/orig/bk/close.png) center / contain no-repeat; }
+.btn.icon.gold { --skin: url(/assets/ui/btn/round_gold.png); }
+.btn.icon.red { --skin: url(/assets/ui/btn/round_red.png); }
+.btn.icon.close { --skin: url(/assets/ui/btn/round_slate.png); font-size: 0; }
+.btn.icon.close::after { content: ''; position: absolute; inset: 24%; background: url(/assets/ui/orig/bk/close.png) center / contain no-repeat; }
 /* labels, hints, HUD badge and toasts sit on thin bronze-framed strips */
 .chip { background: none; border-radius: 0; border-style: solid; border-color: transparent; border-width: .42em .5em;
-  border-image: url(assets/ui/btn/strip_slate.png) 20 26 fill stretch; padding: 0 .25em; font: 800 .8em/1.25 Arial, Helvetica, sans-serif;
+  border-image: url(/assets/ui/btn/strip_slate.png) 20 26 fill stretch; padding: 0 .25em; font: 800 .8em/1.25 Arial, Helvetica, sans-serif;
   color: #fff; text-shadow: var(--ink-soft); }
 .chip.el { border-image: none; border: 0; border-radius: .35em; padding: .1em .5em; text-shadow: none; }
-.chip.panel { backdrop-filter: none; box-shadow: none; border-image: url(assets/ui/btn/strip_parch.png) 20 26 fill stretch; color: #3a2410;
+.chip.panel { backdrop-filter: none; box-shadow: none; border-image: url(/assets/ui/btn/strip_parch.png) 20 26 fill stretch; color: #3a2410;
   text-shadow: 0 1px 0 rgba(255,240,205,.6); filter: drop-shadow(0 .12em .15em rgba(0,0,0,.5)); }
 .hud-stats { background: none; border-radius: 0; border-style: solid; border-color: transparent; border-width: .45em .6em;
-  border-image: url(assets/ui/btn/strip_slate.png) 20 26 fill stretch; padding: 0 .3em; filter: drop-shadow(0 .12em .18em rgba(0,0,0,.5)); }
+  border-image: url(/assets/ui/btn/strip_slate.png) 20 26 fill stretch; padding: 0 .3em; filter: drop-shadow(0 .12em .18em rgba(0,0,0,.5)); }
 .toast { background: none; border-radius: 0; border-style: solid; border-color: transparent; border-width: .55em .75em;
-  border-image: url(assets/ui/btn/strip_slate.png) 20 26 fill stretch; padding: .05em .4em; font: 800 1em Arial, Helvetica, sans-serif;
+  border-image: url(/assets/ui/btn/strip_slate.png) 20 26 fill stretch; padding: .05em .4em; font: 800 1em Arial, Helvetica, sans-serif;
   color: #fff; text-shadow: var(--ink-soft); filter: drop-shadow(0 .2em .3em rgba(0,0,0,.6)); }
 /* tabs: blue buttons, the selected one turns gold */
-.tab { --skin: url(assets/ui/btn/blue.png); background: none; border-radius: 0; border-style: solid; border-color: transparent;
+.tab { --skin: url(/assets/ui/btn/blue.png); background: none; border-radius: 0; border-style: solid; border-color: transparent;
   border-width: .4em .95em; border-image: var(--skin) 50 58 fill / .95em 1.1em stretch; padding: .1em 0; font: 900 .88em/1.15 Arial, Helvetica, sans-serif;
   color: #fff; text-shadow: var(--ink); filter: drop-shadow(0 .1em .14em rgba(0,0,0,.5)); }
-.tab.on { --skin: url(assets/ui/btn/gold.png); color: #fff; background: none; }
+.tab.on { --skin: url(/assets/ui/btn/gold.png); color: #fff; background: none; }
 .tab:hover { filter: brightness(1.12) drop-shadow(0 .1em .14em rgba(0,0,0,.5)); }
 /* panels and modals use the kit's bronze-framed blue panel */
 .panel { background: none; border-radius: 0; box-shadow: none; backdrop-filter: none; border: 14px solid transparent;
-  border-image: url(assets/ui/orig/bk/panel_blue.png) 14 fill stretch; color: #fff; filter: drop-shadow(0 .35em .6em rgba(0,0,0,.55)); }
+  border-image: url(/assets/ui/orig/bk/panel_blue.png) 14 fill stretch; color: #fff; filter: drop-shadow(0 .35em .6em rgba(0,0,0,.55)); }
 .panel .muted, .modal .muted { color: #d9eef7; }
 .modal { font-family: Arial, Helvetica, sans-serif; text-shadow: var(--ink-soft); }
 .modal header { border-bottom: 0; padding: .2em .4em .6em; }
 .modal header h2 { position: relative; padding: .35em 1.7em .35em 2.9em; min-width: 9.5em; font: 900 1.25em/1.2 'Crimson Pro', Georgia, serif; color: #2b1d0e;
-  text-shadow: 0 1px 0 rgba(255,240,210,.6); background: url(assets/ui/kit/plank.png) center / 100% 100% no-repeat; letter-spacing: .02em; }
+  text-shadow: 0 1px 0 rgba(255,240,210,.6); background: url(/assets/ui/kit/plank.png) center / 100% 100% no-repeat; letter-spacing: .02em; }
 .modal .body { padding: .4em .5em .2em; }
-.dlg.panel { border-image: url(assets/ui/orig/bk/panel_parch.png) 16 fill stretch; border-width: 16px; color: #2b1d0e;
+.dlg.panel { border-image: url(/assets/ui/orig/bk/panel_parch.png) 16 fill stretch; border-width: 16px; color: #2b1d0e;
   font: 700 1.02em/1.35 Arial, Helvetica, sans-serif; text-shadow: none; }
 .dlg .who { font: 900 1.05em Arial, Helvetica, sans-serif; color: #7a2a12; }
 .dlg .muted { color: #6b5233; }
 /* battle / M menu items: parchment rows like the kit's parchment insets */
-.m-menu { background: none; border-radius: 0; box-shadow: none; border: 14px solid transparent; border-image: url(assets/ui/orig/bk/panel_blue.png) 14 fill stretch;
+.m-menu { background: none; border-radius: 0; box-shadow: none; border: 14px solid transparent; border-image: url(/assets/ui/orig/bk/panel_blue.png) 14 fill stretch;
   filter: drop-shadow(0 .4em .6em rgba(0,0,0,.5)); }
 .bt-mi { background: none; border-radius: 0; border-style: solid; border-color: transparent; border-width: .42em .5em;
-  border-image: url(assets/ui/btn/strip_parch.png) 20 26 fill stretch; padding: .05em .3em; color: #2b1d0e; text-shadow: 0 1px 0 rgba(255,240,205,.6); }
+  border-image: url(/assets/ui/btn/strip_parch.png) 20 26 fill stretch; padding: .05em .3em; color: #2b1d0e; text-shadow: 0 1px 0 rgba(255,240,205,.6); }
 .bt-mi:hover:not([disabled]) { filter: brightness(1.08); }
-.bt-mi.on { background: none; border-image: url(assets/ui/btn/gold.png) 50 58 fill / .95em 1.1em stretch; color: #fff; text-shadow: var(--ink); }
-.bt-mi.red { background: none; border-image: url(assets/ui/btn/red.png) 50 58 fill / .95em 1.1em stretch; color: #fff; text-shadow: var(--ink); }
+.bt-mi.on { background: none; border-image: url(/assets/ui/btn/gold.png) 50 58 fill / .95em 1.1em stretch; color: #fff; text-shadow: var(--ink); }
+.bt-mi.red { background: none; border-image: url(/assets/ui/btn/red.png) 50 58 fill / .95em 1.1em stretch; color: #fff; text-shadow: var(--ink); }
 input.text { border-radius: 0; background: none; border-style: solid; border-color: transparent; border-width: .45em .6em;
-  border-image: url(assets/ui/btn/strip_parch.png) 20 26 fill stretch; padding: .1em .3em; color: #2b1d0e; font: 800 1em Arial, Helvetica, sans-serif; outline: none; }
+  border-image: url(/assets/ui/btn/strip_parch.png) 20 26 fill stretch; padding: .1em .3em; color: #2b1d0e; font: 800 1em Arial, Helvetica, sans-serif; outline: none; }
 /* status chips that used to be flat colour fills now use the green/gold enamel skins */
 .chip.good, .chip.gold { border-width: .32em .7em; padding: .05em 0; color: #fff; text-shadow: var(--ink); }
-.chip.good { border-image: url(assets/ui/btn/green.png) 50 58 fill / .72em .84em stretch; }
-.chip.gold { border-image: url(assets/ui/btn/gold.png) 50 58 fill / .72em .84em stretch; }
+.chip.good { border-image: url(/assets/ui/btn/green.png) 50 58 fill / .72em .84em stretch; }
+.chip.gold { border-image: url(/assets/ui/btn/gold.png) 50 58 fill / .72em .84em stretch; }
 .hud-cards { display: inline-flex; align-items: center; gap: .2em; }
 .hud-cards img { height: 1.25em; filter: drop-shadow(0 1px 1px rgba(0,0,0,.6)); }
 /* checkboxes are medallions: slate when off, green when on */
 input[type=checkbox] { appearance: none; -webkit-appearance: none; width: 1.7em; height: 1.7em; margin: 0; cursor: pointer;
-  background: url(assets/ui/btn/round_slate.png) center / contain no-repeat; filter: drop-shadow(0 .08em .12em rgba(0,0,0,.5)); }
-input[type=checkbox]:checked { background-image: url(assets/ui/btn/round_green.png); }
+  background: url(/assets/ui/btn/round_slate.png) center / contain no-repeat; filter: drop-shadow(0 .08em .12em rgba(0,0,0,.5)); }
+input[type=checkbox]:checked { background-image: url(/assets/ui/btn/round_green.png); }
 select.text { font: 800 .95em Arial, Helvetica, sans-serif; color: #2b1d0e; background: none; border-radius: 0; border-style: solid; border-color: transparent;
-  border-width: .4em .55em; border-image: url(assets/ui/btn/strip_parch.png) 20 26 fill stretch; padding: 0 .2em; outline: none; }
+  border-width: .4em .55em; border-image: url(/assets/ui/btn/strip_parch.png) 20 26 fill stretch; padding: 0 .2em; outline: none; }
 /* list rows and info cards are parchment insets, like the kit's parchment labels */
 .abil { background: none; border-radius: 0; border-style: solid; border-color: transparent; border-width: 12px;
-  border-image: url(assets/ui/orig/bk/panel_parch.png) 16 fill stretch; padding: .2em .6em; color: #2b1d0e; text-shadow: none;
+  border-image: url(/assets/ui/orig/bk/panel_parch.png) 16 fill stretch; padding: .2em .6em; color: #2b1d0e; text-shadow: none;
   font-family: Arial, Helvetica, sans-serif; }
 .abil b, .abil h3 { color: #6e2a0e; }
 .abil .muted { color: #5c4630; }
 .abil .stars { color: #a8730b; }
 /* monster cards: teal enamel in a thin bronze frame, gold glow when selected */
 .mcard { background: none; border-radius: 0; border-style: solid; border-color: transparent; border-width: .5em;
-  border-image: url(assets/ui/btn/strip_teal.png) 20 26 fill stretch; padding: .1em; color: #fff; text-shadow: var(--ink-soft); }
+  border-image: url(/assets/ui/btn/strip_teal.png) 20 26 fill stretch; padding: .1em; color: #fff; text-shadow: var(--ink-soft); }
 .mcard:hover { border-color: transparent; filter: brightness(1.08); }
 .mcard.sel { border-color: transparent; box-shadow: none; filter: drop-shadow(0 0 .35em rgba(255,214,107,.95)); }
 .mcard .lv { color: #ffe08a; }
 /* progress bars use the kit's bronze bar casing */
 .bar { height: .95em; background: none; border-radius: 0; overflow: hidden; border-style: solid; border-color: transparent; border-width: .2em .32em;
-  border-image: url(assets/ui/orig/bk/bar_empty.png) 12 18 fill stretch; }
+  border-image: url(/assets/ui/orig/bk/bar_empty.png) 12 18 fill stretch; }
 .bar > i { border-radius: 0; background: linear-gradient(180deg, #8fe0ff, #2f86c8 55%, #1f5f99); box-shadow: inset 0 1px 0 rgba(255,255,255,.4); }
 .stat-row .bar > i { background: linear-gradient(180deg, #ffd27a, #e3861d 55%, #a85a10); }
 .explore-bar { height: 1.35em; background: none; border: 0; border-radius: 0; overflow: visible; border-style: solid; border-color: transparent;
-  border-width: .22em .36em; border-image: url(assets/ui/orig/bk/bar_empty.png) 12 18 fill stretch; }
+  border-width: .22em .36em; border-image: url(/assets/ui/orig/bk/bar_empty.png) 12 18 fill stretch; }
 .explore-bar i { background: linear-gradient(180deg, #b9ef7a, #4fae3a 55%, #2c7a24); }
 .explore-bar span { line-height: 1.1em; }
 table.list td, table.list th { border-bottom: 1px solid rgba(214,160,92,.35); }
 /* egg wheel: bronze rim and the kit's arrow as the pointer */
 .wheel { border: .55em solid #a8743a; box-shadow: 0 0 0 .15em #3a2410, inset 0 0 0 .15em #3a2410, 0 0 30px rgba(246,196,83,.35); }
 .pointer { position: relative; width: 1.7em; height: 1.9em; border: 0; filter: drop-shadow(0 2px 2px #000); }
-.pointer::before { content: ''; position: absolute; inset: 0; background: url(assets/ui/orig/bk/arrow.png) center / contain no-repeat; transform: rotate(90deg); }
+.pointer::before { content: ''; position: absolute; inset: 0; background: url(/assets/ui/orig/bk/arrow.png) center / contain no-repeat; transform: rotate(90deg); }
 .wheel .seg .wl { display: inline-flex; align-items: center; gap: .1em; }
 .wheel .seg .wl img { height: 1.9em; }
 /* element chips carry the painted element medallion on a slate strip; star ratings use the painted stars */
 .chip.el { background: none; border-radius: 0; border-style: solid; border-color: transparent; border-width: .38em .5em;
-  border-image: url(assets/ui/btn/strip_slate.png) 20 26 fill stretch; padding: 0 .15em 0 0; color: #fff; text-shadow: var(--ink-soft); gap: .25em; }
+  border-image: url(/assets/ui/btn/strip_slate.png) 20 26 fill stretch; padding: 0 .15em 0 0; color: #fff; text-shadow: var(--ink-soft); gap: .25em; }
 .chip.el img { height: 1.35em; margin: -.3em 0 -.3em -.25em; filter: drop-shadow(0 1px 1px rgba(0,0,0,.6)); }
 .stars { display: inline-flex; align-items: center; gap: 1px; color: #fff; font-weight: 800; }
 .stars img { height: 1.05em; filter: drop-shadow(0 1px 1px rgba(80,40,0,.55)); }
