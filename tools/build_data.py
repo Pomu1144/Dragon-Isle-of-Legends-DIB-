@@ -447,6 +447,14 @@ if os.path.exists(os.path.join(CUSTOM, "monsters.json")):
         if parent:
             parent["evolveLevel"], parent["evolveInto"] = c["evolveLevel"], c["name"]
 
+# HD sprites: tools/upscale_sprites.py writes NNN.webp next to NNN.png; the game uses those when present
+# (delete a .webp and re-run the upscaler after replacing its .png)
+for m in monsters:
+    if m.get("sprite"):
+        hd = os.path.splitext(m["sprite"])[0] + ".webp"
+        if os.path.exists(os.path.join(SPR, hd)):
+            m["sprite"] = hd
+
 # ---------------------------------------------------------------- regions / towns / dungeons
 REGIONS = [  # 4x4 grid exactly as on the in-game world map, with progression tier 0..15
     ("Forest of Mangal", 0, 0, 3), ("Norwoods", 1, 0, 6), ("North Earlsome", 2, 0, 10), ("Swinedene", 3, 0, 15),

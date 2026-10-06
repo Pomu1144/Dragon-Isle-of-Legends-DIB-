@@ -129,8 +129,8 @@ if __name__ == '__main__':
             print('skip', n)
             continue
         out = os.path.join(dst, os.path.splitext(n)[0] + '.webp')
-        if os.path.exists(out) and os.path.getmtime(out) >= os.path.getmtime(os.path.join(src, n)):
-            continue  # already done (lets an interrupted run resume)
+        if os.path.exists(out):
+            continue  # already done (lets an interrupted run resume); delete the .webp to redo it
         big = img if max(img.shape[:2]) >= MAX_SIDE else upscale(net, img)
         cv2.imwrite(out, big, [cv2.IMWRITE_WEBP_QUALITY, WEBP_QUALITY])
         print(f'{i + 1}/{len(names)} {n} {img.shape[1]}x{img.shape[0]}', flush=True)
