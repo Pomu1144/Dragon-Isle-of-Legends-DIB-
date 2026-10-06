@@ -422,6 +422,13 @@ for m in monsters:
         m["sprite"] = None
         missing.append(m["name"])
 
+# ---------------------------------------------------------------- original UI icons (stars, elements, menu icons)
+UI = os.path.join(OUT, "..", "ui")
+os.makedirs(UI, exist_ok=True)
+for f in ["StarIcon.png", "HalfStarIcon.png", "MonsterpediaIcon.png"] + [f"Element_{e}.png" for e in ELEMENTS]:
+    if f in imgs:
+        shutil.copy(os.path.join(RAW, "img", f), os.path.join(UI, f.lower().replace("_", "-")))
+
 # ---------------------------------------------------------------- custom (non-wiki) monsters
 CUSTOM = os.path.join(os.path.dirname(__file__), "custom")
 if os.path.exists(os.path.join(CUSTOM, "monsters.json")):

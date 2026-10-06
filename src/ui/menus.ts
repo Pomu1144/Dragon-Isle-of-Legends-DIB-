@@ -7,6 +7,7 @@ import {
 } from '../core/state';
 import { h, modal, toast, confirmBox, starsHtml, layer, anyModal, fill } from './dom';
 import { sfx, setAudio } from '../audio';
+import { openBook } from './book';
 
 export const elChip = (el: string) => h('span', { class: `chip el el-${el}` }, el);
 
@@ -76,8 +77,8 @@ export function hud(onMenu: (k: string) => void, extra: HTMLElement[] = []) {
 }
 
 export function openMenu(k: string, refresh: () => void) {
-  if (anyModal()) return;
-  ({ team: () => teamMenu(refresh), bag: () => bagMenu(refresh), pedia: pediaMenu, quests: questsMenu, hero: () => heroMenu(refresh), system: systemMenu } as Record<string, () => void>)[k]?.();
+  if (anyModal() || document.querySelector('[data-layer="book"]')) return;
+  ({ team: () => openBook('mine', refresh), bag: () => bagMenu(refresh), pedia: () => openBook('pedia', refresh), quests: questsMenu, hero: () => heroMenu(refresh), system: systemMenu } as Record<string, () => void>)[k]?.();
 }
 
 // ------------------------------------------------------------------ Team
@@ -103,7 +104,7 @@ export function teamMenu(refresh: () => void, tab: 'party' | 'storage' = 'party'
   modal('Monsters', root, { onClose: refresh });
 }
 
-function monsterActions(m: MonsterInst, changed: () => void, deselect: () => void) {
+export function monsterActions(m: MonsterInst, changed: () => void, deselect: () => void) {
   const inParty = S.party.includes(m);
   const idx = S.party.indexOf(m);
   const souls = S.souls;
