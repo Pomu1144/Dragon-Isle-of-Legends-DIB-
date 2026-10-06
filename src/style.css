@@ -180,8 +180,20 @@ input.text { font: inherit; padding: .5em .8em; border-radius: .5em; border: 1px
 .bt-ab2 .tu { font: 900 .85em Arial, sans-serif; color: #7a2a12; }
 .bt-ab2 .d { grid-column: 1 / -1; font-size: .72em; color: #29475e; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .bt-prompt2 { position: absolute; left: 50%; top: 13%; transform: translateX(-50%); font: 900 1.2em Arial, sans-serif; color: #fff; text-shadow: 0 0 4px #000, 0 2px 0 #000; pointer-events: none; }
-.bt-menu { position: absolute; left: 9%; bottom: 26.5%; display: flex; flex-direction: column; gap: .3em; padding: .5em; border-radius: .5em; z-index: 5;
-  background: linear-gradient(180deg, #5fb0c6, #3f8ea8); border: .22em solid #b9783a; box-shadow: inset 0 0 0 .12em #6e3d17, 0 .4em 1em rgba(0,0,0,.5); }
+.bt-menu { position: absolute; right: 2%; bottom: 33%; display: flex; flex-direction: column; gap: .3em; padding: .9em 1em; z-index: 5; min-width: 13em;
+  border: 14px solid transparent; border-image: url(assets/ui/orig/bk/panel_blue.png) 14 fill stretch; filter: drop-shadow(0 .4em .6em rgba(0,0,0,.5)); }
+.bt-mh { font: 900 .85em Arial, sans-serif; color: #fff; text-shadow: 0 0 3px #000, 0 1px 0 #000; margin-top: .2em; }
+.bt-mi.on { background: linear-gradient(180deg, #fff6d0, #f2cf72); }
+.bt-speed { width: 2.6em; height: 2.4em; padding: .15em; border-radius: .4em; background: rgba(0,0,0,.15); }
+.bt-speed img { width: 100%; height: 100%; object-fit: contain; }
+.bt-speed.on { background: rgba(255,226,140,.55); box-shadow: 0 0 0 2px #f2cf72; }
+.parch-pop { position: absolute; left: 50%; bottom: 31%; transform: translateX(-50%); width: min(70%, 30em); padding: .8em 1.1em; z-index: 6;
+  border: 16px solid transparent; border-image: url(assets/ui/orig/bk/panel_parch.png) 16 fill stretch; color: #2b1d0e; font: 700 .95em Arial, sans-serif;
+  filter: drop-shadow(0 .4em .6em rgba(0,0,0,.5)); cursor: pointer; }
+.parch-pop .pp-title { font: 900 1.25em Arial, sans-serif; margin-bottom: .2em; }
+.parch-pop .pp-text { margin-top: .35em; font-weight: 600; }
+.m-menu .bt-mi { display: flex; align-items: center; gap: .5em; }
+.m-menu .bt-mi img { width: 1.9em; height: 1.9em; }
 .bt-mi { padding: .4em .8em; border-radius: .35em; background: linear-gradient(180deg, #e9f6fb, #b7dbe8); border: .12em solid #6e3d17; color: #10243a; font: 900 .95em Arial, sans-serif; text-align: left; }
 .bt-mi.red { background: linear-gradient(180deg, #ffd0c8, #e98b7a); }
 .bt-mi[disabled] { opacity: .45; }

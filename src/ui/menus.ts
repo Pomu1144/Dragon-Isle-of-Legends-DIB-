@@ -65,8 +65,10 @@ export function speciesDetail(sp: Species, m?: MonsterInst, actions?: HTMLElemen
 // ------------------------------------------------------------------ HUD
 export function hud(onMenu: (k: string) => void, extra: HTMLElement[] = []) {
   const coin = (g = false) => h('span', { class: `coin ${g ? 'g' : ''}` });
-  const items: [string, string][] = [['team', 'Monsters'], ['pedia', 'Monsterpedia'], ['bag', 'Bag'], ['quests', 'Quests'], ['hero', 'Hero'], ['system', 'Settings']];
-  const menu = h('div', { class: 'm-menu' }, ...items.map(([k, l]) => h('button', { class: 'bt-mi', 'data-menu': k, onClick: () => { menu.classList.remove('open'); onMenu(k); } }, l)));
+  const items: [string, string, string][] = [['team', 'Monsters', 'btn_monsters'], ['pedia', 'Monsterpedia', 'btn_book'], ['bag', 'Bag', 'btn_bag'],
+    ['quests', 'Quests', 'btn_scroll'], ['hero', 'Hero', ''], ['system', 'Settings', 'btn_gear']];
+  const menu = h('div', { class: 'm-menu' }, ...items.map(([k, l, icon]) => h('button', { class: 'bt-mi', 'data-menu': k, onClick: () => { menu.classList.remove('open'); onMenu(k); } },
+    icon ? h('img', { src: `assets/ui/orig/bk/${icon}.png`, alt: '' }) : h('img', { src: 'assets/ui/orig/town/hero.png', alt: '' }), l)));
   return layer('hud', h('div', { class: 'hud' },
     h('button', { class: 'm-btn', title: 'Menu', 'data-testid': 'menu-m', onClick: () => menu.classList.toggle('open') }, h('img', { src: 'assets/ui/orig/town/menu_m.png', alt: 'M' })),
     menu,

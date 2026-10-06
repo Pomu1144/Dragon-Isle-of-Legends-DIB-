@@ -96,22 +96,33 @@ for name in RECTS:
     meta[name] = [int(img.shape[1]), int(img.shape[0])]
 
 # bottom battle panel: keep the frames, rebuild the middle panel's interior without the four
-# empty-slot silhouettes (row-wise blend between the clean left/right edges + original grain)
+# empty-slot silhouettes. Interior = per-row blend of the clean left/right edges + mottled noise
+# that imitates the panel's paper texture (no tiling, so no repeating shapes).
 panel = crop("battle/panel")
 ph, pw = panel.shape[:2]
-bgr = panel[..., :3].astype(np.float32)
-# middle panel interior (between the left ghost box and the right hero frame), above the HP bars
-x0, x1, y0, y1 = 182, 793, 14, 128
-clean_l = bgr[y0:y1, x0:x0 + 6].mean(1)
-clean_r = bgr[y0:y1, x1 - 6:x1].mean(1)
-t = np.linspace(0, 1, x1 - x0)[None, :, None]
-base = clean_l[:, None, :] * (1 - t) + clean_r[:, None, :] * t
-grain_src = bgr[y0:y1, x0:x0 + 40]
-hp = grain_src - cv2.GaussianBlur(grain_src, (0, 0), 3)
-grain = np.tile(hp, (1, (x1 - x0) // hp.shape[1] + 1, 1))[:, : x1 - x0]
-bgr[y0:y1, x0:x1] = np.clip(cv2.GaussianBlur(base, (0, 0), 2) + grain, 0, 255)
-panel[..., :3] = bgr.astype(np.uint8)
+x0, x1 = 182, 793
+rng = np.random.default_rng(11)
+
+
+def rebuild(img, y0, y1):
+    f = img[..., :3].astype(np.float32)
+    cl = f[y0:y1, x0:x0 + 5].mean(1)
+    cr = f[y0:y1, x1 - 5:x1].mean(1)
+    t = np.linspace(0, 1, x1 - x0)[None, :, None]
+    base = cv2.GaussianBlur(cl[:, None, :] * (1 - t) + cr[:, None, :] * t, (0, 0), 3)
+    h_, w_ = y1 - y0, x1 - x0
+    mottle = cv2.GaussianBlur(rng.normal(0, 1, (h_, w_)).astype(np.float32), (0, 0), 6) * 22
+    fine = rng.normal(0, 3.2, (h_, w_)).astype(np.float32)
+    f[y0:y1, x0:x1] = np.clip(base + (mottle + fine)[..., None] * np.array([0.8, 0.9, 1.0]), 0, 255)
+    img[..., :3] = f.astype(np.uint8)
+    return img
+
+
+panel = rebuild(panel, 14, 135)
 cv2.imwrite(os.path.join(OUT, "battle/panel.png"), panel)
 meta["battle/panel"] = [pw, ph]
+# variant for the player's turn (ability cards): no party HP bars at all
+cards = rebuild(crop("battle/panel"), 14, 157)
+cv2.imwrite(os.path.join(OUT, "battle/panel_cards.png"), cards)
 json.dump(meta, open(os.path.join(OUT, "pieces.json"), "w"), indent=1)
 print(json.dumps(meta))

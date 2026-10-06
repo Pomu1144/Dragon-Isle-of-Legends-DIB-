@@ -78,6 +78,25 @@ python3 tools/ref_ui/slice_town_battle.py .cache/sheet_rgba.png public/assets/ui
   - The bottom panel has the ghost box (capture cards, auto, speed and escape), your monsters with "HP/max" bars, and the hero portrait (tap it to toggle auto).
   - Magic attacks fire the original glowing orbs.
 
+### Battle UI kit
+
+`tools/ref_ui/battle_kit.png` has a white background. `dewhite.py` keys it out and `slice_battle_kit.py` cuts it into `public/assets/ui/orig/bk/`:
+
+```bash
+python3 tools/ref_ui/dewhite.py tools/ref_ui/battle_kit.png .cache/battle_kit_rgba.png
+python3 tools/ref_ui/slice_battle_kit.py .cache/battle_kit_rgba.png public/assets/ui/orig/bk
+```
+
+The battle matches `battle_reference2.png`:
+
+- **Your turn:** the left box shows the acting monster with its name and HP. The middle panel turns into its ability cards, each with TU and an ⓘ button that opens a parchment popup. Card art shows the kind of move: arrow for a quick physical hit, double arrow for a heavy or support move, flame for magic, and "???" for an empty slot.
+- **Targeting and capture:** tapping a card that needs a target puts the compass marker on each target. The small card beside each enemy's name throws a capture card at it.
+- **Scene buttons:** the round buttons flee, toggle auto battle, and open the scroll menu (card type and pause / 1× / 2× / 3×).
+- **Bars and effects:**
+  - HP bars are red above half health and orange below.
+  - Magic hits play element effects: tornado, water ring, red, green and web vortexes, and a sparkle.
+  - Dungeon battles get flickering candles.
+
 ## Project layout
 
 ```

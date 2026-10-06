@@ -2,8 +2,10 @@
  * Battle screen laid out like the original Dragon Island Blue (960x640 reference space):
  * enemies stand in the scene with coloured names and HP bars across the top, the turn queue
  * (time units until each monster acts) runs down the left, and the player's monsters sit in the
- * bottom panel between the ghost box and the hero portrait. UI art comes from the original sprite
- * sheet (public/assets/ui/orig, see tools/ref_ui/slice_town_battle.py).
+ * bottom panel between the ghost box and the hero portrait. On the player's turn the ghost box shows
+ * the acting monster and the middle panel turns into its ability cards (TU + info), as in
+ * tools/ref_ui/battle_reference2.png. Art: public/assets/ui/orig (slice_town_battle.py) and
+ * public/assets/ui/orig/bk (slice_battle_kit.py).
  */
 import Phaser from 'phaser';
 import { Battle, BattleEvent, Combatant } from '../core/battle';
@@ -33,6 +35,17 @@ const SLOT_X = [258, 416, 571, 723];
 const BAR_Y = 135, BAR_W = 133;
 const P = (x: number, y: number) => ({ x: OX + x * PS, y: PANEL_Y + y * PS });
 
+const FX_BY_ELEMENT: Record<string, string> = { Air: 'bk_fx_tornado', Water: 'bk_fx_ring', Fire: 'bk_fx_red', Earth: 'bk_fx_green', Death: 'bk_fx_web', Life: 'bk_fx_sparkle', Arcane: 'bk_fx_sparkle' };
+const DUNGEON_BGS = new Set(['cave', 'castle', 'ruins', 'sanctuary', 'piratecave', 'magma', 'abyss', 'lighthouse']);
+const CARD_Y = 470, CARD_H = 80;
+
+/** Card art like the original: quick physical hit, heavy/support move, magic, or a locked slot. */
+function cardArt(a: Ability) {
+  if (a.kind === 'magical') return 'bk_card_flame';
+  if (a.kind === 'physical' && (a.tu ?? 130) < 150) return 'bk_card_tail';
+  return 'bk_card_outrage';
+}
+
 const NAME_COLOR: Record<string, string> = { Water: '#8f8dff', Air: '#8f8dff', Fire: '#ff4b3b', Death: '#ff4b3b', Earth: '#52e052', Life: '#52e052', Arcane: '#ffd84a' };
 const STATUS_ICON: Record<string, string> = { stun: '💫', sleep: '💤', paralyze: '⚡', confuse: '❓', doom: '💀', taunt: '😤', disguise: '🫥', noguard: '🛡', berserk: '😡', poison: '☠' };
 const FONT = { fontFamily: '"Arial Black", Arial, Helvetica, sans-serif', fontStyle: 'bold' } as const;
@@ -50,6 +63,7 @@ interface View {
   extras: Phaser.GameObjects.GameObject[];
   shownHp: number;
   baseScale: number;
+  fill?: Phaser.GameObjects.Image;
 }
 
 export class BattleScene extends Phaser.Scene {
@@ -67,6 +81,13 @@ export class BattleScene extends Phaser.Scene {
   private coinText!: Phaser.GameObjects.Text;
   private nextView: Phaser.GameObjects.Container | null = null;
   private activeMark!: Phaser.GameObjects.Image;
+  private actorBox: Phaser.GameObjects.Container | null = null;
+  private cards: Phaser.GameObjects.Container | null = null;
+  private targets: Phaser.GameObjects.Image[] = [];
+  private minicards: Phaser.GameObjects.Image[] = [];
+  private cardType: 'card' | 'silver' | 'gold' = 'card';
+  private paused = false;
+  private panelImg!: Phaser.GameObjects.Image;
 
   init(req: BattleReq) {
     this.req = req;
@@ -78,6 +99,11 @@ export class BattleScene extends Phaser.Scene {
     this.actor = null;
     this.queue = [];
     this.nextView = null;
+    this.actorBox = null;
+    this.cards = null;
+    this.targets = [];
+    this.minicards = [];
+    this.paused = false;
   }
 
   create() {
@@ -88,13 +114,19 @@ export class BattleScene extends Phaser.Scene {
     bg.setScale(bg.scale * 1.12);
     this.tweens.add({ targets: bg, scale: bg.scale / 1.12, duration: 900, ease: 'Cubic.out' });
     // bottom panel from the original sheet: ghost box | party slots | hero portrait
-    this.add.image(OX, PANEL_Y, 'ui_panel').setOrigin(0, 0).setScale(PS).setDepth(40);
-    const ghostHit = this.add.zone(...Object.values(P(0, 0)) as [number, number], 168 * PS, PANEL.h * PS).setOrigin(0, 0).setDepth(45).setInteractive({ useHandCursor: true });
-    ghostHit.on('pointerdown', () => this.battleMenu());
+    this.panelImg = this.add.image(OX, PANEL_Y, 'ui_panel').setOrigin(0, 0).setScale(PS).setDepth(40);
     const heroHit = this.add.zone(P(800, 0).x, P(800, 0).y, 173 * PS, PANEL.h * PS).setOrigin(0, 0).setDepth(45).setInteractive({ useHandCursor: true });
     heroHit.on('pointerdown', () => this.toggleAuto());
-    const c = T(925, 34);
-    this.add.image(c.x, c.y, 'ui_coin').setDisplaySize(52 * K, 54 * K).setDepth(40);
+    if (DUNGEON_BGS.has(enc.bg)) this.candles();
+    // round buttons in the scene, bottom right (flee / monsters = auto / scroll = cards & speed)
+    ([['bk_btn_flee', 735, () => this.flee()], ['bk_btn_monsters', 822, () => this.toggleAuto()], ['bk_btn_scroll', 915, () => this.battleMenu()]] as const)
+      .forEach(([key, x, fn]) => {
+        const p = T(x, 408);
+        const b = this.add.image(p.x, p.y, key).setDisplaySize(62 * K, 62 * K).setDepth(39).setInteractive({ useHandCursor: true });
+        b.on('pointerover', () => b.setTint(0xfff0c0)).on('pointerout', () => b.clearTint()).on('pointerdown', () => { sfx('select'); fn(); });
+      });
+    const c = T(928, 32);
+    this.add.image(c.x, c.y, 'bk_coin').setDisplaySize(50 * K, 52 * K).setDepth(40);
     this.coinText = this.add.text(c.x, c.y, '0', { ...FONT, fontSize: `${30 * K}px`, color: '#ffffff', stroke: '#000', strokeThickness: 5 }).setOrigin(0.5).setDepth(41);
     this.activeMark = this.add.image(0, 0, 'ui_orb').setDepth(46).setVisible(false).setScale(0.8);
     this.tweens.add({ targets: this.activeMark, scale: 1.05, alpha: 0.6, duration: 500, yoyo: true, repeat: -1 });
@@ -118,16 +150,26 @@ export class BattleScene extends Phaser.Scene {
       const sc = Math.min(box / img.height, (box * 1.15) / img.width, c.boss ? 3.4 : 2.6);
       img.setScale(sc);
       const shadow = this.add.ellipse(feet.x, feet.y - 4, img.displayWidth * 0.75, 26, 0x000000, 0.35).setDepth(19);
-      const top = T(ENEMY_X[col], 30);
+      const top = T(ENEMY_X[col], 27);
       const name = this.add.text(top.x, top.y, displayName(c.inst), { ...FONT, fontSize: `${23 * K}px`, color: NAME_COLOR[sp.element] ?? '#fff', stroke: '#1a1030', strokeThickness: 6 }).setOrigin(0.5).setDepth(41);
-      const barPos = T(ENEMY_X[col], 54);
-      const frame = this.add.image(barPos.x, barPos.y, 'ui_hpbar').setDisplaySize(158 * K, 26 * K).setDepth(41);
+      const barPos = T(ENEMY_X[col], 58);
+      const bw = 150 * K, bh = 22 * K;
+      const frame = this.add.image(barPos.x, barPos.y, 'bk_bar_empty').setDisplaySize(bw, bh).setDepth(41);
+      const fillImg = this.add.image(barPos.x - bw / 2, barPos.y, 'bk_bar_red').setOrigin(0, 0.5).setDisplaySize(bw, bh).setDepth(42);
       const bar = this.add.graphics().setDepth(42);
-      const status = this.add.text(barPos.x, barPos.y + 22 * K, '', { fontSize: '18px' }).setOrigin(0.5, 0).setDepth(42);
-      const lv = this.add.text(barPos.x + 80 * K, barPos.y, `${c.inst.level}`, { ...FONT, fontSize: '14px', color: '#fff', stroke: '#000', strokeThickness: 4 }).setOrigin(0, 0.5).setDepth(42);
+      const status = this.add.text(barPos.x, barPos.y + 18 * K, '', { fontSize: '18px' }).setOrigin(0.5, 0).setDepth(42);
+      const lv = this.add.text(barPos.x + bw / 2 + 4, barPos.y, `${c.inst.level}`, { ...FONT, fontSize: '14px', color: '#fff', stroke: '#000', strokeThickness: 4 }).setOrigin(0, 0.5).setDepth(42);
+      // mini capture card beside the name: tap it to throw a card at this monster
+      const mp = T(ENEMY_X[col] - 118, 62);
+      const mini = this.add.image(mp.x, mp.y, 'bk_minicard').setDisplaySize(62 * K, 74 * K).setDepth(41);
+      if (this.req.enc.capturable && !c.temp) {
+        mini.setInteractive({ useHandCursor: true }).on('pointerdown', () => this.throwCard(c));
+        mini.on('pointerover', () => mini.setTint(0xfff0c0)).on('pointerout', () => mini.clearTint());
+      } else mini.setAlpha(0.35);
       v = {
         c, img, home: { x: feet.x, y: feet.y }, center: () => ({ x: img.x, y: img.y - img.displayHeight / 2 }),
-        bar, barBox: { x: barPos.x - 66 * K, y: barPos.y - 5 * K, w: 132 * K, h: 10 * K }, name, status, extras: [shadow, frame, lv], shownHp: c.pool.hp, baseScale: sc,
+        bar, barBox: { x: barPos.x - bw / 2, y: barPos.y - bh / 2, w: bw, h: bh }, name, status, extras: [shadow, frame, fillImg, lv, mini], shownHp: c.pool.hp, baseScale: sc,
+        fill: fillImg,
       };
       this.tweens.add({ targets: img, scaleY: sc * 1.02, duration: 1000 + Math.random() * 400, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
     } else {
@@ -161,6 +203,13 @@ export class BattleScene extends Phaser.Scene {
     const pct = Math.max(0, v.shownHp / v.c.pool.max);
     const { x, y, w, h: hh } = v.barBox;
     v.bar.clear();
+    if (v.fill) {
+      // original bars: red above half health, orange below; the empty bar shows through
+      v.fill.setTexture(pct > 0.5 ? 'bk_bar_red' : 'bk_bar_orange').setDisplaySize(w, hh);
+      v.fill.setCrop(0, 0, v.fill.width * pct, v.fill.height);
+      v.status.setText(Object.keys(v.c.statuses).map((k) => STATUS_ICON[k] ?? '').join('') + (v.c.poisons.length ? STATUS_ICON.poison : ''));
+      return;
+    }
     // the sheet's bar art is the "full" state: darken the lost part from the right
     v.bar.fillStyle(0x140303, 0.88).fillRect(x + w * pct, y, w * (1 - pct), hh);
     v.hpText?.setText(`${Math.max(0, Math.round(v.shownHp))}/${v.c.pool.max}`);
@@ -182,14 +231,17 @@ export class BattleScene extends Phaser.Scene {
     img.setScale(Math.min((90 * PS) / img.height, (130 * PS) / img.width, 1.4)).setAlpha(0.55);
     const t = this.add.text(0, -6 * PS, `${displayName(nxt.inst)}`, { ...FONT, fontSize: `${15 * PS}px`, color: '#d8e6ff', stroke: '#000', strokeThickness: 4 }).setOrigin(0.5, 1);
     const hp = this.add.text(0, 12.5 * PS, `${nxt.pool.hp}/${nxt.pool.max}`, { ...FONT, fontSize: `${13 * PS}px`, color: '#fff', stroke: '#000', strokeThickness: 4 }).setOrigin(0.5);
-    this.nextView = this.add.container(feet.x, feet.y, [img, t, hp]).setDepth(43);
+    this.nextView = this.add.container(feet.x, feet.y, [img, t, hp]).setDepth(43).setVisible(!this.cards);
   }
 
   // ---------------------------------------------------------------- helpers
   private tw(cfg: Phaser.Types.Tweens.TweenBuilderConfig): Promise<void> {
     return new Promise((res) => this.tweens.add({ ...cfg, duration: ((cfg.duration as number) ?? 300) / S.settings.speed, onComplete: () => res() }));
   }
-  private wait(ms: number) { return new Promise<void>((r) => this.time.delayedCall(ms / S.settings.speed, r)); }
+  private async wait(ms: number) {
+    await new Promise<void>((r) => this.time.delayedCall(ms / S.settings.speed, r));
+    while (this.paused) await new Promise<void>((r) => this.time.delayedCall(120, r));
+  }
 
   private banner(text: string, color = '#fff') {
     const p = T(480, 200);
@@ -247,8 +299,10 @@ export class BattleScene extends Phaser.Scene {
       }
       let choice: { ability: Ability; target?: string } | null;
       if (actor.side === 0 && !S.settings.auto) {
+        this.showTurn(actor);
         choice = await new Promise((res) => { this.choose = res; this.ui(); });
         this.choose = null;
+        this.hideTurn();
         if (this.b.over !== null) break;
         if (!choice) continue;
       } else {
@@ -274,17 +328,17 @@ export class BattleScene extends Phaser.Scene {
     const actors = this.b.all.filter((c) => c.slot >= 0 && c.pool.hp > 0).sort((a, b) => a.time - b.time).slice(0, 6);
     const now = Math.min(...actors.map((a) => a.time));
     actors.forEach((c, i) => {
-      const p = T(22, 26 + i * 50);
+      const p = T(22, 6 + i * 67);
       const tu = Math.max(0, Math.round(((c.time - now) * c.stats.spd) / this.b.refSpd));
       const frame = this.add.image(0, 0, 'ui_qframe').setOrigin(0, 0).setDisplaySize(52 * K, 38 * K);
       const icon = this.add.image(26 * K, 19 * K, `spr_${c.sp.sprite}`);
       icon.setScale(Math.min((44 * K) / icon.width, (32 * K) / icon.height)).setFlipX(c.side === 0);
       const color = i === 0 ? '#ff2a1f' : c.side === 0 ? '#3cdc4a' : tu < 60 ? '#ffffff' : '#8f8dff';
       const num = this.add.text(76 * K, 19 * K, `${tu}`, { ...FONT, fontSize: `${21 * K}px`, color, stroke: '#000', strokeThickness: 5 }).setOrigin(0.5);
-      const bar = this.add.image(0, 38 * K, 'ui_qbar').setOrigin(0, 0).setDisplaySize(104 * K, 15 * K);
-      const g = this.add.graphics();
       const pct = c.pool.hp / c.pool.max;
-      g.fillStyle(0x140303, 0.85).fillRect(6 * K + 92 * K * pct, 41 * K, 92 * K * (1 - pct), 8 * K);
+      const bar = this.add.image(0, 46 * K, pct > 0.5 ? 'bk_qbar_red' : 'bk_qbar_orange').setOrigin(0, 0).setDisplaySize(100 * K, 14 * K);
+      const g = this.add.graphics();
+      g.fillStyle(0x1b1b1b, 0.95).fillRect(4 * K + 92 * K * pct, 49 * K, 92 * K * (1 - pct), 8 * K);
       this.queue.push(this.add.container(p.x, p.y, [frame, icon, num, bar, g]).setDepth(41));
     });
     this.coinText.setText(String(this.b.reserve(1).length));
@@ -334,6 +388,11 @@ export class BattleScene extends Phaser.Scene {
         const c = v.center();
         if (!e.dot) {
           this.burst(c.x, c.y, EL_COLOR[e.element ?? ''] ?? 0xffffff, e.crit ? 34 : 18, e.crit ? 340 : 240);
+          const fxKey = FX_BY_ELEMENT[e.element ?? ''];
+          if (fxKey && e.kind === 'magical') {
+            const fx = this.add.image(c.x, c.y, fxKey).setDepth(112).setScale(0.3).setAlpha(0.95);
+            this.tweens.add({ targets: fx, scale: 1.25, angle: 200, alpha: 0, duration: 650 / S.settings.speed, ease: 'Cubic.out', onComplete: () => fx.destroy() });
+          }
           sfx(e.crit ? 'crit' : 'hit');
           v.img.setTintFill(0xffffff);
           this.time.delayedCall(70, () => v.img.clearTint());
@@ -369,6 +428,11 @@ export class BattleScene extends Phaser.Scene {
         if (!v) return;
         const up = e.amount > 0;
         sfx(up ? 'buff' : 'debuff');
+        if (up) {
+          const c2 = v.center();
+          const ring = this.add.image(c2.x, c2.y + v.img.displayHeight * 0.35, 'bk_fx_silver').setDepth(111).setScale(0.6).setAlpha(0.9);
+          this.tweens.add({ targets: ring, y: c2.y - v.img.displayHeight * 0.3, alpha: 0, duration: 600 / S.settings.speed, onComplete: () => ring.destroy() });
+        }
         this.float(v, `${up ? '▲' : '▼'} ${e.stat.toUpperCase()}`, up ? '#7fe3ff' : '#ff9a9a', 20, 12);
         await this.wait(180);
         break;
@@ -416,6 +480,7 @@ export class BattleScene extends Phaser.Scene {
         await new Promise<void>((res) => loadSprites(this, [c.sp.sprite], () => res()));
         if (c.side === 1) markSeen(c.sp.id);
         await this.makeView(c, true);
+        if (this.cards && c.side === 0) this.setPartyVisible(false);
         this.drawNext();
         this.refreshQueue();
         break;
@@ -492,7 +557,23 @@ export class BattleScene extends Phaser.Scene {
     const ok = a.target === 'ally' ? c.side === this.actor.side : c.side !== this.actor.side;
     if (!ok) return;
     this.pending = null;
+    this.clearTargets();
     this.choose({ ability: a, target: c.key });
+  }
+
+  /** Mini capture card next to an enemy's name. */
+  private throwCard(c: Combatant) {
+    if (!this.choose || this.busy || !this.actor || this.actor.side !== 0) return toast('Throw cards on one of your monsters\' turns.');
+    if (c.pool.hp <= 0 || c.slot < 0) return;
+    this.capturing = this.cardType;
+    this.clickMon(c);
+  }
+
+  private flee() {
+    if (!this.choose || this.busy || !this.actor || this.actor.side !== 0) return toast('Wait for one of your monsters to act.');
+    if (!this.req.enc.canFlee) return toast("You can't run from this fight!");
+    const evs = this.b.flee();
+    this.play(evs).then(() => this.choose?.(null));
   }
 
   private toggleAuto() {
@@ -503,49 +584,142 @@ export class BattleScene extends Phaser.Scene {
     this.ui();
   }
 
-  /** The ghost box opens the battle menu: capture cards, auto, speed, escape. */
+  // ---------------------------------------------------------------- player's turn: actor box + ability cards
+  private setPartyVisible(on: boolean) {
+    this.panelImg?.setTexture(on ? 'ui_panel' : 'ui_panel_cards');
+    for (const v of this.views.values()) if (v.c.side === 0) [v.img, v.name, v.bar, v.hpText, v.status].forEach((o) => o?.setVisible(on));
+    this.nextView?.setVisible(on);
+  }
+
+  private showTurn(actor: Combatant) {
+    this.hideTurn();
+    this.setPartyVisible(false);
+    const v = this.views.get(actor.key);
+    // acting monster in the left box (original: portrait, name, HP bar)
+    const bx = T(3, 449), bw = 175 * K, bh = 188 * K;
+    const box = this.add.image(0, 0, 'bk_actor_box').setOrigin(0, 0).setDisplaySize(bw, bh);
+    const sp = this.add.image(bw / 2, bh * 0.66, `spr_${actor.sp.sprite}`).setOrigin(0.5, 1).setFlipX(true);
+    sp.setScale(Math.min((bw * 0.82) / sp.width, (bh * 0.6) / sp.height, 1.8));
+    const name = this.add.text(bw / 2, bh * 0.73, displayName(actor.inst), { ...FONT, fontSize: `${17 * K}px`, color: '#fff', stroke: '#000', strokeThickness: 5 }).setOrigin(0.5);
+    const pct = actor.pool.hp / actor.pool.max;
+    const barX = bw * 0.085, barW = bw * 0.84, barY = bh * 0.825, barH = bh * 0.11;
+    const lost = this.add.graphics().fillStyle(0x1b1b1b, 0.95).fillRect(barX + barW * pct, barY, barW * (1 - pct), barH);
+    const hp = this.add.text(bw / 2, barY + barH / 2, `${actor.pool.hp}/${actor.pool.max}`, { ...FONT, fontSize: `${14 * K}px`, color: '#fff', stroke: '#000', strokeThickness: 4 }).setOrigin(0.5);
+    this.actorBox = this.add.container(bx.x, bx.y, [box, sp, name, lost, hp]).setDepth(47);
+    void v;
+    // ability cards across the middle panel; empty slots show the locked "???" card
+    const abilities = this.b.usable(actor);
+    const n = Math.max(4, abilities.length);
+    const step = Math.min(150, 600 / n), cw = Math.min(116, step - 10), ch = (cw / 116) * CARD_H;
+    const parts: Phaser.GameObjects.GameObject[] = [];
+    for (let i = 0; i < n; i++) {
+      const a = abilities[i];
+      const cx = T(255 + i * step - (n > 4 ? 20 : 0), 0).x;
+      const cy = T(0, CARD_Y).y;
+      const card = this.add.image(cx, cy, a ? cardArt(a) : 'bk_card_locked').setOrigin(0.5, 0).setDisplaySize(cw * K, ch * K);
+      parts.push(card);
+      if (!a) continue;
+      const nm = this.add.text(cx, cy + ch * K + 13 * K, a.name, { ...FONT, fontSize: `${(a.name.length > 11 ? 15 : 18) * K}px`, color: '#fff', stroke: '#000', strokeThickness: 5 }).setOrigin(0.5);
+      const tu = this.add.text(cx - 14 * K, T(0, 612).y, `TU:${a.tu ?? 130}`, { ...FONT, fontSize: `${15 * K}px`, color: '#fff', stroke: '#000', strokeThickness: 4 }).setOrigin(0.5);
+      const info = this.add.image(cx + 40 * K, T(0, 612).y, 'bk_info').setDisplaySize(22 * K, 22 * K).setInteractive({ useHandCursor: true });
+      info.on('pointerdown', () => { sfx('select'); this.abilityInfo(a); });
+      card.setInteractive({ useHandCursor: true });
+      card.on('pointerover', () => card.setTint(0xfff3c4)).on('pointerout', () => { if (this.pending !== a) card.clearTint(); });
+      card.on('pointerdown', () => this.pickAbility(actor, a, card));
+      parts.push(nm, tu, info);
+    }
+    this.cards = this.add.container(0, 0, parts).setDepth(47);
+  }
+
+  private hideTurn() {
+    this.actorBox?.destroy();
+    this.actorBox = null;
+    this.cards?.destroy();
+    this.cards = null;
+    this.clearTargets();
+    clearLayer('abinfo');
+    this.setPartyVisible(true);
+  }
+
+  private clearTargets() {
+    this.targets.forEach((t) => t.destroy());
+    this.targets = [];
+  }
+
+  private pickAbility(actor: Combatant, a: Ability, card: Phaser.GameObjects.Image) {
+    if (!this.choose || this.busy) return;
+    sfx('select');
+    this.capturing = null;
+    const needsPick = ((a.target === 'foe' || a.target === 'twoFoes') && this.b.foesOf(actor).length > 1 && !(a.healPower && !a.power)) || (a.target === 'ally' && this.b.alliesOf(actor).length > 1);
+    if (needsPick) {
+      if (this.pending === a) { this.pending = null; card.clearTint(); this.clearTargets(); return; }
+      this.cards?.list.forEach((o) => (o as Phaser.GameObjects.Image).clearTint?.());
+      card.setTint(0xfff3c4);
+      this.pending = a;
+      this.clearTargets();
+      const pool = a.target === 'ally' ? this.b.alliesOf(actor) : this.b.foesOf(actor);
+      for (const t of pool) {
+        const v = this.views.get(t.key);
+        if (!v) continue;
+        const c = t.side === 0 ? { x: v.home.x, y: PANEL_Y + 40 } : v.center();
+        const m = this.add.image(c.x, c.y, 'bk_fx_target').setDepth(118).setScale(0.55 * K).setInteractive({ useHandCursor: true });
+        m.on('pointerdown', () => this.clickMon(t));
+        this.tweens.add({ targets: m, scale: 0.7 * K, angle: 45, duration: 600, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
+        this.targets.push(m);
+      }
+      this.ui();
+      return;
+    }
+    this.pending = null;
+    this.choose({ ability: a });
+  }
+
+  private abilityInfo(a: Ability) {
+    const tgt = { foe: '1 Foe', twoFoes: '2 Foes', allFoes: 'All Foes', self: 'Self', ally: '1 Ally', allAllies: 'All Allies', all: 'Everyone', passive: '—' }[a.target];
+    const box = h('div', { class: 'parch-pop', onClick: () => clearLayer('abinfo') },
+      h('div', { class: 'pp-title' }, a.name),
+      h('div', {}, `${tgt} · TU ${a.tu ?? 130}${a.element ? ` · ${a.element}` : ''}`),
+      h('div', { class: 'pp-text' }, a.text ?? ''));
+    layer('abinfo', box);
+  }
+
+  /** Scroll button: capture card type + battle speed, in the original blue panel. */
   private battleMenu() {
     if (document.querySelector('.bt-menu')) { clearLayer('battlemenu'); return; }
-    const mine = () => !!(this.actor && this.actor.side === 0 && this.choose && !this.busy);
-    const card = (t: 'card' | 'silver' | 'gold', n: number, label: string) => h('button', {
-      class: 'bt-mi', disabled: !n || !this.req.enc.capturable,
-      onClick: () => {
-        if (!mine()) return toast('Wait for one of your monsters to act.');
-        this.capturing = t; this.pending = null; clearLayer('battlemenu'); this.ui();
-      },
+    const pick = (t: 'card' | 'silver' | 'gold', n: number, label: string) => h('button', {
+      class: `bt-mi ${this.cardType === t ? 'on' : ''}`, disabled: !n,
+      onClick: () => { this.cardType = t; clearLayer('battlemenu'); toast(`${label} selected — tap the small card beside a monster's name to throw it.`); },
     }, `${label} ×${n}`);
-    layer('battlemenu', h('div', { class: 'bt-menu' },
-      card('card', S.items.card, 'Capture Card'), card('silver', S.items.silver, 'Silver Card'), card('gold', S.items.gold, 'Gold Card'),
-      h('button', { class: 'bt-mi', onClick: () => { clearLayer('battlemenu'); this.toggleAuto(); } }, `Auto: ${S.settings.auto ? 'ON' : 'OFF'}`),
-      h('button', { class: 'bt-mi', onClick: () => { S.settings.speed = (S.settings.speed % 3) + 1; save(); clearLayer('battlemenu'); this.battleMenu(); } }, `Speed ${S.settings.speed}x`),
-      h('button', { class: 'bt-mi red', disabled: !this.req.enc.canFlee, onClick: () => {
-        if (!mine()) return toast('Wait for one of your monsters to act.');
+    const speedBtn = (img: string, sp: number | 'pause', label: string) => h('button', {
+      class: `bt-speed ${(sp === 'pause' ? this.paused : !this.paused && S.settings.speed === sp) ? 'on' : ''}`, title: label,
+      onClick: () => {
+        if (sp === 'pause') this.paused = !this.paused;
+        else { this.paused = false; S.settings.speed = sp; save(); }
         clearLayer('battlemenu');
-        const evs = this.b.flee();
-        this.play(evs).then(() => this.choose?.(null));
-      } }, 'Escape')));
+        this.battleMenu();
+      },
+    }, h('img', { src: `assets/ui/orig/bk/${img}.png`, alt: label }));
+    layer('battlemenu', h('div', { class: 'bt-menu' },
+      h('div', { class: 'bt-mh' }, 'Capture card'),
+      pick('card', S.items.card, 'Card'), pick('silver', S.items.silver, 'Silver Card'), pick('gold', S.items.gold, 'Gold Card'),
+      h('div', { class: 'bt-mh' }, 'Speed'),
+      h('div', { class: 'row' }, speedBtn('pause', 'pause', 'Pause'), speedBtn('play', 1, '1x'), speedBtn('ff', 2, '2x'), speedBtn('fff', 3, '3x')),
+      h('button', { class: 'bt-mi', onClick: () => { clearLayer('battlemenu'); this.toggleAuto(); } }, `Auto: ${S.settings.auto ? 'ON' : 'OFF'}`)));
   }
 
   private ui() {
-    const actor = this.actor;
-    const mine = !!(actor && actor.side === 0 && this.choose && !this.busy);
-    const abilities = mine ? this.b.usable(actor!) : [];
-    const prompt = this.capturing ? 'Tap a wild monster to throw the card' : this.pending ? `Choose a target for ${this.pending.name}` : '';
-    layer('battle', h('div', {},
-      prompt ? h('div', { class: 'bt-prompt2' }, prompt) : null,
-      mine ? h('div', { class: 'bt-abil2' },
-        h('div', { class: 'who' }, `${displayName(actor!.inst)}`),
-        ...abilities.map((a) => h('button', {
-          class: `bt-ab2 ${this.pending === a ? 'on' : ''}`,
-          onClick: () => {
-            if (!this.choose) return;
-            this.capturing = null;
-            const needsPick = ((a.target === 'foe' || a.target === 'twoFoes') && this.b.foesOf(actor!).length > 1 && !(a.healPower && !a.power)) || (a.target === 'ally' && this.b.alliesOf(actor!).length > 1);
-            if (needsPick && this.pending !== a) { this.pending = a; this.ui(); return; }
-            this.pending = null;
-            this.choose({ ability: a });
-          },
-        }, h('span', { class: 'n' }, a.name), h('span', { class: 'tu' }, `${a.tu ?? 130}`), h('span', { class: 'd' }, `${a.element ? a.element + ' · ' : ''}${a.text ?? ''}`)))) : null));
+    const prompt = this.capturing ? 'Tap a wild monster to throw the card' : this.pending ? `Choose a target for ${this.pending.name}` : this.paused ? 'Paused' : '';
+    layer('battle', h('div', {}, prompt ? h('div', { class: 'bt-prompt2' }, prompt) : null));
+  }
+
+  private candles() {
+    const spots: [string, number, number, number][] = [['bk_candle_double', 22, 300, 0.42], ['bk_candle_tall', 175, 250, 0.38], ['bk_candle_double', 938, 280, 0.42], ['bk_candle_small', 790, 230, 0.4]];
+    for (const [key, x, y, sc] of spots) {
+      const p = T(x, y);
+      const c = this.add.image(p.x, p.y, key).setOrigin(0.5, 1).setScale(sc * K).setDepth(8);
+      const glow = this.add.image(p.x, p.y - c.displayHeight * 0.9, 'glow').setTint(0xffb347).setBlendMode('ADD').setScale(3.2).setAlpha(0.55).setDepth(8);
+      this.tweens.add({ targets: glow, alpha: 0.3, scale: 2.7, duration: 260 + Math.random() * 200, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
+    }
   }
 
   // ---------------------------------------------------------------- results
@@ -586,6 +760,7 @@ export class BattleScene extends Phaser.Scene {
     const tp = T(480, 110);
     const t = this.add.text(tp.x, tp.y, title, { ...FONT, fontSize: '80px', color, stroke: '#2a1600', strokeThickness: 10 }).setOrigin(0.5).setDepth(200).setScale(2).setAlpha(0);
     this.tweens.add({ targets: t, scale: 1, alpha: 1, duration: 500, ease: 'Back.out' });
+    this.hideTurn();
     clearLayer('battle');
     clearLayer('battlemenu');
     this.time.delayedCall(700, () => {
