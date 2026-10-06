@@ -736,7 +736,7 @@ export class BattleScene extends Phaser.Scene {
     if (outcome === 0) {
       S.stats.wins++;
       const defeated = this.b.all.filter((c) => c.side === 1 && c.pool.hp <= 0 && !c.temp && !captured.includes(c.inst));
-      const xp = [...defeated, ...this.b.all.filter((c) => captured.includes(c.inst))].reduce((a, c) => a + xpYield(c.inst) * (c.boss ? 4 : 1), 0) * (enc.kind === 'wild' ? 1 : 1.5);
+      const xp = [...defeated, ...this.b.all.filter((c) => captured.includes(c.inst))].reduce((a, c) => a + xpYield(c.inst) * (c.boss ? 4 : 1), 0) * (enc.kind === 'wild' ? 1 : 1.5) * (enc.xpMult ?? 1);
       reports.push(...awardXp([...this.participants], Math.round(xp)));
       reports.forEach((r) => r.evolved && questEvent('evolve'));
       S.stats.defeated += defeated.length;

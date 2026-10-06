@@ -15,6 +15,8 @@ export interface Encounter {
   statMult?: number;
   reward: { silver: number; gold?: number; egg?: 'egg' | 'golden' };
   intro?: string;
+  /** experience multiplier (the Abyss is where breeders farm experience) */
+  xpMult?: number;
 }
 
 const TERRAIN_BG: Record<string, string[]> = {
@@ -115,7 +117,26 @@ export function dungeonEncounter(name: string, floor: number, rng: Rng = R): Enc
   const lv = dungeonLevel(name, floor);
   const size = rng.int(2, Math.min(7, 3 + Math.floor(floor / 3)));
   const team = Array.from({ length: size }, () => makeMonster(pickWeighted(pool, rng), lv + rng.int(-2, 2), rng));
-  return { kind: 'wild', team, bg: d.bg, capturable: name !== 'The Abyss', canFlee: true, reward: { silver: team.reduce((a, m) => a + 6 + m.level * 3, 0) } };
+  // nothing in the Abyss can be captured, but its battles pay extra experience
+  const abyss = name === 'The Abyss';
+  return { kind: 'wild', team, bg: d.bg, capturable: !abyss, canFlee: true, reward: { silver: team.reduce((a, m) => a + 6 + m.level * 3, 0) }, xpMult: abyss ? 1.5 : undefined };
+}
+
+/**
+ * Save points let a dungeon be resumed from deep floors. Ordinary dungeons have waypoints on floors
+ * 1, 6, 11, ...; the Abyss, as in the original, has a teleport save point every 10 floors (10, 20, ...).
+ */
+export const savePointStep = (name: string) => (name === 'The Abyss' ? 10 : 5);
+export function isSavePoint(name: string, floor: number) {
+  return name === 'The Abyss' ? floor % 10 === 0 : floor > 1 && floor % 5 === 1;
+}
+/** Deepest save point at or above the best floor reached: where the dungeon entrance sends you. */
+export function resumeFloor(name: string, best: number) {
+  return name === 'The Abyss' ? Math.max(1, Math.floor(best / 10) * 10) : Math.max(1, Math.floor((best - 1) / 5) * 5 + 1);
+}
+/** The next save point below this floor (shown as "Next bonus at floor: N"). */
+export function nextSavePoint(name: string, floor: number) {
+  return name === 'The Abyss' ? (Math.floor(floor / 10) + 1) * 10 : Math.floor((floor - 1) / 5) * 5 + 6;
 }
 
 export const FINALE = [

@@ -3,7 +3,7 @@ import { vignette, ambient } from './fx';
 import { data, maps, region, speciesByName, spriteUrl, dungeon as dungeonData, overlord as overlordData } from '../core/data';
 import { S, save, questEvent, hash, exploreState, reveal, rollGem, grantPrize } from '../core/state';
 import type { Spot } from '../core/types';
-import { wildEncounter, breederEncounter, overlordEncounter, rareEncounter } from '../core/encounters';
+import { wildEncounter, breederEncounter, overlordEncounter, rareEncounter, resumeFloor } from '../core/encounters';
 import { hud, openMenu, elChip } from '../ui/menus';
 import { h, layer, toast, confirmBox, dialogue, starsHtml, anyModal } from '../ui/dom';
 import { music, sfx } from '../audio';
@@ -482,11 +482,9 @@ export class RegionScene extends Phaser.Scene {
   async enterDungeon(name: string) {
     const d = dungeonData(name)!;
     if (name === 'Unknown Relic' && !S.ending) return toast('A strange seal blocks the entrance… perhaps after the Final Battle.');
-    if (await confirmBox(`${name}: ${d.about || 'A dangerous dungeon.'} Enter?`, 'Enter')) {
-      const best = S.dungeons[name]?.best ?? 1;
-      const wp = Math.max(1, Math.floor((best - 1) / 5) * 5 + 1);
-      toDungeon(name, wp);
-    }
+    const wp = resumeFloor(name, S.dungeons[name]?.best ?? 1);
+    const where = wp > 1 ? ` You will teleport to the save point on floor ${wp}.` : '';
+    if (await confirmBox(`${name}: ${d.about || 'A dangerous dungeon.'}${where} Enter?`, 'Enter')) toDungeon(name, wp);
   }
 
   async challengeOverlord(name: string) {
