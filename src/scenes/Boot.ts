@@ -50,6 +50,7 @@ export class BootScene extends Phaser.Scene {
  * and the least recently used ones are dropped to keep GPU memory in check.
  */
 const mapLru: string[] = [];
+const mapLoading = new Set<string>();
 export function loadMap(scene: Phaser.Scene, id: string, done: () => void) {
   const key = `map_${id}`;
   const touch = () => {
@@ -60,8 +61,11 @@ export function loadMap(scene: Phaser.Scene, id: string, done: () => void) {
   };
   if (!mapLru.includes(key)) mapLru.push(key);
   if (scene.textures.exists(key)) return touch();
+  // another scene is already streaming this painting (e.g. leaving town before it finished): wait for it
+  if (mapLoading.has(key)) return void scene.textures.once(Phaser.Textures.Events.ADD_KEY + key, touch);
+  mapLoading.add(key);
   scene.load.image(key, `assets/maps/${id}.jpg`);
-  scene.load.once('complete', touch);
+  scene.load.once('complete', () => { mapLoading.delete(key); touch(); });
   scene.load.start();
 }
 

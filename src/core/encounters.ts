@@ -31,8 +31,10 @@ export function regionBg(r: Region, spot = 0) {
   return opts[spot % opts.length];
 }
 
-function levelFor(r: Region, spot: number, rng: Rng) {
+/** @param depth 0..1, how far out from the region's towns the battle happens (free roaming); else varies by spot */
+function levelFor(r: Region, spot: number, rng: Rng, depth?: number) {
   const [lo, hi] = r.levels;
+  if (depth !== undefined) return Math.max(1, Math.round(lo + (hi - lo) * Math.min(1, Math.max(0, depth)) + rng.range(-1, 1)));
   return Math.round(lo + ((hi - lo) * (spot % 15)) / 14 + rng.range(-1.5, 1.5));
 }
 
@@ -41,13 +43,13 @@ function pickWeighted(pool: Species[], rng: Rng) {
   return rng.weighted(pool, (s) => 1 / (0.6 + s.stars ** 1.35));
 }
 
-export function wildEncounter(regionId: string, spot: number, rng: Rng = R): Encounter {
+export function wildEncounter(regionId: string, spot: number, rng: Rng = R, depth?: number): Encounter {
   const r = region(regionId);
   const pool = regionPool(r);
   const size = r.tier === 0 ? (rng.chance(0.75) ? 1 : 2) : r.tier <= 2 ? rng.int(1, 3) : rng.int(1, Math.min(6, 2 + Math.ceil(r.tier / 3)));
   const swarm = r.tier > 0 && rng.chance(0.12);
   const first = pickWeighted(pool, rng);
-  const team = Array.from({ length: size }, () => makeMonster(swarm ? first : pickWeighted(pool, rng), levelFor(r, spot, rng), rng, rng.int(0, 5)));
+  const team = Array.from({ length: size }, () => makeMonster(swarm ? first : pickWeighted(pool, rng), levelFor(r, spot, rng, depth), rng, rng.int(0, 5)));
   const silver = team.reduce((a, m) => a + 4 + m.level * 2, 0);
   return { kind: 'wild', team, bg: regionBg(r, spot), capturable: true, canFlee: true, reward: { silver } };
 }
@@ -86,18 +88,22 @@ export function breederEncounter(regionId: string, name: string, seed: number, p
   };
 }
 
+export function overlordLevel(name: string) {
+  const o = overlord(name)!;
+  return data().regions.find((x) => x.name === o.region)!.levels[1] + 8;
+}
+
 export function overlordEncounter(name: string): Encounter {
   const o = overlord(name)!;
   const r = data().regions.find((x) => x.name === o.region)!;
   const form = speciesByName(o.form) ?? speciesByName('Red Wyrm')!;
-  const lv = r.levels[1] + 8;
+  const lv = overlordLevel(name);
   const boss = makeMonster(form, lv, new Rng(lv), 8);
-  boss.nick = o.name;
   return {
     kind: 'overlord', name: o.name, team: [boss], bg: r.terrain === 'volcano' ? 'volcano' : r.terrain === 'snow' ? 'snow' : 'mountain',
     capturable: false, canFlee: true, bossHp: 7 + r.tier * 0.4, statMult: 1.15,
     reward: { silver: 500 + r.tier * 300, gold: 30 + r.tier * 5, egg: 'golden' },
-    intro: `The Dragon Overlord ${o.name} descends!`,
+    intro: `Dragon Overlord ${o.name} sends out ${form.name}!`,
   };
 }
 

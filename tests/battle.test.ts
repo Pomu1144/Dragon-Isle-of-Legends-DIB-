@@ -85,7 +85,7 @@ describe('custom evolutions', () => {
     expect(evolve(angel)?.name).toBe('Seraph');
     expect(evolve(angel)?.name).toBe('Empyrean');
     expect(species(angel.species).name).toBe('Empyrean');
-    for (const n of ['Moonreaver', 'Seraph', 'Empyrean']) expect(speciesByName(n)?.sprite).toMatch(/^22[5-7]\.png$/);
+    for (const n of ['Moonreaver', 'Seraph', 'Empyrean']) expect(speciesByName(n)?.sprite).toMatch(/^22[5-7]\.(png|webp)$/);
     const rng = new Rng(9);
     const b = new Battle([makeMonster('Empyrean', 100, rng), makeMonster('Moonreaver', 100, rng), makeMonster('Seraph', 100, rng)],
       [makeMonster('Divine', 100, rng), makeMonster('Behemoth', 100, rng), makeMonster('Archdemon', 100, rng)], { rng });
