@@ -140,83 +140,30 @@ input.text { font: inherit; padding: .5em .8em; border-radius: .5em; border: 1px
 .town-btn:hover { border-color: var(--gold); transform: translateY(-2px); }
 .loading { position: absolute; inset: 0; display: grid; place-items: center; font-family: Cinzel, serif; font-size: 1.4em; }
 
-/* ===================================================================== Monster book (original DIB card design) */
-.dib-book { position: absolute; inset: 0; z-index: 18; background: #3d7a2c center / cover no-repeat; animation: fade .2s;
-  font-family: Arial, 'Nunito', sans-serif; }
-.dib-book.nobg { background: linear-gradient(180deg, #4f9a35 0 3%, transparent 3% 97%, #4f9a35 97%),
-  radial-gradient(ellipse at 85% 10%, #f6e7c2 0%, #e4c98d 45%, #c9953e 100%); }
-.dib-pagearea { position: absolute; left: 5cqw; top: 4cqh; width: 66cqw; height: 92cqh; }
-.dib-grid { display: grid; grid-template-columns: repeat(3, 19.4cqw); grid-template-rows: repeat(2, 41.5cqh); gap: 5.5cqh 3.1cqw; padding-top: 2cqh; }
-.dib-close { position: absolute; left: -3.6cqw; top: 0; width: 3cqw; height: 3cqw; border-radius: 50%; color: #fff; font-weight: 900; font-size: 1.4cqw;
-  background: radial-gradient(circle at 35% 30%, #e45a4a, #8e1f16); border: .25cqw solid #f1d38a; box-shadow: 0 .3cqh .6cqh rgba(0,0,0,.5); }
-
-.dib-card { position: relative; display: flex; flex-direction: column; cursor: pointer; padding: .55cqw; border-radius: .7cqw;
-  background: linear-gradient(180deg, #2c4c6e, #142b44 60%, #0f2236); border: .22cqw solid #0a1626;
-  box-shadow: 0 .8cqh 1.6cqh rgba(40,20,0,.45), inset 0 0 0 .18cqw #4f7ea8; transition: transform .12s; }
-.dib-card:hover { transform: translateY(-.6cqh); }
-.dib-card.sel { box-shadow: 0 0 0 .35cqw #f6c453, 0 .8cqh 1.6cqh rgba(40,20,0,.45); }
-.dib-title { position: relative; height: 4.6cqh; margin: -1.5cqh .5cqw .4cqh; display: grid; place-items: center; border-radius: .3cqw;
-  background: linear-gradient(180deg, #f5ead0, #dccaa0 55%, #c8b183); border: .18cqw solid #7c5d33;
-  box-shadow: inset 0 .25cqh 0 rgba(255,255,255,.6), 0 .3cqh .4cqh rgba(0,0,0,.35); }
-.dib-title span { font-weight: 900; font-size: 2.65cqh; color: #1c1a16; letter-spacing: .01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 96%;
-  text-shadow: 0 1px 0 rgba(255,255,255,.6); }
-.dib-portrait { position: relative; flex: 1.45; border: .25cqw solid #10243b; border-radius: .35cqw; overflow: hidden; display: grid; place-items: center;
-  background:
-    linear-gradient(115deg, transparent 30%, rgba(255,255,255,.22) 38%, transparent 46%, transparent 55%, rgba(255,255,255,.14) 61%, transparent 68%),
-    radial-gradient(ellipse at 50% 45%, #cfeef3 0%, #8cc9d8 28%, #3f8aa8 62%, #1b4d6c 100%);
-  box-shadow: inset 0 0 0 .15cqw #6fa9c9, inset 0 0 2.5cqh rgba(0,20,40,.55); }
-.dib-portrait img { position: absolute; left: 6%; top: 5%; width: 88%; height: 90%; object-fit: contain; filter: drop-shadow(0 .6cqh .5cqh rgba(0,20,40,.55)); }
-.dib-tag { position: absolute; left: .4cqw; top: .5cqh; font: 800 1.5cqh Nunito, sans-serif; padding: .1cqh .5cqw; border-radius: 99em; background: rgba(15,35,60,.8); color: #ffe39a; }
-.dib-info { position: relative; flex: 1; margin-top: .55cqw; border: .25cqw solid #10243b; border-radius: .35cqw; display: flex; flex-direction: column; justify-content: space-between;
-  padding: .2cqh .4cqw .5cqh;
-  background:
-    radial-gradient(circle at 20% 70%, rgba(110,160,60,.18) 0 8%, transparent 9%),
-    radial-gradient(circle at 70% 40%, rgba(110,160,60,.14) 0 6%, transparent 7%),
-    linear-gradient(180deg, #edf7d6, #c9e6a6 45%, #9fcd7c);
-  box-shadow: inset 0 0 0 .15cqw #6fa9c9; }
-.dib-portrait .c, .dib-info .c { position: absolute; width: 1.3cqw; height: 1.3cqw; background: linear-gradient(135deg, #e9a25a, #8a4a17); z-index: 2; }
-.c.tl { left: -.15cqw; top: -.15cqw; clip-path: polygon(0 0, 100% 0, 0 100%); }
-.c.tr { right: -.15cqw; top: -.15cqw; clip-path: polygon(0 0, 100% 0, 100% 100%); }
-.c.bl { left: -.15cqw; bottom: -.15cqw; clip-path: polygon(0 0, 100% 100%, 0 100%); }
-.c.br { right: -.15cqw; bottom: -.15cqw; clip-path: polygon(100% 0, 100% 100%, 0 100%); }
-.dib-stars { display: flex; justify-content: center; align-items: center; height: 3.4cqh; gap: .05cqw; }
-.dib-stars img { height: 2.8cqh; filter: drop-shadow(0 .15cqh .1cqh rgba(80,40,0,.5)); }
-.dib-stars.many img { height: 2.1cqh; }
-.dib-stars img.half { margin-left: -.1cqw; clip-path: inset(0 0 0 6%); }
-.dib-row { display: flex; align-items: center; justify-content: space-between; gap: .3cqw; }
-.dib-crown { position: relative; width: 5.2cqw; height: 4.4cqw; flex: none; }
-.dib-crown svg { position: absolute; inset: 0; width: 100%; height: 100%; filter: drop-shadow(0 .25cqh .2cqh rgba(60,30,0,.5)); }
-.dib-crown b.long { font-size: 2.05cqh; }
-.dib-crown b { position: absolute; left: 0; right: 0; top: 47%; transform: translateY(-50%); text-align: center; font: 900 2.75cqh Arial, sans-serif; color: #0d2318;
-  text-shadow: 0 0 .25cqh #c7ffe0; }
-.dib-el { height: 4.8cqw; width: 4.8cqw; object-fit: contain; filter: drop-shadow(0 .3cqh .2cqh rgba(40,30,0,.45)); }
-.dib-num { position: relative; display: flex; align-items: center; height: 4.3cqh; min-width: 6.3cqw; padding: 0 .7cqw 0 2.2cqw; border-radius: .6cqw;
-  background: linear-gradient(180deg, #cfe5f1, #9cc3d8 60%, #86b3cc); border: .18cqw solid #3d6f93; box-shadow: inset 0 .25cqh 0 rgba(255,255,255,.6); }
-.dib-num b { margin-left: auto; font: 900 3.4cqh Arial, sans-serif; color: #10253a; }
-.dib-chain { position: absolute; left: -1.1cqw; top: 50%; transform: translateY(-62%); width: 3.1cqw; height: 3.1cqw; }
-.dib-chain svg { width: 100%; height: 100%; filter: drop-shadow(0 .2cqh .15cqh rgba(0,0,0,.35)); }
-.dib-empty { }
-
-.dib-side { position: absolute; right: 0; top: 3cqh; display: flex; flex-direction: column; gap: .6cqh; }
-.dib-tab { position: relative; width: 10.5cqw; height: 7.9cqh; display: grid; place-items: center; padding-left: 1.4cqw; transition: transform .12s;
-  clip-path: polygon(0 50%, 22% 0, 100% 0, 100% 100%, 22% 100%);
-  background: linear-gradient(180deg, #a8d6ec, #4f97c2 50%, #2a6b97); }
-.dib-tab::before { content: ''; position: absolute; inset: .3cqw .3cqw .3cqw .5cqw; clip-path: polygon(0 50%, 22% 0, 100% 0, 100% 100%, 22% 100%);
-  background: linear-gradient(180deg, #2f78a5, #1a4f78); }
-.dib-tab.on, .dib-tab:hover { transform: translateX(-1.2cqw); }
-.dib-tab .disc { position: relative; width: 6.4cqh; height: 6.4cqh; border-radius: 50%; display: grid; place-items: center;
-  background: radial-gradient(circle at 40% 35%, #f8efd4, #c9a76a 70%, #7b5524); border: .3cqh solid #5a3a14; box-shadow: 0 .3cqh .5cqh rgba(0,0,0,.45); }
-.dib-tab.on .disc { box-shadow: 0 0 0 .35cqh #ffe08a, 0 .3cqh .5cqh rgba(0,0,0,.45); }
-.dib-tab .disc img { width: 78%; height: 78%; object-fit: contain; }
-
-.dib-foot { position: absolute; right: 1.4cqw; bottom: 2.4cqh; display: flex; flex-direction: column; align-items: flex-end; gap: 1.6cqh; }
-.dib-pg { display: flex; align-items: center; gap: .8cqw; font: 900 3.2cqh Arial, sans-serif; color: #1a120a; text-align: right; line-height: 1.25; margin-right: 1cqw; }
-.dib-arrow { font-size: 2.6cqh; color: #5a3a14; padding: .4cqh .5cqw; }
-.dib-arrow[disabled] { opacity: .25; cursor: default; }
-.dib-plank { width: 25cqw; height: 7.4cqh; font: 800 2.7cqh Arial, sans-serif; color: #22180c; padding-left: 4cqw; text-align: center;
-  clip-path: polygon(2% 18%, 8% 4%, 40% 10%, 70% 0, 97% 8%, 100% 45%, 96% 92%, 60% 100%, 30% 90%, 4% 98%, 0 60%);
-  background:
-    radial-gradient(circle at 9% 50%, #8e6a3b 0 9%, #5c3d1a 10% 13%, transparent 14%),
-    repeating-linear-gradient(178deg, rgba(90,60,20,.15) 0 .5cqh, transparent .5cqh 1.4cqh),
-    linear-gradient(180deg, #e3cfa3, #c7a875 55%, #a7834c); filter: drop-shadow(0 .4cqh .4cqh rgba(0,0,0,.4)); }
-.dib-plank:hover { filter: brightness(1.08) drop-shadow(0 .4cqh .4cqh rgba(0,0,0,.4)); }
+/* ===================================================================== Monster book: 1:1 with the original */
+.dibx-root { position: absolute; inset: 0; z-index: 18; overflow: hidden; background: #2f5d1f center / cover; animation: fade .2s; }
+.dibx-backdrop { position: absolute; inset: -20px; background-position: center; background-size: cover; filter: blur(14px) brightness(.55); }
+.dibx-page { position: absolute; left: 50%; top: 50%; width: 1170px; height: 879px; transform-origin: center; background-size: 1170px 879px;
+  font-family: Arial, Helvetica, 'Liberation Sans', sans-serif; box-shadow: 0 0 40px rgba(0,0,0,.6); }
+.dibx-back { position: absolute; left: .8em; top: .8em; z-index: 2; }
+.dibx-card { position: absolute; width: 272px; height: 342px; cursor: pointer; }
+.dibx-card:active { filter: brightness(1.08); }
+.dibx-name { position: absolute; left: 20px; right: 20px; top: 20px; height: 29px; line-height: 29px; text-align: center; font-size: 28px; font-weight: 700;
+  color: #121212; white-space: nowrap; overflow: hidden; text-shadow: 0 1px 0 rgba(255,255,255,.45), 0 0 1px #000; letter-spacing: -.3px; }
+.dibx-sprite { position: absolute; left: 18px; top: 55px; width: 236px; height: 160px; display: flex; align-items: center; justify-content: center; }
+.dibx-sprite img { max-width: 100%; max-height: 100%; width: auto; height: 100%; object-fit: contain; }
+.dibx-stars { position: absolute; left: 30px; width: 216px; top: 234px; height: 24px; display: flex; justify-content: center; align-items: center; gap: 1px; }
+.dibx-stars img { height: 18px; }
+.dibx-stars.many img { height: 15px; }
+.dibx-stars img.half { margin-left: -1px; }
+.dibx-crown { position: absolute; left: 43px; top: 281px; width: 34px; height: 32px; line-height: 32px; text-align: center; font-size: 27px; font-weight: 700;
+  color: #0c1a13; text-shadow: 0 0 2px rgba(220,255,235,.7); }
+.dibx-crown.long { font-size: 17px; }
+.dibx-el { position: absolute; left: 109px; top: 260px; width: 64px; height: 64px; object-fit: contain; }
+.dibx-num { position: absolute; left: 207px; top: 286px; width: 48px; height: 36px; line-height: 36px; text-align: center; font-size: 33px; font-weight: 700;
+  color: #0b1724; letter-spacing: -1px; text-shadow: 0 0 1px #0b1724; }
+.dibx-tab { position: absolute; background: transparent; }
+.dibx-pg { position: absolute; left: 990px; width: 195px; top: 643px; text-align: center; font-size: 35px; font-weight: 700; line-height: 53px; color: #111;
+  text-shadow: 0 0 2px rgba(255,255,255,.5); cursor: pointer; }
+.dibx-plank { position: absolute; left: 880px; top: 800px; width: 240px; height: 46px; background: transparent; font-family: inherit; font-size: 25px; font-weight: 700;
+  color: #241d12; text-shadow: 0 1px 0 rgba(255,255,255,.35); }

@@ -78,7 +78,7 @@ export function hud(onMenu: (k: string) => void, extra: HTMLElement[] = []) {
 
 export function openMenu(k: string, refresh: () => void) {
   if (anyModal() || document.querySelector('[data-layer="book"]')) return;
-  ({ team: () => openBook('mine', refresh), bag: () => bagMenu(refresh), pedia: () => openBook('pedia', refresh), quests: questsMenu, hero: () => heroMenu(refresh), system: systemMenu } as Record<string, () => void>)[k]?.();
+  ({ team: () => openBook('mine', refresh, (n) => openMenu(n, refresh)), bag: () => bagMenu(refresh), pedia: () => openBook('pedia', refresh, (n) => openMenu(n, refresh)), quests: questsMenu, hero: () => heroMenu(refresh), system: systemMenu } as Record<string, () => void>)[k]?.();
 }
 
 // ------------------------------------------------------------------ Team
