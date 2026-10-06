@@ -1,0 +1,44 @@
+{
+  "_doc": "Original monsters added on top of the wiki roster. Merged by build_data.py. Ability numbers are already engine coefficients (power x caster stat, mods as a fraction of the stat).",
+  "monsters": [
+    {
+      "id": 225, "name": "Moonreaver", "element": "Death", "stars": 9.5, "sprite": "moonreaver.png",
+      "evolvesFrom": "Dark Panther", "evolveLevel": 75, "types": [],
+      "lore": "When a Dark Panther hunts beneath enough eclipses, its pelt hardens into bone-white crescents and moonlight burns along its veins. Moonreavers stalk only on moonless nights, when nothing can see them coming.",
+      "base": { "hp": 82, "atk": 64, "mag": 52, "spd": 66, "def": 68, "res": 62 },
+      "abilities": [
+        { "name": "Crescent Rend", "tu": 130, "target": "foe", "kind": "physical", "element": "Death", "power": 1.6, "mods": { "def": -0.12 }, "text": "Heavy Physical Damage (Death), lowers Defense" },
+        { "name": "Night Hunt", "tu": 130, "target": "foe", "kind": "physical", "element": "Death", "power": 1.25, "perKill": 25, "text": "Physical Damage (Death), +25% damage per kill made in battle" },
+        { "name": "Eclipse", "tu": 180, "target": "allFoes", "kind": "magical", "element": "Death", "power": 0.95, "text": "Magical Damage (Death) to all foes" },
+        { "name": "Lunar Howl", "tu": 160, "target": "allFoes", "mods": { "atk": -0.15, "mag": -0.15 }, "text": "Lowers all foes' Attack and Magic" },
+        { "name": "Death Sentence", "tu": 50, "target": "foe", "status": { "type": "doom", "tu": 500 }, "text": "Target is killed after 500 TUs" }
+      ]
+    },
+    {
+      "id": 226, "name": "Seraph", "element": "Life", "stars": 9.5, "sprite": "seraph.png",
+      "evolvesFrom": "Archangel", "evolveLevel": 70, "types": ["divine"],
+      "lore": "An Archangel that has carried a fragment of the sun for a hundred battles. The light it holds can mend any wound, or burn the darkness out of a demon's heart.",
+      "base": { "hp": 120, "atk": 40, "mag": 70, "spd": 92, "def": 62, "res": 80 },
+      "abilities": [
+        { "name": "Radiant Orb", "tu": 130, "target": "foe", "kind": "magical", "element": "Life", "power": 1.7, "vs": { "demonic": 100 }, "text": "Magical Damage (Life), +100% vs. Demonic" },
+        { "name": "Judgement", "tu": 250, "target": "allFoes", "kind": "magical", "element": "Life", "power": 1.1, "text": "Magical Damage (Life) to all foes" },
+        { "name": "Halo Mend", "tu": 160, "target": "allAllies", "healPower": 1.1, "text": "Heals all allies" },
+        { "name": "Angelic Wind", "tu": 100, "target": "allAllies", "cleanse": "bad", "text": "Removes Sleep, Paralyze, Poison, Confuse from all allies" },
+        { "name": "Mighty Guard", "tu": 160, "target": "allAllies", "mods": { "def": 0.15, "res": 0.15 }, "text": "Raises all allies' Defense and Resist" }
+      ]
+    },
+    {
+      "id": 227, "name": "Empyrean", "element": "Life", "stars": 10, "sprite": "empyrean.png",
+      "evolvesFrom": "Seraph", "evolveLevel": 100, "types": ["divine"],
+      "lore": "The final ascension of the angel line. Six wings, a crown of crescent moons and a heart that is a living sun. Legends say Dragon Island was born at dawn beneath its gaze.",
+      "base": { "hp": 140, "atk": 50, "mag": 92, "spd": 100, "def": 78, "res": 100 },
+      "abilities": [
+        { "name": "Sunfall Judgement", "tu": 200, "target": "allFoes", "kind": "magical", "element": "Life", "power": 1.35, "vs": { "demonic": 100 }, "text": "Magical Damage (Life) to all foes, +100% vs. Demonic" },
+        { "name": "Celestial Requiem", "tu": 220, "target": "foe", "kind": "magical", "element": "Life", "power": 2.8, "text": "Massive Magical Damage (Life)" },
+        { "name": "Sanctum", "tu": 200, "target": "allAllies", "healPower": 1.4, "cleanse": "bad", "text": "Heals all allies and removes bad effects" },
+        { "name": "Wings of Dawn", "tu": 130, "target": "allAllies", "haste": 30, "text": "Speeds up all allies' actions by 30%" },
+        { "name": "Divine Grace", "tu": null, "target": "self", "immune": true, "passive": true, "text": "Immune from all bad status effects" }
+      ]
+    }
+  ]
+}

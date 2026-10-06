@@ -1,0 +1,98 @@
+{
+ "town/menu_m": [
+  107,
+  104
+ ],
+ "town/leave": [
+  98,
+  89
+ ],
+ "town/shop": [
+  121,
+  162
+ ],
+ "town/hero": [
+  116,
+  144
+ ],
+ "town/warp_emblem": [
+  124,
+  94
+ ],
+ "town/emblem_house": [
+  124,
+  140
+ ],
+ "town/house_a": [
+  194,
+  138
+ ],
+ "town/warp_house": [
+  166,
+  114
+ ],
+ "town/house_b": [
+  165,
+  129
+ ],
+ "town/monsterpedia": [
+  191,
+  148
+ ],
+ "town/monsters": [
+  147,
+  154
+ ],
+ "town/signpost": [
+  127,
+  100
+ ],
+ "town/trees": [
+  173,
+  180
+ ],
+ "town/bigtree": [
+  174,
+  126
+ ],
+ "town/bushes": [
+  155,
+  58
+ ],
+ "town/farm": [
+  176,
+  104
+ ],
+ "battle/hpbar": [
+  202,
+  32
+ ],
+ "battle/coin": [
+  65,
+  68
+ ],
+ "battle/qframe": [
+  75,
+  56
+ ],
+ "battle/qbar": [
+  133,
+  21
+ ],
+ "battle/orb": [
+  32,
+  31
+ ],
+ "battle/water_orb": [
+  109,
+  107
+ ],
+ "battle/ghost": [
+  133,
+  127
+ ],
+ "battle/panel": [
+  973,
+  165
+ ]
+}

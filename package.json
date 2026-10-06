@@ -1,0 +1,25 @@
+{
+  "name": "dragon-isle-of-legends",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Dragon Isle of Legends - a fan rebuild of Dragon Island Blue",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "data": "python3 -I tools/build_data.py .cache/wiki public/assets/data && python3 -I tools/place_spots.py public/assets public/assets/data"
+  },
+  "dependencies": {
+    "phaser": "^3.90.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@types/node": "^26.6.4",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.3",
+    "vitest": "^5.0.3"
+  }
+}
