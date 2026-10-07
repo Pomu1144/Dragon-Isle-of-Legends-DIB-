@@ -43,9 +43,14 @@ export function statsOf(m: MonsterInst, gem: Partial<Stats> = {}): Stats {
 export const xpForLevel = (lv: number) => Math.round(12 * lv ** 2.15);
 export const xpToNext = (m: MonsterInst) => xpForLevel(m.level + 1) - xpForLevel(m.level);
 
+/**
+ * Experience for defeating (or capturing) a monster. The flat part (40 + 8 per level) matters only early on:
+ * it lets a Lv 5 starter gain ~5 levels in about 15-25 wild battles near Corova (tests/balance.test.ts),
+ * while at Lv 50+ the level term dominates and it adds little more than a tenth.
+ */
 export function xpYield(defeated: MonsterInst) {
   const s = species(defeated.species);
-  return Math.round(8 + defeated.level ** 1.9 * (0.9 + s.stars * 0.35));
+  return Math.round(40 + 8 * defeated.level + defeated.level ** 1.9 * (0.9 + s.stars * 0.35));
 }
 
 /** Add XP; returns levels gained. */

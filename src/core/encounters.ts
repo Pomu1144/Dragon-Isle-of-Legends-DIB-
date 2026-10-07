@@ -93,6 +93,15 @@ export function overlordLevel(name: string) {
   return data().regions.find((x) => x.name === o.region)!.levels[1] + 8;
 }
 
+/**
+ * Boss HP and stat multipliers of an overlord. They ramp up over the first tiers: Arashi (tier 0) must be
+ * beatable by a starter trained to Lv 10-12 plus a catch or two (tests/balance.test.ts); from tier 3 on
+ * overlords keep the full 7 + 0.4/tier HP and +15% stats.
+ */
+export function overlordMults(tier: number) {
+  return { bossHp: Math.min(7 + tier * 0.4, 2 + tier * 2.75), statMult: Math.min(1.15, 1 + tier * 0.075) };
+}
+
 export function overlordEncounter(name: string): Encounter {
   const o = overlord(name)!;
   const r = data().regions.find((x) => x.name === o.region)!;
@@ -101,7 +110,7 @@ export function overlordEncounter(name: string): Encounter {
   const boss = makeMonster(form, lv, new Rng(lv), 8);
   return {
     kind: 'overlord', name: o.name, team: [boss], bg: r.terrain === 'volcano' ? 'volcano' : r.terrain === 'snow' ? 'snow' : 'mountain',
-    capturable: false, canFlee: true, bossHp: 7 + r.tier * 0.4, statMult: 1.15,
+    capturable: false, canFlee: true, ...overlordMults(r.tier),
     reward: { silver: 500 + r.tier * 300, gold: 30 + r.tier * 5, egg: 'golden' },
     intro: `Dragon Overlord ${o.name} sends out ${form.name}!`,
   };
