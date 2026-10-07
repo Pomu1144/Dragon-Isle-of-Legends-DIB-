@@ -637,7 +637,14 @@ export class RegionScene extends Phaser.Scene {
         const name = BREEDERS[seed % BREEDERS.length];
         this.frozen = true;
         await dialogue([{ who: name, text: `A traveller out here? I raise monsters in the wilds of ${r.name}. Beat my team and I'll give you an egg from my camp!` }]);
-        fight(breederEncounter(r.id, name, seed), (res) => {
+        // breeder battles can't be fled: walking past the camp must not force one on an unready team
+        const enc = breederEncounter(r.id, name, seed);
+        const lv = Math.round(enc.team.reduce((a, m) => a + m.level, 0) / enc.team.length);
+        if (!(await confirmBox(`Accept ${name}'s challenge? ${enc.team.length} monsters around Lv ${lv} — there is no running from a breeder battle.`, 'Battle!'))) {
+          this.frozen = false;
+          return;
+        }
+        fight(enc, (res) => {
           if (res.outcome === 0) { this.claim(s); S.items.egg += 1; save(); toast(`${name} hands you a Monster Egg`, 'assets/ui/orig/disc/tent.png'); }
           toRegion();
         });
