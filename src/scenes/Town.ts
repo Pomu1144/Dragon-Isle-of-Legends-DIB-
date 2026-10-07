@@ -16,6 +16,8 @@ import '../ui/town.css';
 const SPEED = 330;   // hero walking speed (world px per second)
 const NEAR = 70;     // how close to a door (world px) its action shows in the action bar
 const LABEL_PX = 15; // name plate text size on screen (px)
+const LABEL_MIN_CSS = 11; // …and never smaller than this on the device (CSS px), however small the canvas is shown
+const HINT_MS = 5000; // how long the "tap to walk" hint stays after arriving
 
 /** Where to put the hero back after a battle started from town (the Arena, the tournament board). */
 let resume: { town: string; x: number; y: number } | null = null;
@@ -51,6 +53,15 @@ export class TownScene extends Phaser.Scene {
   private labels = new Map<Placed, Phaser.GameObjects.Container>();
   private plates: { x: number; y: number; w: number; h: number }[] = [];
   private plateW = 2736;
+  /** the bottom action bar, refilled in place when the nearest door changes (the HUD stays untouched) */
+  private actionsEl?: HTMLElement;
+  private hintUntil = 0;
+  private moved = false;
+  /** the camera follows the hero until the map is dragged; any new walk picks it up again */
+  private following = false;
+  /** a full-screen DOM layer (Monster Keep, Monsterpedia, a dialogue) is open: its keys are not for walking */
+  private uiBlock = false;
+  private uiWatch?: MutationObserver;
 
   init(d: { name: string }) {
     this.name = d.name;
@@ -63,11 +74,19 @@ export class TownScene extends Phaser.Scene {
     this.walls = [];
     this.labels.clear();
     this.plates = [];
+    this.actionsEl = undefined;
+    this.moved = this.following = this.uiBlock = false;
+    this.hintUntil = 0;
   }
 
   create() {
     music('town');
-    this.events.once('shutdown', () => { this.alive = false; this.ready = false; });
+    this.events.once('shutdown', () => { this.alive = false; this.ready = false; this.uiWatch?.disconnect(); });
+    // watch the UI root once per visit instead of querying the DOM every frame
+    const root = document.getElementById('ui');
+    const check = () => { this.uiBlock = !!document.querySelector('[data-layer="team"], [data-layer="book"], [data-layer="dialogue"]'); };
+    if (root) { this.uiWatch = new MutationObserver(check); this.uiWatch.observe(root, { childList: true }); }
+    check();
     const t = townData(this.name)!;
     const reg = regionByName(t.region)!;
     const spot = maps()[reg.id].spots.find((s) => s.kind === 'town' && s.ref === this.name);
@@ -79,7 +98,7 @@ export class TownScene extends Phaser.Scene {
     const ready = S.quests.filter(questDone).filter((q) => q.town === this.name);
     if (ready.length) toast(`📜 ${ready.length} quest(s) ready to turn in at the Guild!`);
     const hasDock = maps()[reg.id].spots.some((s) => s.kind === 'dock');
-    this.loadArt(pickPlate(this.name, hasDock), () => this.build());
+    this.loadArt(pickPlate(this.name, hasDock, !!t.arena), () => this.build());
   }
 
   /** The town art is streamed in the first time a town is shown (and the plate whenever it changes). */
@@ -142,12 +161,27 @@ export class TownScene extends Phaser.Scene {
       g.fillRect(0, 0, 64, 64);
       c.refresh();
     }
+    if (!this.textures.exists('tw_cast')) {
+      // the cast shadow of buildings and props: a wide soft oval, darkest a little off its middle
+      const c = this.textures.createCanvas('tw_cast', 128, 64)!;
+      const g = c.getContext();
+      g.setTransform(1, 0, 0, 0.5, 0, 0);
+      const r = g.createRadialGradient(60, 66, 6, 64, 64, 64);
+      r.addColorStop(0, 'rgba(12,16,34,0.62)');
+      r.addColorStop(0.55, 'rgba(12,16,34,0.38)');
+      r.addColorStop(1, 'rgba(12,16,34,0)');
+      g.fillStyle = r;
+      g.fillRect(0, 0, 128, 128);
+      c.refresh();
+    }
 
     // camera: the plate fills the screen; on phones the view is a little closer
     const { width, height } = this.scale;
     const cover = Math.max(width / PW, height / PH);
     const k = Math.max(Math.min(width / 1280, height / 720), Math.min(width / 390, height / 844) * 0.95);
-    const zoom = Math.max(cover, lay.zoom * Math.min(1.2, k));
+    // shown on a phone the 1280x720 canvas shrinks to a strip: look closer so the town stays legible
+    const phone = this.scale.displaySize.width > 0 && this.scale.displaySize.width < 600;
+    const zoom = Math.max(cover, lay.zoom * Math.min(1.2, k) * (phone ? 1.35 : 1));
     cam.setZoom(zoom).setBounds(0, 0, PW, PH);
 
     for (const it of plan.items) this.drawItem(it, zoom);
@@ -177,6 +211,7 @@ export class TownScene extends Phaser.Scene {
       if (!this.drag.moved && Math.hypot(dx, dy) < 8) return;
       this.drag.moved = true;
       cam.stopFollow();
+      this.following = false;
       cam.setScroll(this.drag.sx - dx / cam.zoom, this.drag.sy - dy / cam.zoom);
     });
     this.input.on('pointerup', (p: Phaser.Input.Pointer, over: Phaser.GameObjects.GameObject[]) => {
@@ -191,11 +226,15 @@ export class TownScene extends Phaser.Scene {
     this.keys = this.input.keyboard?.addKeys({ up: 'UP', down: 'DOWN', left: 'LEFT', right: 'RIGHT', w: 'W', a: 'A', s: 'S', d: 'D' }, false) as Keys;
 
     this.ready = true;
+    this.hintUntil = this.time.now + HINT_MS;
+    this.time.delayedCall(HINT_MS + 50, () => this.renderActions());
+    this.renderActions();
     cam.fadeIn(450);
   }
 
   /** One piece of the town: its sprite, and for the places you can use, a name plate and a tap target. */
   private drawItem(it: Placed, zoom: number) {
+    if (it.kind !== 'npc' && it.kind !== 'fx') this.castShadow(it);
     const img = this.add.image(it.x, it.y, `tp_${it.piece}`).setOrigin(it.ox, it.oy).setFlipX(it.flip).setDepth(it.depth);
     img.setDisplaySize(it.w, it.h);
     if (it.base) this.walls.push(it);
@@ -227,18 +266,34 @@ export class TownScene extends Phaser.Scene {
     }
   }
 
+  /**
+   * A soft shadow on the ground under a building or prop, cast toward the lower left like everything painted
+   * into the plates (the evening light comes from the upper right).
+   */
+  private castShadow(it: Placed) {
+    const b = it.base;
+    const w = b ? (b.span ? b.span[1] - b.span[0] : it.w * 0.92) : it.foot ? Math.max(it.foot.w * 1.6, it.w * 0.55) : it.w * 0.6;
+    const cx = b?.span ? (b.span[0] + b.span[1]) / 2 : it.x + (0.5 - it.ox) * it.w * (b ? 1 : 0);
+    const deep = b ? b.deep : Math.max(it.foot?.h ?? 0, it.w * 0.12) * 1.6;
+    const sh = this.add.image(cx - w * 0.12, it.y - deep * 0.25, 'tw_cast').setDepth(it.depth - 0.02);
+    sh.setDisplaySize(w * 1.2, deep * 1.7).setAlpha(b ? 0.85 : 0.7);
+  }
+
   /** A painted slate strip with the place's name, hung over it. */
   private nameplate(it: Placed, zoom: number) {
     // on a small screen the 1280x720 canvas is shown scaled down: the plates grow a little to stay legible
     const shown = this.scale.displaySize.width / this.scale.gameSize.width || 1;
-    const fs = (LABEL_PX / zoom) * Phaser.Math.Clamp(1 / shown, 1, 1.6);
+    const fs = (Math.max(LABEL_PX, LABEL_MIN_CSS / shown) / zoom);
     const txt = this.add.text(0, 0, it.label!, { fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: '900', fontSize: `${fs}px`, color: '#ffffff', stroke: '#0a0f1c', strokeThickness: fs * 0.22 }).setOrigin(0.5, 0.52);
     txt.setResolution(Math.min(2, window.devicePixelRatio || 1) * zoom);
     const w = txt.width + fs * 1.9, hh = fs * 2.15;
     const s = Math.min(1, hh / 72);
     const strip = this.add.nineslice(0, 0, 'btn_strip_slate', undefined, w / s, 72, 30, 30, 20, 20).setScale(s);
-    // hung over the door, about halfway up the facade (the roofs of the back row reach the top of the plate)
-    let y = it.kind === 'npc' ? it.y - it.h - hh * 0.7 : it.kind === 'prop' ? it.y - it.h - hh * 0.6 : it.y - it.h * (it.kind === 'gate' ? 0.6 : 0.55);
+    // above the roof ridge, so the painted facade, its sign and its goods stay in view
+    let y = it.y - it.oy * it.h - hh * (it.kind === 'npc' ? 0.7 : 0.55);
+    // the gate's plate hangs at its foot (where the road leaves town) unless that is the bottom edge of the plate
+    const plateH = this.textures.get(`tw_plate_${this.plan!.plate}`).getSourceImage().height;
+    if (it.kind === 'gate' && it.y + hh * 1.6 < plateH) y = it.y + hh * 0.9;
     let x = it.kind !== 'npc' && it.door ? Phaser.Math.Clamp(it.door.x, it.x - it.w * 0.25, it.x + it.w * 0.25) : it.x;
     // never on top of another plate
     for (let tries = 0; tries < 6; tries++) {
@@ -246,7 +301,8 @@ export class TownScene extends Phaser.Scene {
       if (!hit) break;
       y = hit.y - (hit.h + hh) / 2 - 6;
     }
-    y = Math.max(hh, y);
+    // a roof at the very top of the plate gets its plate a little lower, clear of the HUD and the town's name
+    y = Math.max(hh * 0.6 + 72 / zoom, y);
     x = Phaser.Math.Clamp(x, w / 2 + 8, this.plateW - w / 2 - 8);
     this.plates.push({ x, y, w, h: hh });
     const c = this.add.container(x, y, [strip, txt]).setDepth(9000 + it.y * 0.01);
@@ -258,13 +314,16 @@ export class TownScene extends Phaser.Scene {
     if (!this.ready) return;
     const k = this.keys;
     const dt = Math.min(delta, 50) / 1000;
-    const busy = this.frozen || anyModal();
+    // keys typed into a text field (naming a monster…) are not for walking
+    const typing = document.activeElement instanceof HTMLInputElement || document.activeElement instanceof HTMLTextAreaElement;
+    const busy = this.frozen || this.uiBlock || typing || anyModal();
     const vx = k && !busy ? (k.right.isDown || k.d.isDown ? 1 : 0) - (k.left.isDown || k.a.isDown ? 1 : 0) : 0;
     const vy = k && !busy ? (k.down.isDown || k.s.isDown ? 1 : 0) - (k.up.isDown || k.w.isDown ? 1 : 0) : 0;
     let moving = false;
     if (vx || vy) {
       this.route.length = 0;
       this.target = undefined;
+      this.userMoved();
       const len = Math.hypot(vx, vy), s = SPEED * dt;
       moving = this.step((vx / len) * s, (vy / len) * s);
     } else if (!busy && this.route.length) {
@@ -280,7 +339,8 @@ export class TownScene extends Phaser.Scene {
     if (moving) {
       this.walkT += delta;
       this.heroImg.y = -Math.abs(Math.sin(this.walkT * 0.011)) * this.heroH * 0.05 * this.heroImg.scaleY * 1.5;
-      if (!this.walking) { this.walking = true; this.cameras.main.startFollow(this.hero, true, 0.1, 0.1); }
+      if (!this.walking) this.walking = true;
+      if (!this.following) this.follow();
     } else if (this.walking) {
       this.walking = false;
       this.heroImg.y = 0;
@@ -293,7 +353,23 @@ export class TownScene extends Phaser.Scene {
     if (!path) return;
     this.route = path;
     this.target = it;
+    this.userMoved();
+    this.follow();
     if (!it) this.marker(p);
+  }
+
+  /** The camera goes back to the hero (after the map was dragged to look around). */
+  private follow() {
+    if (this.following) return;
+    this.following = true;
+    this.cameras.main.startFollow(this.hero, true, 0.1, 0.1);
+  }
+
+  /** The first step the player takes puts the "tap to walk" hint away. */
+  private userMoved() {
+    if (this.moved) return;
+    this.moved = true;
+    this.renderActions();
   }
 
   /** A small ripple where you tapped. */
@@ -334,7 +410,7 @@ export class TownScene extends Phaser.Scene {
       const dist = Math.hypot(d.x - x, d.y - y);
       if (dist < bd) { bd = dist; best = u; }
     }
-    if (best !== this.near) { this.near = best; this.render(); }
+    if (best !== this.near) { this.near = best; this.renderActions(); }
   }
 
   /** The painting has some perspective: the hero grows a little nearer the bottom. */
@@ -365,7 +441,6 @@ export class TownScene extends Phaser.Scene {
   // ---------------------------------------------------------------- places
   private use(it: Placed) {
     const refresh = () => this.render();
-    const back = () => { resume = { town: this.name, x: this.hero.x, y: this.hero.y }; };
     switch (it.service) {
       case 'guild': return this.guild();
       case 'market': return this.shop();
@@ -373,17 +448,23 @@ export class TownScene extends Phaser.Scene {
       case 'warp': return this.warp();
       case 'keep': return openMenu('team', refresh);
       case 'hero': return openMenu('hero', refresh);
-      case 'arena': back(); return this.arena();
-      case 'board': back(); return this.tournament();
+      case 'arena': return this.arena();
+      case 'board': return this.tournament();
       case 'pedia': return this.talk(it, () => openMenu('pedia', refresh));
       case 'npc': return this.talk(it);
       case 'gate': {
         this.frozen = true;
+        resume = null;
         this.cameras.main.fadeOut(300, 0, 0, 0);
         this.cameras.main.once('camerafadeoutcomplete', () => toRegion());
         return;
       }
     }
+  }
+
+  /** A fight started from town brings the hero back to where he stood (only once the fight really begins). */
+  private keepSpot() {
+    if (this.hero) resume = { town: this.name, x: this.hero.x, y: this.hero.y };
   }
 
   private async talk(it: Placed, then?: () => void) {
@@ -408,14 +489,27 @@ export class TownScene extends Phaser.Scene {
     const refresh = () => this.render();
     hud((k) => openMenu(k, refresh));
     const ready = S.quests.filter((q) => q.town === this.name && questDone(q)).length;
-    const n = this.near;
+    this.actionsEl = h('div', { class: 'town-actions' });
     layer('scene', h('div', {},
       h('div', { class: 'town-name' }, this.name, ready ? h('span', { class: 'chip gold', style: { marginLeft: '.5em' } }, `📜 ${ready} ready at the Guild`) : null),
       h('div', { class: 'town-sub' }, t.region),
-      h('div', { class: 'town-actions' },
-        n ? h('button', { class: `btn ${n.service === 'gate' ? 'green' : 'gold'}`, onClick: () => { sfx('select'); this.use(n); } }, this.actionLabel(n)) : null,
-        n?.sub ? h('span', { class: 'chip panel town-what' }, n.sub) : null,
-        n ? null : h('span', { class: 'chip panel' }, 'Tap the ground to walk · tap a building to enter'))));
+      this.actionsEl));
+    this.renderActions();
+  }
+
+  /**
+   * The bottom action bar: the door in reach, else (only for the first moments in town) how to get about.
+   * Refilled on its own, so walking past doors never rebuilds the HUD (or closes its open menu).
+   */
+  private renderActions() {
+    const el = this.actionsEl;
+    if (!el || !el.isConnected) return;
+    const n = this.near;
+    const hint = !n && this.ready && !this.moved && this.time.now < this.hintUntil;
+    fill(el,
+      n ? h('button', { class: `btn ${n.service === 'gate' ? 'green' : 'gold'}`, onClick: () => { sfx('select'); this.use(n); } }, this.actionLabel(n)) : null,
+      n?.sub ? h('span', { class: 'chip panel town-what' }, n.sub) : null,
+      hint ? h('span', { class: 'chip panel town-hint' }, 'Tap the ground to walk · tap a building to enter') : null);
   }
 
   // ---------------------------------------------------------------- Guild
@@ -559,6 +653,7 @@ export class TownScene extends Phaser.Scene {
         h('div', {}, `Requires Hero Lv ${lic.heroLevel} (you: ${heroLevel()}) and ${lic.quests} completed quests (you: ${S.questCount}).`),
         h('button', { class: 'btn gold', disabled: heroLevel() < lic.heroLevel || S.questCount < lic.quests, onClick: async () => {
           await dialogue([{ who: next % 2 ? 'Arena Master May' : 'Arena Master Herald', text: `So you seek the ${lic.name} license? Show me your bond with your monsters!` }]);
+          this.keepSpot();
           fight(arenaEncounter(next), (r) => {
             if (r.outcome === 0) { S.license = next; save(); toast(`🏅 ${lic.name} License earned! Party size is now ${partySize()}.`); }
             toTown(this.name);
@@ -579,6 +674,7 @@ export class TownScene extends Phaser.Scene {
       cls < CLASSES.length ? h('button', { class: 'btn gold', onClick: () => {
         const reg = sorted[Math.min(15, Math.round(cls * 1.45))];
         const team = breederTeam(reg.id, new Rng(cls * 977), 3 + Math.floor(cls / 2), 4);
+        this.keepSpot();
         fight({ kind: 'arena', name: `${CLASSES[cls]}-class champion`, team, bg: 'arena', capturable: false, canFlee: false,
           reward: { silver: 300 * (cls + 1), egg: cls >= 8 ? 'golden' : 'egg' }, intro: `Tournament — ${CLASSES[cls]} class` }, (r) => {
           if (r.outcome === 0) { S2.tourney = cls + 1; save(); toast(`${CLASSES[cls]} class cleared!`); }

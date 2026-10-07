@@ -12,22 +12,38 @@ import { WalkGrid, type Pt } from './walkgrid';
 import { Rng } from './rng';
 
 export type PlateId = 'plaza' | 'harbor' | 'garden';
-export type Size = 'S' | 'M' | 'L' | 'XL';
 export type Service = 'guild' | 'market' | 'lab' | 'warp' | 'keep' | 'hero' | 'pedia' | 'arena' | 'board' | 'gate' | 'npc';
 
 /** kit.json: world size in kit units (a townsperson is ~80 tall), ground anchor, collision box. */
 export interface KitPiece { cat: string; w: number; h: number; origin: [number, number]; footprint?: { x: number; y: number; w: number; h: number } | null }
-/** Per-piece tuning in layouts.json: extra size factor, where the hero stands to use it, footprint depth. */
-export interface PieceTune { k?: number; size?: Size; door?: [number, number]; deep?: number; glow?: [number, number] }
+/**
+ * Per-piece tuning in layouts.json. `k` is the piece's size against the townsfolk at the same depth, fixed once
+ * per piece (a building is drawn at scaleAt(y) * k wherever it stands, so its doors stay a little taller than
+ * the hero). `door` is where the hero stands to use it, `deep` the depth of its footprint, `span` the part of
+ * its width (kit units from the anchor) that blocks walking, `pass` an archway you walk through, `wet` marks
+ * art with canal water baked in.
+ */
+export interface PieceTune { k?: number; door?: [number, number]; deep?: number; span?: [number, number]; pass?: [number, number]; glow?: [number, number]; wet?: boolean }
 /** bases.json: a building's ground line, one sample every `dx` kit units from `x0` (null = no wall there). */
 export interface Base { x0: number; dx: number; y: (number | null)[] }
 
-export interface Slot { id: string; x: number; y: number; fits: Size[]; maxW?: number; maxH?: number; excludes?: string[]; flip?: boolean }
+/**
+ * A place for a building. `maxW`/`maxH` (world px) are only a fit test: a piece that would be drawn bigger is
+ * not offered for the slot. `arena` slots may hold the Grand Arena; `open` slots stand free on the square and
+ * take only the small free-standing pieces (`only`); `wet` slots are at the water's edge; `doorX` is where on
+ * the walkable ground (world x) a door may open; `minW` makes sure a building covers what it stands on (a
+ * mosaic) completely; `filler` slots hold only homes and trees, no doors to reach.
+ */
+export interface Slot { id: string; x: number; y: number; maxW: number; maxH: number; excludes?: string[]; flip?: boolean; arena?: boolean; open?: boolean; wet?: boolean; only?: string[]; doorX?: [number, number]; minW?: number; filler?: boolean }
 export interface PropSpot { x: number; y: number; kind: string; p?: number; flip?: boolean }
 export interface PlateLayout {
   /** sprite size per world px along the plate's depth: [y, scale] stops (the paintings have some perspective) */
   scale: [number, number][];
   zoom: number;
+  /** painted features (mosaics, stepping stones, fountain rims…) no building may stand on or hide */
+  keep?: number[][];
+  /** painted features that buildings may cover completely, but never leave half hidden */
+  cover?: number[][];
   /** polygons (flat x,y lists): ground you can walk on; painted things in the way; shade the painting colours blue */
   walk: number[][];
   blocks: number[][];
@@ -63,7 +79,7 @@ export interface Placed {
   label?: string; sub?: string;
   door?: Pt;                     // where the hero stands to use it
   /** ground line (world px) for depth sorting and the footprint, sampled every `dx` from `x0` */
-  base?: { x0: number; dx: number; y: Float32Array; deep: number };
+  base?: { x0: number; dx: number; y: Float32Array; deep: number; span?: [number, number]; pass?: [number, number] };
   foot?: { x: number; y: number; w: number; h: number };
   glow?: Pt;
   who?: string; line?: string;   // townsfolk
@@ -93,9 +109,11 @@ const FOLK_NAME: Record<string, string> = {
 };
 
 interface ServiceDef { pieces: string[]; label: string; sub: string }
+/** The kit residence that stands in for the Guild Hall only while guild.webp is missing. */
+export const GUILD_FALLBACK = 'architecture_waterside-residence_upper-terrace-06';
 const SERVICES: Partial<Record<Service, ServiceDef>> = {
   arena: { pieces: ['arena'], label: 'Grand Arena', sub: 'Licenses · Trials' },
-  guild: { pieces: ['guild', 'architecture_waterside-residence_upper-terrace-06'], label: 'Guild Hall', sub: 'Quests · Rewards' },
+  guild: { pieces: ['guild'], label: 'Guild Hall', sub: 'Quests · Rewards' },
   keep: { pieces: ['keep'], label: 'Monster Keep', sub: 'Your monsters' },
   lab: { pieces: ['architecture_apothecary-shop_main-01'], label: 'Recipe Lab', sub: 'Fuse monsters' },
   market: { pieces: ['architecture_bakery-cafe_main-01', 'architecture_market-stall_01'], label: 'Market', sub: 'Cards · Eggs · Gems' },
@@ -112,9 +130,12 @@ export function hashName(s: string) {
   return h >>> 0;
 }
 
-/** Harbour towns sit in regions with a dock; the rest get the plaza or the garden by their name. */
-export function pickPlate(name: string, hasDock: boolean): PlateId {
-  if (hasDock) return 'harbor';
+/**
+ * Harbour towns sit in regions with a dock; the rest get the plaza or the garden by their name. The quay has
+ * no ground for the Grand Arena, so a town with an arena always gets the plaza or the garden.
+ */
+export function pickPlate(name: string, hasDock: boolean, arena = false): PlateId {
+  if (hasDock && !arena) return 'harbor';
   return hashName(name) % 2 ? 'garden' : 'plaza';
 }
 
@@ -149,11 +170,18 @@ function dims(piece: string, A: TownArt) {
   return { w: a.w, h: a.h, ox: 0.5, oy: 1 };
 }
 const has = (piece: string, A: TownArt) => !!(A.kit[piece] || A.art[piece]);
-export function sizeOf(piece: string, A: TownArt): Size {
-  const t = A.layouts.pieces[piece];
-  if (t?.size) return t.size;
-  const w = dims(piece, A).w * (t?.k ?? 1);
-  return w > 620 ? 'XL' : w > 430 ? 'L' : w > 260 ? 'M' : 'S';
+/** The piece's fixed size factor against the townsfolk (see PieceTune.k). */
+export const kOf = (piece: string, A: TownArt) => A.layouts.pieces[piece]?.k ?? 1;
+
+/** Would the piece, at its one consistent scale, fit the slot (and stay on the plate, and off dry/wet ground it does not suit)? */
+export function fitsSlot(piece: string, s: Slot, lay: PlateLayout, A: TownArt) {
+  if (s.only && !s.only.includes(piece)) return false;
+  if (!!A.layouts.pieces[piece]?.wet && !s.wet) return false;
+  const d = dims(piece, A), sc = scaleAt(lay, s.y) * kOf(piece, A);
+  const h = d.h * sc * d.oy;
+  const dx = s.x + (A.layouts.pieces[piece]?.door?.[0] ?? 0) * sc;
+  if (s.doorX && (dx < s.doorX[0] || dx > s.doorX[1])) return false;
+  return d.w * sc <= s.maxW && d.w * sc >= (s.minW ?? 0) && h <= s.maxH && h <= s.y - 6;
 }
 
 /** Ground line of a building at a kit-unit offset from its anchor (kit units, + is down), if it has one. */
@@ -168,12 +196,10 @@ function baseAt(b: Base, dx: number): number | null {
 }
 
 /** Put one piece on the plate. */
-function place(A: TownArt, lay: PlateLayout, piece: string, kind: Placed['kind'], x: number, y: number, o: { flip?: boolean; maxW?: number; maxH?: number; scale?: number } = {}): Placed {
+function place(A: TownArt, lay: PlateLayout, piece: string, kind: Placed['kind'], x: number, y: number, o: { flip?: boolean; scale?: number } = {}): Placed {
   const d = dims(piece, A);
   const tune = A.layouts.pieces[piece] ?? {};
-  let sc = o.scale ?? scaleAt(lay, y) * (tune.k ?? 1);
-  if (o.maxW && d.w * sc > o.maxW) sc = o.maxW / d.w;
-  if (o.maxH && d.h * sc > o.maxH) sc = o.maxH / d.h;
+  const sc = o.scale ?? scaleAt(lay, y) * (tune.k ?? 1);
   const flip = !!o.flip;
   const fx = flip ? -1 : 1;
   const p: Placed = { piece, url: pieceUrl(piece, A), kind, x, y, scale: sc, w: d.w * sc, h: d.h * sc, ox: flip ? 1 - d.ox : d.ox, oy: d.oy, flip, depth: y };
@@ -191,6 +217,15 @@ function place(A: TownArt, lay: PlateLayout, piece: string, kind: Placed['kind']
     // flipped art mirrors its ground line
     if (flip) ys.reverse();
     p.base = { x0: x + (flip ? -(x0 + n * step) : x0) * sc, dx: step * sc, y: ys, deep };
+    // only the solid part of the width blocks walking (not an open canopy or tables at one side)
+    if (tune.span) {
+      const [a, c] = flip ? [-tune.span[1], -tune.span[0]] : tune.span;
+      p.base.span = [x + a * sc, x + c * sc];
+    }
+    if (tune.pass) {
+      const [a, c] = flip ? [-tune.pass[1], -tune.pass[0]] : tune.pass;
+      p.base.pass = [x + a * sc, x + c * sc];
+    }
     const door = tune.door ?? [0, 10];
     let dy = door[1];
     const line = b ? baseAt(b, door[0]) : -Math.abs(door[0]) * 0.28;
@@ -232,7 +267,11 @@ export function planTown(t: TownInfo, plate: PlateId, A: TownArt): TownPlan {
   const items: Placed[] = [];
   const free = new Set(lay.slots.map((s) => s.id));
   const slot = (id: string) => lay.slots.find((s) => s.id === id)!;
-  const take = (s: Slot) => { free.delete(s.id); for (const e of s.excludes ?? []) free.delete(e); };
+  // slots that overlap exclude each other, whichever is filled first
+  const take = (s: Slot) => {
+    free.delete(s.id);
+    for (const o of lay.slots) if (s.excludes?.includes(o.id) || o.excludes?.includes(s.id)) free.delete(o.id);
+  };
 
   // the gate the hero arrived by
   const gate = place(A, lay, 'gate', 'gate', lay.gate.x, lay.gate.y, { flip: lay.gate.flip });
@@ -241,30 +280,59 @@ export function planTown(t: TownInfo, plate: PlateId, A: TownArt): TownPlan {
   gate.sub = 'Leave town';
   items.push(gate);
 
-  // services, each in a slot its building fits
+  // services, each in a slot its building fits at its one consistent scale; a small search so every
+  // service finds room whatever the seed picks first
   const want = ORDER.filter((s) => s !== 'arena' || t.arena);
-  for (const svc of want) {
+  const choice = new Map<Service, [Slot, string]>();
+  const optsFor = (svc: Service): [Slot, string][] => {
     const def = SERVICES[svc]!;
-    const pieces = def.pieces.filter((p) => has(p, A));
-    const opts: [Slot, string][] = [];
+    const pieces = svc === 'guild' ? (has('guild', A) ? ['guild'] : [GUILD_FALLBACK]) : def.pieces.filter((p) => has(p, A));
+    const used = new Set([...choice.values()].map(([, p]) => p));
+    const out: [Slot, string][] = [];
     for (const id of free) {
       const s = slot(id);
-      if (s.fits.includes('XL') && svc !== 'arena') continue; // the arena's ground stays clear for it
-      for (const p of pieces) if (s.fits.includes(sizeOf(p, A))) opts.push([s, p]);
+      if ((svc === 'arena' && !s.arena) || s.filler) continue;
+      for (const p of pieces) if (!used.has(p) && fitsSlot(p, s, lay, A)) out.push([s, p]);
     }
-    // nothing fits: squeeze the first choice into any free slot that is not reserved for the arena
-    if (!opts.length) for (const id of free) if (!slot(id).fits.includes('XL')) opts.push([slot(id), pieces[0]]);
-    if (!opts.length) throw new Error(`${t.name}: no room for the ${svc} on the ${plate} plate`);
-    // keep the residences distinct: the hero's house never repeats the fallback guild hall
-    let pick = rng.pick(opts);
-    if (svc === 'hero') {
-      const used = new Set(items.map((i) => i.piece));
-      const fresh = opts.filter(([, p]) => !used.has(p));
-      if (fresh.length) pick = rng.pick(fresh);
+    // the open square is used only when the edges are full
+    return shuffle(rng, out).sort((a, b) => +!!a[0].open - +!!b[0].open);
+  };
+  // a free-standing stall or shrine never hides the door of a building behind it
+  const hidesDoor = () => {
+    for (const [s, p] of choice.values()) {
+      if (!s.open) continue;
+      const d = dims(p, A), sc = scaleAt(lay, s.y) * kOf(p, A);
+      const x0 = s.x - d.ox * d.w * sc, x1 = x0 + d.w * sc, y0 = s.y - d.oy * d.h * sc;
+      for (const [o, q] of choice.values()) {
+        if (o === s) continue;
+        const door = A.layouts.pieces[q]?.door ?? [0, 10], oc = scaleAt(lay, o.y) * kOf(q, A);
+        for (const fx of o.flip ? [1, -1] : [1]) {
+          const dx = o.x + door[0] * oc * fx, dy = o.y + door[1] * oc;
+          if (dy < s.y && dx > x0 - 20 && dx < x1 + 20 && dy > y0) return true;
+        }
+      }
     }
-    const [s, p] = pick;
-    take(s);
-    const b = place(A, lay, p, 'building', s.x, s.y, { maxW: s.maxW, maxH: s.maxH, flip: s.flip && rng.chance(0.5) });
+    return false;
+  };
+  const assign = (i: number): boolean => {
+    if (i >= want.length) return !hidesDoor();
+    const svc = want[i];
+    for (const [s, p] of optsFor(svc)) {
+      const before = [...free];
+      take(s);
+      choice.set(svc, [s, p]);
+      if (assign(i + 1)) return true;
+      choice.delete(svc);
+      free.clear();
+      for (const id of before) free.add(id);
+    }
+    return false;
+  };
+  if (!assign(0)) throw new Error(`${t.name}: no room for every service on the ${plate} plate`);
+  for (const svc of want) {
+    const [s, p] = choice.get(svc)!;
+    const def = SERVICES[svc]!;
+    const b = place(A, lay, p, 'building', s.x, s.y, { flip: s.flip && rng.chance(0.5) });
     b.service = svc;
     b.label = def.label;
     b.sub = def.sub;
@@ -272,19 +340,19 @@ export function planTown(t: TownInfo, plate: PlateId, A: TownArt): TownPlan {
     decorate(A, lay, b, rng, items);
   }
 
-  // the rest of the slots: more homes, or a tree and a planter
+  // the rest of the slots: more homes, or a tree and a planter (the open square stays open)
   const used = new Set(items.map((i) => i.piece));
   const homes = shuffle(rng, RESIDENCES.filter((r) => !used.has(r)));
-  for (const id of [...free]) {
-    const s = slot(id);
-    if (s.fits.includes('XL')) continue;
-    if (s.fits.includes('M') && homes.length && rng.chance(0.8)) {
-      items.push(place(A, lay, homes.pop()!, 'building', s.x, s.y, { maxW: s.maxW, maxH: s.maxH, flip: s.flip && rng.chance(0.5) }));
+  for (const s of lay.slots) {
+    if (!free.has(s.id) || s.open || s.arena) continue;
+    take(s);
+    const home = homes.findIndex((h) => fitsSlot(h, s, lay, A));
+    if (home >= 0 && rng.chance(0.85)) {
+      items.push(place(A, lay, homes.splice(home, 1)[0], 'building', s.x, s.y, { flip: s.flip && rng.chance(0.5) }));
     } else {
       items.push(place(A, lay, rng.pick(TREES), 'tree', s.x, s.y - 6, { flip: rng.chance(0.5) }));
       items.push(place(A, lay, rng.pick(PROPS.planter), 'prop', s.x + (rng.chance(0.5) ? -1 : 1) * 70 * scaleAt(lay, s.y), s.y + 16, { flip: rng.chance(0.5) }));
     }
-    free.delete(id);
   }
 
   // spots for townsfolk, the notice board and props must stand clear of the buildings (and of each other)
@@ -311,10 +379,11 @@ export function planTown(t: TownInfo, plate: PlateId, A: TownArt): TownPlan {
   const spots = shuffle(rng, lay.npcs.filter(([x, y]) => clear(x, y)));
   const hints = shuffle(rng, HINTS.slice());
   const folk = shuffle(rng, FOLK.filter((f) => f !== 'npcs_apothecary_idle-south-01'));
-  const count = Math.min(spots.length, 3 + rng.int(0, 2));
+  // the Scholar and two or three neighbours, never the same face twice
+  const count = Math.min(spots.length, 1 + folk.length, 3 + rng.int(0, 1));
   for (let i = 0; i < count; i++) {
     const [x, y] = spots[i];
-    const piece = i === 0 ? 'npcs_apothecary_idle-south-01' : folk[(i - 1) % folk.length];
+    const piece = i === 0 ? 'npcs_apothecary_idle-south-01' : folk[i - 1];
     taken.push({ x, y });
     const n = place(A, lay, piece, 'npc', x, y, { flip: rng.chance(0.4) });
     n.service = i === 0 ? 'pedia' : 'npc';
@@ -380,15 +449,10 @@ function decorate(A: TownArt, lay: PlateLayout, b: Placed, rng: Rng, items: Plac
   }
 }
 
-/**
- * The town's walk grid: the plate read like a region map (open water blocks the way), limited to the
- * authored walkable ground, minus painted obstacles and the footprint of everything standing on it.
- */
-export function townGrid(plan: TownPlan, rgba: ArrayLike<number>, cols: number, rows: number, cell: number) {
-  const lay = plan.layout;
+/** The bare plate read like a region map: open water blocks the way (blue evening shade on stone does not). */
+export function plateGrid(lay: PlateLayout, rgba: ArrayLike<number>, cols: number, rows: number, cell: number) {
   let px = rgba;
   if (lay.dry?.length) {
-    // blue evening shade on stone is not water
     const copy = Uint8ClampedArray.from(rgba as ArrayLike<number>);
     for (let cy = 0; cy < rows; cy++) for (let cx = 0; cx < cols; cx++) {
       if (!inAny(lay.dry, (cx + 0.5) * cell, (cy + 0.5) * cell)) continue;
@@ -397,7 +461,16 @@ export function townGrid(plan: TownPlan, rgba: ArrayLike<number>, cols: number, 
     }
     px = copy;
   }
-  const grid = WalkGrid.fromPixels(px, cols, rows, cell);
+  return WalkGrid.fromPixels(px, cols, rows, cell);
+}
+
+/**
+ * The town's walk grid: the bare plate, limited to the authored walkable ground, minus painted obstacles
+ * and the footprint of everything standing on it.
+ */
+export function townGrid(plan: TownPlan, rgba: ArrayLike<number>, cols: number, rows: number, cell: number) {
+  const lay = plan.layout;
+  const grid = plateGrid(lay, rgba, cols, rows, cell);
   grid.blockWhere((x, y) => !inAny(lay.walk, x, y) || inAny(lay.blocks, x, y));
   for (const p of plan.items) {
     if (p.base) {
@@ -406,10 +479,17 @@ export function townGrid(plan: TownPlan, rgba: ArrayLike<number>, cols: number, 
       const c0 = Math.floor(b.x0 / cell), c1 = Math.floor((b.x0 + b.dx * b.y.length) / cell);
       for (let c = c0; c <= c1; c++) {
         const cx = (c + 0.5) * cell;
+        if (b.span && (cx < b.span[0] || cx > b.span[1])) continue;
+        if (b.pass && cx > b.pass[0] && cx < b.pass[1]) continue;
         const gy = groundLine(p, cx);
         if (gy == null) continue;
         grid.blockRect(c * cell, gy - b.deep, cell, b.deep);
       }
+    } else if (p.kind === 'npc') {
+      // townsfolk stand their ground: a small oval around their feet (never thinner than a cell, so the
+      // hero stops beside them instead of walking through), their door point stays just in front
+      const w = Math.max(30 * p.scale, cell * 1.6), h = Math.max(14 * p.scale, cell * 1.2);
+      grid.blockRect(p.x - w / 2, p.y - h * 0.75, w, h);
     } else if (p.foot) grid.blockRect(p.foot.x, p.foot.y, p.foot.w, p.foot.h);
   }
   return grid;
