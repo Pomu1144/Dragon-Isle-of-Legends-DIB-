@@ -8,6 +8,7 @@ import {
 import { h, modal, toast, confirmBox, promptBox, stars, layer, anyModal, fill } from './dom';
 import { sfx, setAudio } from '../audio';
 import { openBook } from './book';
+import { openTeam } from './team';
 
 export const elChip = (el: string) => h('span', { class: `chip el el-${el}` }, h('img', { src: `assets/ui/element-${el.toLowerCase()}.png`, alt: '' }), el);
 
@@ -82,8 +83,8 @@ export function hud(onMenu: (k: string) => void, extra: HTMLElement[] = []) {
 }
 
 export function openMenu(k: string, refresh: () => void) {
-  if (anyModal() || document.querySelector('[data-layer="book"]')) return;
-  ({ team: () => openBook('mine', refresh, (n) => openMenu(n, refresh)), bag: () => bagMenu(refresh), pedia: () => openBook('pedia', refresh, (n) => openMenu(n, refresh)), quests: questsMenu, hero: () => heroMenu(refresh), system: systemMenu } as Record<string, () => void>)[k]?.();
+  if (anyModal() || document.querySelector('[data-layer="book"], [data-layer="team"]')) return;
+  ({ team: () => openTeam(refresh), bag: () => bagMenu(refresh), pedia: () => openBook('pedia', refresh, (n) => openMenu(n, refresh)), quests: questsMenu, hero: () => heroMenu(refresh), system: systemMenu } as Record<string, () => void>)[k]?.();
 }
 
 // ------------------------------------------------------------------ Team
