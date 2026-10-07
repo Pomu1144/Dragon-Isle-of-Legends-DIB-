@@ -8,6 +8,7 @@ import {
 import { h, modal, toast, confirmBox, promptBox, stars, layer, anyModal, fill } from './dom';
 import { sfx, setAudio } from '../audio';
 import { openBook } from './book';
+import { openTeam } from './team';
 
 export const elChip = (el: string) => h('span', { class: `chip el el-${el}` }, h('img', { src: `assets/ui/element-${el.toLowerCase()}.png`, alt: '' }), el);
 
@@ -66,11 +67,14 @@ export function speciesDetail(sp: Species, m?: MonsterInst, actions?: HTMLElemen
 export function hud(onMenu: (k: string) => void, extra: HTMLElement[] = []) {
   const coin = (g = false) => h('span', { class: `coin ${g ? 'g' : ''}` });
   const items: [string, string, string][] = [['team', 'Monsters', 'btn_monsters'], ['pedia', 'Monsterpedia', 'btn_book'], ['bag', 'Bag', 'btn_bag'],
-    ['quests', 'Quests', 'btn_scroll'], ['hero', 'Hero', ''], ['system', 'Settings', 'btn_gear']];
-  const menu = h('div', { class: 'm-menu' }, ...items.map(([k, l, icon]) => h('button', { class: 'bt-mi', 'data-menu': k, onClick: () => { menu.classList.remove('open'); onMenu(k); } },
-    icon ? h('img', { src: `assets/ui/orig/bk/${icon}.png`, alt: '' }) : h('img', { src: 'assets/ui/orig/town/hero.png', alt: '' }), l)));
+    ['quests', 'Quests', 'btn_scroll'], ['hero', 'Hero', 'btn_hero'], ['system', 'Settings', 'btn_gear']];
+  const menu = h('div', { class: 'm-menu' }, ...items.map(([k, l, icon]) => h('button', { class: 'bt-mi', 'data-menu': k, onClick: () => { menu.classList.remove('open'); mBtn.classList.remove('on'); onMenu(k); } },
+    h('img', { src: `assets/ui/orig/bk/${icon}.png`, alt: '' }), l)));
+  // the M button stays pressed in while its menu is open
+  const mBtn = h('button', { class: 'm-btn', title: 'Menu', 'data-testid': 'menu-m', onClick: () => mBtn.classList.toggle('on', menu.classList.toggle('open')) },
+    h('img', { src: 'assets/ui/orig/town/menu_m.png', alt: 'M' }));
   return layer('hud', h('div', { class: 'hud' },
-    h('button', { class: 'm-btn', title: 'Menu', 'data-testid': 'menu-m', onClick: () => menu.classList.toggle('open') }, h('img', { src: 'assets/ui/orig/town/menu_m.png', alt: 'M' })),
+    mBtn,
     menu,
     h('div', { class: 'hud-stats' }, h('span', { class: 'hero-lv' }, `Lv ${heroLevel()}`), h('b', {}, S.hero),
       coin(), h('b', {}, S.silver.toLocaleString()), coin(true), h('b', {}, S.gold.toLocaleString()),
@@ -79,8 +83,8 @@ export function hud(onMenu: (k: string) => void, extra: HTMLElement[] = []) {
 }
 
 export function openMenu(k: string, refresh: () => void) {
-  if (anyModal() || document.querySelector('[data-layer="book"]')) return;
-  ({ team: () => openBook('mine', refresh, (n) => openMenu(n, refresh)), bag: () => bagMenu(refresh), pedia: () => openBook('pedia', refresh, (n) => openMenu(n, refresh)), quests: questsMenu, hero: () => heroMenu(refresh), system: systemMenu } as Record<string, () => void>)[k]?.();
+  if (anyModal() || document.querySelector('[data-layer="book"], [data-layer="team"]')) return;
+  ({ team: () => openTeam(refresh), bag: () => bagMenu(refresh), pedia: () => openBook('pedia', refresh, (n) => openMenu(n, refresh)), quests: questsMenu, hero: () => heroMenu(refresh), system: systemMenu } as Record<string, () => void>)[k]?.();
 }
 
 // ------------------------------------------------------------------ Team

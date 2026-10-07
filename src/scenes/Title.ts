@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { coverBg, ambient, vignette } from './fx';
-import { h, layer, modal, dialogue, toast } from '../ui/dom';
+import { h, layer, clearLayer, modal, dialogue, toast } from '../ui/dom';
 import { hasSave, load, newGame, S, STARTERS } from '../core/state';
 import { data, speciesByName, spriteUrl } from '../core/data';
 import { music, sfx, setAudio, unlockAudio } from '../audio';
@@ -19,8 +19,8 @@ export class TitleScene extends Phaser.Scene {
     layer('title', h('div', { class: 'title-screen' },
       h('div', { class: 'logo' }, h('h1', {}, 'Dragon Isle of Legends'), h('div', { class: 'sub' }, 'A DRAGON ISLAND BLUE REBUILD')),
       h('div', { class: 'row' },
-        cont ? h('button', { class: 'btn gold', style: { fontSize: '1.3em', padding: '.6em 2em' }, onClick: () => { start(); if (load()) { setAudio(S.settings.music, S.settings.sfx); toRegion(); } } }, 'Continue') : null,
-        h('button', { class: `btn ${cont ? '' : 'gold'}`, style: { fontSize: '1.3em', padding: '.6em 2em' }, onClick: () => { start(); this.newGameDialog(); } }, 'New Game')),
+        cont ? h('button', { class: 'btn gold big', onClick: () => { start(); if (load()) { setAudio(S.settings.music, S.settings.sfx); toRegion(); } } }, 'Continue') : null,
+        h('button', { class: `btn big ${cont ? '' : 'gold'}`, onClick: () => { start(); this.newGameDialog(); } }, 'New Game')),
       h('div', { class: 'muted', style: { textShadow: '0 1px 4px #000' } }, `${data().monsters.length} monsters · ${data().regions.length} regions · ${data().dungeons.length} dungeons · ${data().overlords.length} Dragon Overlords`)));
   }
 
@@ -34,14 +34,18 @@ export class TitleScene extends Phaser.Scene {
         h('img', { src: spriteUrl(sp) }), h('div', { style: { fontWeight: '800' } }, n), elChip(sp.element));
     }));
     render();
+    // the title's buttons would poke out under the modal's frame: hide them while it is open
+    const title = document.querySelector('.title-screen');
+    title?.classList.add('picking');
     modal('A New Legend', (close) => h('div', { class: 'col' },
       h('p', {}, 'Every breeder on Dragon Island begins with a dragon hatchling. Choose your partner — its element shapes your early battles.'),
       grid,
       h('div', { class: 'row' }, h('span', {}, 'Your name'), h('input', { class: 'text', value: name, maxlength: '14', onInput: (e: Event) => (name = (e.target as HTMLInputElement).value) }),
         h('span', { class: 'grow' }),
-        h('button', { class: 'btn gold', onClick: async () => {
+        h('button', { class: 'btn gold big', onClick: async () => {
           if (!name.trim()) return toast('Enter a name');
           close();
+          clearLayer('title');
           newGame(name.trim(), pick);
           sfx('levelup');
           await dialogue([
@@ -52,6 +56,6 @@ export class TitleScene extends Phaser.Scene {
           ]);
           toRegion();
           toTown('Corova');
-        } }, 'Begin Adventure'))), { width: '48em' });
+        } }, 'Begin Adventure'))), { width: '48em', onClose: () => title?.classList.remove('picking') });
   }
 }
