@@ -65,6 +65,9 @@ export class RegionScene extends Phaser.Scene {
   private WH = 1440;
   private drag = { on: false, moved: false, x: 0, y: 0, sx: 0, sy: 0, mini: false };
   private keys?: Record<'up' | 'down' | 'left' | 'right' | 'w' | 'a' | 's' | 'd', Phaser.Input.Keyboard.Key>;
+  /** a full-screen DOM layer (Monster Keep, Monsterpedia, a dialogue) is open: the hero stands still under it */
+  private uiBlock = false;
+  private uiWatch?: MutationObserver;
 
   private P(s: Spot) { return { x: s.x * this.WW, y: s.y * this.WH }; }
   private seen(id: number) { return exploreState(S.location.region).seen.includes(id); }
@@ -75,7 +78,13 @@ export class RegionScene extends Phaser.Scene {
 
   create() {
     this.ready = false;
-    this.events.once('shutdown', () => { this.ready = false; });
+    this.events.once('shutdown', () => { this.ready = false; this.uiWatch?.disconnect(); });
+    // watch the UI root instead of querying the DOM every frame (as the Town scene does)
+    const check = () => { this.uiBlock = !!document.querySelector('[data-layer="team"], [data-layer="book"], [data-layer="dialogue"]'); };
+    const root = document.getElementById('ui');
+    this.uiWatch?.disconnect();
+    if (root) { this.uiWatch = new MutationObserver(check); this.uiWatch.observe(root, { childList: true }); }
+    check();
     this.view = undefined;
     this.keys = undefined;
     loadMap(this, S.location.region, () => this.build());
@@ -236,7 +245,9 @@ export class RegionScene extends Phaser.Scene {
     const cam = this.cameras.main;
     const k = this.keys;
     const dt = Math.min(delta, 50) / 1000;
-    const busy = this.frozen || anyModal();
+    // keys typed into a text field (naming a monster…) are not for walking either
+    const typing = document.activeElement instanceof HTMLInputElement || document.activeElement instanceof HTMLTextAreaElement;
+    const busy = this.frozen || this.uiBlock || typing || anyModal();
     const vx = k ? (k.right.isDown || k.d.isDown ? 1 : 0) - (k.left.isDown || k.a.isDown ? 1 : 0) : 0;
     const vy = k ? (k.down.isDown || k.s.isDown ? 1 : 0) - (k.up.isDown || k.w.isDown ? 1 : 0) : 0;
     if (!busy && (vx || vy)) {
