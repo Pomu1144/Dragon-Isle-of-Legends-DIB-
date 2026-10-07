@@ -88,6 +88,19 @@ export class WalkGrid {
   groundAt(p: Pt): Ground { const [cx, cy] = this.cellOf(p); return this.inside(cx, cy) ? this.ground[cy * this.cols + cx] as Ground : BLOCKED; }
   canStand(p: Pt) { const [cx, cy] = this.cellOf(p); return this.walkable(cx, cy); }
 
+  /** Block the cells whose centres lie in a rectangle (world px): a building or prop standing on the ground. */
+  blockRect(x: number, y: number, w: number, h: number) {
+    const c0 = Math.max(0, Math.ceil(x / this.cell - 0.5)), c1 = Math.min(this.cols - 1, Math.floor((x + w) / this.cell - 0.5));
+    const r0 = Math.max(0, Math.ceil(y / this.cell - 0.5)), r1 = Math.min(this.rows - 1, Math.floor((y + h) / this.cell - 0.5));
+    for (let cy = r0; cy <= r1; cy++) for (let cx = c0; cx <= c1; cx++) this.ground[cy * this.cols + cx] = BLOCKED;
+  }
+
+  /** Block every cell whose centre (world px) the test picks out, e.g. ground outside a hand-drawn walk area. */
+  blockWhere(blocked: (x: number, y: number) => boolean) {
+    for (let cy = 0; cy < this.rows; cy++) for (let cx = 0; cx < this.cols; cx++)
+      if (blocked((cx + 0.5) * this.cell, (cy + 0.5) * this.cell)) this.ground[cy * this.cols + cx] = BLOCKED;
+  }
+
   private open(cx: number, cy: number) {
     if (this.inside(cx, cy) && this.ground[cy * this.cols + cx] === BLOCKED) this.ground[cy * this.cols + cx] = PATH;
   }
