@@ -46,6 +46,24 @@ describe('walk grid', () => {
     expect(WalkGrid.fromPixels(px, cols, 10, 10, keep, [[0, 1]]).path(keep[0], keep[1])).not.toBeNull();
   });
 
+  it('blocks rectangles and test-picked cells, and routes around them', () => {
+    const rows = Array.from({ length: 10 }, () => 'g'.repeat(20));
+    const { px, cols } = paint(rows);
+    const g = WalkGrid.fromPixels(px, cols, 10, 10);
+    // a wall across the middle with a gap at the bottom
+    g.blockRect(95, 0, 10, 80);
+    expect(g.canStand({ x: 100, y: 45 })).toBe(false);
+    expect(g.canStand({ x: 85, y: 45 })).toBe(true);
+    expect(g.canStand({ x: 100, y: 85 })).toBe(true);
+    const path = g.path({ x: 25, y: 15 }, { x: 175, y: 15 })!;
+    expect(path).not.toBeNull();
+    expect(Math.max(...path.map((p) => p.y))).toBeGreaterThan(80);
+    // then close the gap with a test: nothing gets across any more
+    g.blockWhere((x, y) => x > 90 && x < 110 && y > 75);
+    expect(g.canStand({ x: 100, y: 85 })).toBe(false);
+    expect(g.path({ x: 25, y: 15 }, { x: 175, y: 15 })).toBeNull();
+  });
+
   it('walks to the nearest shore when the target is in the water', () => {
     const { px, cols, rows } = paint(lake);
     const g = WalkGrid.fromPixels(px, cols, rows, 10);
