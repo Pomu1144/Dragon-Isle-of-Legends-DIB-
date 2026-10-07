@@ -180,7 +180,7 @@ input.text { font: inherit; padding: .5em .8em; border-radius: .5em; border: 1px
 .bt-ab2 .tu { font: 900 .85em Arial, sans-serif; color: #7a2a12; }
 .bt-ab2 .d { grid-column: 1 / -1; font-size: .72em; color: #29475e; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .bt-prompt2 { position: absolute; left: 50%; top: 13%; transform: translateX(-50%); font: 900 1.2em Arial, sans-serif; color: #fff; text-shadow: 0 0 4px #000, 0 2px 0 #000; pointer-events: none; }
-.bt-menu { position: absolute; right: 2%; bottom: 33%; display: flex; flex-direction: column; gap: .3em; padding: .9em 1em; z-index: 5; min-width: 13em;
+.bt-menu { position: absolute; right: 2%; bottom: 42%; display: flex; flex-direction: column; gap: .3em; padding: .9em 1em; z-index: 5; min-width: 13em;
   border: 14px solid transparent; border-image: var(--panel-blue); filter: drop-shadow(0 .4em .6em rgba(0,0,0,.5)); }
 .bt-mh { font: 900 .85em Arial, sans-serif; color: #fff; text-shadow: 0 0 3px #000, 0 1px 0 #000; margin-top: .2em; }
 .bt-mi.on { background: linear-gradient(180deg, #fff6d0, #f2cf72); }
@@ -218,6 +218,7 @@ input.text { font: inherit; padding: .5em .8em; border-radius: .5em; border: 1px
   text-shadow: 0 0 3px #000, 0 1px 0 #000; filter: drop-shadow(0 .3em .5em rgba(0,0,0,.45)); }
 .region-info.panel .muted { color: #e6f6ff; }
 .region-title h2 { font-family: Arial, Helvetica, sans-serif; font-weight: 900; color: #fff; text-shadow: 0 0 4px #000, 0 2px 0 #000; }
+.region-sub { font: 800 .95em Arial, Helvetica, sans-serif; color: #fff; text-shadow: var(--ink-soft); }
 .explore-bar { position: relative; width: 17em; height: 1.25em; margin: .35em auto 0; border-radius: .7em; background: rgba(0,0,0,.55); border: 2px solid #f6d27a; overflow: hidden; }
 .explore-bar i { position: absolute; left: 0; top: 0; bottom: 0; background: linear-gradient(#9be15d, #3fa34d); }
 .explore-bar span { position: relative; display: block; font: 800 .78em/1.6em Arial, sans-serif; color: #fff; text-shadow: 0 0 3px #000, 0 1px 0 #000; }
@@ -262,8 +263,15 @@ input.text { font: inherit; padding: .5em .8em; border-radius: .5em; border: 1px
 .btn.icon.small { width: 2.1em; height: 2.1em; font-size: .95em; }
 .btn.icon.gold { --skin: url(/assets/ui/btn/round_gold.png); }
 .btn.icon.red { --skin: url(/assets/ui/btn/round_red.png); }
+.btn.icon.green { --skin: url(/assets/ui/btn/round_green.png); font-size: 1.15em; }
 .btn.icon.close { --skin: url(/assets/ui/btn/round_slate.png); color: transparent; text-shadow: none; overflow: hidden; }
 .btn.icon.close::after { content: ''; position: absolute; inset: 24%; background: url(/assets/ui/orig/bk/close.png) center / contain no-repeat; }
+/* painted icons in front of a label (map buttons), and filling a medallion */
+.btn > img { height: 1.25em; margin: -.2em 0; filter: drop-shadow(0 1px 1px #000); }
+.btn > img.flip { transform: rotate(180deg); }
+.btn.icon > img { width: 62%; height: 62%; margin: 0; object-fit: contain; }
+/* the map camera's zoom medallions carry the kit's heavy outlined Arial */
+.region-actions .btn.icon { font: 900 1.3em/1 Arial, Helvetica, sans-serif; color: #f6e2b0; text-shadow: var(--ink); }
 /* labels, hints, HUD badge and toasts sit on thin bronze-framed strips */
 .chip { background: none; border-radius: 0; border-style: solid; border-color: transparent; border-width: .42em .5em;
   border-image: url(/assets/ui/btn/strip_slate.png) 20 26 fill stretch; padding: 0 .25em; font: 800 .8em/1.25 Arial, Helvetica, sans-serif;
@@ -315,6 +323,16 @@ input.text { font: inherit; padding: .5em .8em; border-radius: .5em; border: 1px
   border-image: url(/assets/ui/btn/strip_parch.png) 20 26 fill stretch; padding: .05em .3em; color: #2b1d0e; text-shadow: 0 1px 0 rgba(255,240,205,.6); }
 .bt-mi:hover:not([disabled]) { filter: brightness(1.08); }
 .bt-mi.on { background: none; border-image: url(/assets/ui/btn/gold.png) 50 58 fill / .95em 1.1em stretch; color: #fff; text-shadow: var(--ink); }
+/* battle menu: chosen option keeps its parchment strip and takes the shared gold glow (as .mcard.sel); gold enamel stays the confirm role */
+.bt-menu .bt-mi.on { background: none; border-image: url(/assets/ui/btn/strip_parch.png) 20 26 fill stretch; color: #2b1d0e; text-shadow: 0 1px 0 rgba(255,240,205,.6);
+  filter: brightness(1.1) drop-shadow(0 0 .3em rgba(255,214,107,.95)); }
+.bt-mi[disabled] { opacity: 1; filter: grayscale(.85) brightness(.72) contrast(.9); cursor: not-allowed; }
+.bt-auto { display: flex; align-items: center; gap: .35em; }
+.bt-auto img { height: 1.3em; }
+/* speed icons sit bare on the panel; the chosen one rides a gold medallion with the same glow */
+.bt-speed { background: none; border-radius: 0; box-shadow: none; opacity: .65; filter: grayscale(.4) drop-shadow(0 .08em .1em rgba(0,0,0,.5)); }
+.bt-speed.on { background: url(/assets/ui/btn/round_gold.png) center / contain no-repeat; box-shadow: none; opacity: 1; filter: drop-shadow(0 0 .3em rgba(255,214,107,.95)) brightness(1.1); }
+.bt-speed.on img { transform: scale(.72); }
 .bt-mi.red { background: none; border-image: url(/assets/ui/btn/red.png) 50 58 fill / .95em 1.1em stretch; color: #fff; text-shadow: var(--ink); }
 input.text { border-radius: 0; background: none; border-style: solid; border-color: transparent; border-width: .45em .6em;
   border-image: url(/assets/ui/btn/strip_parch.png) 20 26 fill stretch; padding: .1em .3em; color: #2b1d0e; font: 800 1em Arial, Helvetica, sans-serif; outline: none;
@@ -355,13 +373,34 @@ select.text { font: 800 .95em Arial, Helvetica, sans-serif; color: #2b1d0e; back
   border-width: .22em .36em; border-image: url(/assets/ui/orig/bk/bar_empty.png) 12 18 fill stretch; }
 .explore-bar i { background: url(/assets/ui/orig/bk/fill_green.png) left center / auto 100% repeat-x; }
 .explore-bar span { line-height: 1.1em; }
-table.list td, table.list th { border-bottom: 1px solid rgba(214,160,92,.35); }
+/* list rows are parchment strips laid out as a grid (columns per table via --cols) */
+table.list { display: block; }
+table.list tr { display: grid; grid-template-columns: var(--cols, 2fr 3fr 1fr auto auto); align-items: center; gap: .4em; margin-bottom: .2em;
+  border: .45em solid transparent; border-image: url(/assets/ui/btn/strip_parch.png) 20 26 fill stretch; color: #2b1d0e; text-shadow: none; }
+table.list td, table.list th { border: 0; padding: 0 .3em; }
+table.list td:last-child { text-align: right; justify-self: end; }
+table.list b { color: #6e2a0e; }
+table.list td.muted { color: #5c4630; }
+.lic-ic { display: block; height: 1.3em; filter: drop-shadow(0 1px 1px rgba(0,0,0,.6)); }
+.abil.locked { filter: grayscale(.7) brightness(.85); }
+/* a lone primary inside a card stays a compact plate at the right */
+.abil.col > .btn { align-self: flex-end; min-width: 9em; margin-top: .2em; }
+.toast { display: flex; align-items: center; gap: .4em; }
+.toast-ic, .chip-ic { height: 1.4em; margin: -.25em 0; filter: drop-shadow(0 1px 1px rgba(0,0,0,.6)); }
+.chip-ic { height: 1.2em; vertical-align: middle; margin-right: .2em; }
 /* egg wheel: bronze rim and the kit's arrow as the pointer */
-.wheel { border: .55em solid #a8743a; box-shadow: 0 0 0 .15em #3a2410, inset 0 0 0 .15em #3a2410, 0 0 30px rgba(246,196,83,.35); }
+.wheel { border: 0; box-shadow: none; }
+.wheel-stack { position: relative; display: grid; place-items: center; }
+.wheel-stack > * { grid-area: 1 / 1; }
+.wheel-rim { width: 24.4em; height: 24.4em; filter: drop-shadow(0 .3em .4em rgba(0,0,0,.6)); }
+.wheel-hub { position: relative; z-index: 1; width: 3.2em; height: 3.2em; filter: drop-shadow(0 .1em .2em rgba(0,0,0,.6)); }
 .pointer { position: relative; width: 1.7em; height: 1.9em; border: 0; filter: drop-shadow(0 2px 2px #000); }
 .pointer::before { content: ''; position: absolute; inset: 0; background: url(/assets/ui/orig/bk/arrow.png) center / contain no-repeat; transform: rotate(90deg); }
 .wheel .seg .wl { display: inline-flex; align-items: center; gap: .1em; }
 .wheel .seg .wl img { height: 1.9em; }
+.wheel .seg .seg-l { display: inline-flex; }
+.wheel .seg span { font-size: 1em; text-shadow: var(--ink); color: #fff; }
+.wheel .seg .coin { width: 1.1em; height: 1.1em; }
 /* element chips carry the painted element medallion on a slate strip; star ratings use the painted stars */
 .chip.el { background: none; border-radius: 0; border-style: solid; border-color: transparent; border-width: .38em .5em;
   border-image: url(/assets/ui/btn/strip_slate.png) 20 26 fill stretch; padding: 0 .15em 0 0; color: #fff; text-shadow: var(--ink-soft); gap: .25em; }
@@ -396,3 +435,10 @@ table.list td, table.list th { border-bottom: 1px solid rgba(214,160,92,.35); }
 .dun-lv { position: absolute; left: 0; bottom: 1.2em; width: 4.45em; height: 2.25em; display: flex; align-items: center; padding-left: .3em;
   background: url(/assets/dungeon/lv_tab.png) left center / 100% 100% no-repeat; }
 .dun-lv span { font: 900 1.12em Arial, Helvetica, sans-serif; color: #fff; text-shadow: var(--ink); white-space: nowrap; }
+/* rows not yet reachable are dimmed with a filter (opacity would let the blue panel bleed through the parchment) */
+table.list tr.locked { filter: grayscale(.7) brightness(.82); }
+/* a visible bronze scrollbar tells you a tall modal scrolls */
+.modal .body { scrollbar-width: thin; scrollbar-color: #c9a35a rgba(20, 30, 50, .35); }
+.modal .body::-webkit-scrollbar { width: 8px; }
+.modal .body::-webkit-scrollbar-thumb { background: linear-gradient(90deg, #8a6424, #e7c37a, #8a6424); border-radius: 4px; }
+.modal .body::-webkit-scrollbar-track { background: rgba(20, 30, 50, .35); border-radius: 4px; }

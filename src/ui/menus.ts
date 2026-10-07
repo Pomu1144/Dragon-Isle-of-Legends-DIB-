@@ -161,23 +161,27 @@ export function bagMenu(refresh: () => void) {
   const root = h('div', { class: 'col' });
   const render = () => {
     fill(root, 
-      h('table', { class: 'list' },
-        h('tr', {}, h('td', {}, 'Capture Card'), h('td', {}, String(S.items.card)), h('td', { class: 'muted' }, 'Basic capture chance')),
-        h('tr', {}, h('td', {}, 'Silver Card'), h('td', {}, String(S.items.silver)), h('td', { class: 'muted' }, 'Much higher capture chance')),
-        h('tr', {}, h('td', {}, 'Gold Card'), h('td', {}, String(S.items.gold)), h('td', { class: 'muted' }, 'Guaranteed capture')),
-        h('tr', {}, h('td', {}, 'Egg'), h('td', {}, String(S.items.egg)), h('td', {}, h('button', { class: 'btn small gold', disabled: !S.items.egg, onClick: () => openEgg('egg', () => { render(); refresh(); }) }, 'Open'))),
-        h('tr', {}, h('td', {}, 'Golden Egg'), h('td', {}, String(S.items.golden)), h('td', {}, h('button', { class: 'btn small gold', disabled: !S.items.golden, onClick: () => openEgg('golden', () => { render(); refresh(); }) }, 'Open')))),
-      h('h3', {}, `Soul stones (${S.souls.length})`),
-      h('div', { class: 'row', style: { flexWrap: 'wrap' } }, ...S.souls.map((s) => h('span', { class: `chip el el-${s.element}` }, `◆ ${s.element} +${Math.round(s.power * 100)}%`)),
-        S.souls.length ? null : h('span', { class: 'muted' }, 'Extract souls from monsters in the Team menu.')),
-      h('h3', {}, `Gems (${S.gems.length})`),
-      h('div', { class: 'row', style: { flexWrap: 'wrap' } }, ...S.gems.map(gemChip), S.gems.length ? null : h('span', { class: 'muted' }, 'Buy gems in town shops; equip them on the Hero screen.')));
+      // every row: name, count, description, action
+      h('table', { class: 'list', style: '--cols: 8em 2.5em 1fr 4.5em' },
+        h('tr', {}, h('td', {}, 'Capture Card'), h('td', {}, String(S.items.card)), h('td', { class: 'muted' }, 'Basic capture chance'), h('td', {})),
+        h('tr', {}, h('td', {}, 'Silver Card'), h('td', {}, String(S.items.silver)), h('td', { class: 'muted' }, 'Much higher capture chance'), h('td', {})),
+        h('tr', {}, h('td', {}, 'Gold Card'), h('td', {}, String(S.items.gold)), h('td', { class: 'muted' }, 'Guaranteed capture'), h('td', {})),
+        h('tr', {}, h('td', {}, 'Egg'), h('td', {}, String(S.items.egg)), h('td', { class: 'muted' }, 'Spin the wheel for monsters and items.'),
+          h('td', {}, h('button', { class: 'btn small gold', disabled: !S.items.egg, onClick: () => openEgg('egg', () => { render(); refresh(); }) }, 'Open'))),
+        h('tr', {}, h('td', {}, 'Golden Egg'), h('td', {}, String(S.items.golden)), h('td', { class: 'muted' }, 'Rare monsters you have not caught yet.'),
+          h('td', {}, h('button', { class: 'btn small gold', disabled: !S.items.golden, onClick: () => openEgg('golden', () => { render(); refresh(); }) }, 'Open')))),
+      // inset to line up with the row text above
+      h('div', { class: 'col', style: { paddingLeft: '.5em', gap: '.2em' } }, h('h3', {}, `Soul stones (${S.souls.length})`),
+        h('div', { class: 'row', style: { flexWrap: 'wrap' } }, ...S.souls.map((s) => h('span', { class: `chip el el-${s.element}` }, `◆ ${s.element} +${Math.round(s.power * 100)}%`)),
+          S.souls.length ? null : h('span', { class: 'muted' }, 'Extract souls from monsters in the Team menu.'))),
+      h('div', { class: 'col', style: { paddingLeft: '.5em', gap: '.2em' } }, h('h3', {}, `Gems (${S.gems.length})`),
+        h('div', { class: 'row', style: { flexWrap: 'wrap' } }, ...S.gems.map(gemChip), S.gems.length ? null : h('span', { class: 'muted' }, 'Buy gems in town shops; equip them on the Hero screen.'))));
   };
   render();
   modal('Bag', root, { width: '46em' });
 }
 
-export const gemChip = (g: S['gems'][number]) => h('span', { class: 'chip' }, `${{ Oval: '⬭', Square: '◼', Tear: '💧', Star: '★' }[g.shape]} ${g.shape} ` +
+export const gemChip = (g: S['gems'][number]) => h('span', { class: 'chip' }, h('img', { class: 'chip-ic', src: 'assets/ui/orig/bk/crystal.png', alt: '' }), `${g.shape} ` +
   Object.entries(g.stats).map(([k, v]) => `${STAT_LABEL[k as StatKey]} +${Math.round((v ?? 0) * 100)}%`).join(', '));
 type S = typeof S;
 
@@ -188,12 +192,15 @@ export function openEgg(type: 'egg' | 'golden', done: () => void) {
   const prizes = eggPrizes(type);
   const n = prizes.length;
   const label = (p: EggPrize) => p.kind === 'monster' ? h('img', { src: spriteUrl(species(p.species)) })
-    : /card/i.test(p.kind) ? h('span', { class: 'wl' }, h('img', { src: 'assets/ui/orig/bk/minicard.png', alt: '' }), { card: '×5', silverCard: 'S', goldCard: 'G' }[p.kind as 'card'])
-    : h('span', {}, { silver: `${p.kind === 'silver' ? (p as any).amount : ''}🪙`, gold: `${(p as any).amount}G`, card: '', silverCard: '', goldCard: '', gem: '💎' }[p.kind as 'gem']);
-  // segment colours are the four button enamels
+    : /card/i.test(p.kind) ? h('span', { class: 'wl' }, h('img', { src: 'assets/ui/orig/bk/minicard.png', alt: '' }), { card: '×5', silverCard: 'Silver', goldCard: 'Gold' }[p.kind as 'card'])
+    : p.kind === 'gem' ? h('span', { class: 'wl' }, h('img', { src: 'assets/ui/orig/bk/crystal.png', alt: '' }))
+    : h('span', { class: 'wl' }, h('i', { class: `coin ${p.kind === 'gold' ? 'g' : ''}` }), String((p as any).amount));
+  // segment colours are the four button enamels, textured by the kit's parchment (scaled past its frame)
   const colors = ['#2c6a80', '#7a2626', '#2d6b3d', '#a06a1a'];
-  const wheel = h('div', { class: 'wheel', style: { background: `conic-gradient(${prizes.map((_, i) => `${colors[i % 4]} ${(i / n) * 360}deg ${((i + 1) / n) * 360}deg`).join(',')})` } },
-    ...prizes.map((p, i) => { const s = h('div', { class: 'seg', style: { transform: `rotate(${(i + 0.5) * (360 / n) - 90}deg)` } }, label(p)); return s; }));
+  const wheel = h('div', { class: 'wheel', style: { background: `url(/assets/ui/orig/bk/panel_parch.png) center / 160% 160%, conic-gradient(${prizes.map((_, i) => `${colors[i % 4]} ${(i / n) * 360}deg ${((i + 1) / n) * 360}deg`).join(',')})`, backgroundBlendMode: 'multiply' } },
+    ...prizes.map((p, i) => { const a = (i + 0.5) * (360 / n) - 90;
+      // labels are counter-rotated so they start upright
+      return h('div', { class: 'seg', style: { transform: `rotate(${a}deg)` } }, h('span', { class: 'seg-l', style: { transform: `rotate(${-a}deg)` } }, label(p))); }));
   let angle = 0, speed = 22, stopping = false, raf = 0, finished = false, prevT = performance.now();
   const result = h('div', { style: { minHeight: '2em', fontWeight: '800', textAlign: 'center' } }, 'Tap STOP!');
   const stopBtn = h('button', { class: 'btn gold', onClick: () => { stopping = true; stopBtn.setAttribute('disabled', ''); } }, 'STOP');
@@ -211,7 +218,7 @@ export function openEgg(type: 'egg' | 'golden', done: () => void) {
       const idx = Math.floor(((pointerAngle + 90 + 360) % 360) / (360 / n)) % n;
       const msg = grantPrize(prizes[idx]);
       sfx(prizes[idx].kind === 'monster' ? 'levelup' : 'coin');
-      result.textContent = `🎉 ${msg}`;
+      result.textContent = msg;
       save();
       done();
       return;
@@ -219,7 +226,9 @@ export function openEgg(type: 'egg' | 'golden', done: () => void) {
     raf = requestAnimationFrame(spin);
   };
   raf = requestAnimationFrame(spin);
-  modal(type === 'golden' ? 'Golden Egg' : 'Egg', h('div', { class: 'wheel-wrap' }, h('div', { class: 'pointer', style: { transform: 'rotate(180deg) translateY(1.4em)' } }), h('div', { class: 'pointer' }), wheel, stopBtn, result),
+  modal(type === 'golden' ? 'Golden Egg' : 'Egg', h('div', { class: 'wheel-wrap' }, h('div', { class: 'pointer' }),
+    // the wheel sits in a painted bronze medallion rim with a fixed hub on top
+    h('div', { class: 'wheel-stack' }, h('img', { class: 'wheel-rim', src: 'assets/ui/btn/round_gold.png', alt: '' }), wheel, h('img', { class: 'wheel-hub', src: 'assets/ui/btn/round_gold.png', alt: '' })), stopBtn, result),
     { width: '30em', onClose: () => { cancelAnimationFrame(raf); if (!finished) { const msg = grantPrize(prizes[0]); toast(msg); save(); done(); } } });
 }
 
@@ -240,7 +249,7 @@ export function questGoalText(q: S['quests'][number]): string {
   const where = g.region ? data().regions.find((r) => r.id === g.region)?.name : '';
   switch (g.kind) {
     case 'capture': return `Capture ${g.species ?? 'any monster'}${where ? ` (${where})` : ''} — ${q.progress}/${g.count ?? 1}`;
-    case 'battle': return `Defeat ${g.npc} at the ⚔ marker in ${where}`;
+    case 'battle': return `Defeat ${g.npc} at the marker in ${where}`;
     case 'defeat': return `Defeat monsters — ${q.progress}/${g.count}`;
     case 'soulstone': return `Extract a soul stone — ${q.progress}/${g.count}`;
     case 'fuse': return `Fuse a recipe monster — ${q.progress}/${g.count}`;
@@ -263,18 +272,20 @@ export function heroMenu(refresh: () => void) {
       h('div', { class: 'row' }, h('b', {}, `Skill points: ${skillPoints()}`), h('span', { class: 'muted' }, 'Each point adds +1% to that stat for every monster.')),
       h('div', { class: 'grid', style: { gridTemplateColumns: 'repeat(3, 1fr)' } }, ...STAT_KEYS.map((k) => h('div', { class: 'abil row' },
         h('b', {}, STAT_LABEL[k]), h('span', { class: 'grow' }), h('span', {}, `+${Math.round((bonus[k] ?? 0) * 100)}%`),
-        h('button', { class: 'btn small', disabled: skillPoints() <= 0, onClick: () => { S.skill[k] = (S.skill[k] ?? 0) + 1; sfx('buff'); save(); render(); refresh(); } }, '+')))),
+        h('button', { class: 'btn icon small green', disabled: skillPoints() <= 0, onClick: () => { S.skill[k] = (S.skill[k] ?? 0) + 1; sfx('buff'); save(); render(); refresh(); } }, '+')))),
       h('h3', {}, 'Gem slots'),
       h('div', { class: 'grid', style: { gridTemplateColumns: 'repeat(4, 1fr)' } }, ...GEM_SHAPES.map((shape, i) => {
         const g = S.gems.find((x) => x.id === S.equippedGems[i]);
         const options = S.gems.filter((x) => x.shape === shape);
-        return h('div', { class: 'abil col' }, h('b', {}, `${shape} slot`),
+        return h('div', { class: `abil col ${unlocked[i] ? '' : 'locked'}` }, h('b', {}, `${shape} slot`),
           unlocked[i] ? (g ? gemChip(g) : h('span', { class: 'muted' }, 'Empty')) : h('span', { class: 'muted' }, `Requires ${['Apprentice', 'Veteran', '', 'Elite', 'Master'][[0, 1, 3, 4][i]]} license`),
           unlocked[i] && options.length ? h('select', { class: 'text', onChange: (e: Event) => { const v = (e.target as HTMLSelectElement).value; S.equippedGems[i] = v ? Number(v) : null; save(); render(); refresh(); } },
             h('option', { value: '' }, '— none —'), ...options.map((o) => { const op = h('option', { value: String(o.id) }, Object.entries(o.stats).map(([k, v]) => `${STAT_LABEL[k as StatKey]} +${Math.round((v ?? 0) * 100)}%`).join(', ')); if (o.id === S.equippedGems[i]) op.setAttribute('selected', ''); return op; })) : null);
       })),
       h('h3', {}, 'Breeder license'),
-      h('table', { class: 'list' }, ...data().licenses.map((l, i) => h('tr', {}, h('td', {}, i <= S.license ? '✅' : '🔒'), h('td', {}, h('b', {}, l.name)),
+      h('table', { class: 'list', style: '--cols: 1.6em 8em 1fr auto' }, ...data().licenses.map((l, i) => h('tr', { class: i > S.license + 1 ? 'locked' : '' },
+        // earned: green medallion; the next one, once its requirements are met: gold; the rest: slate
+        h('td', {}, h('img', { class: 'lic-ic', src: `assets/ui/btn/${i <= S.license ? 'round_green' : i === S.license + 1 && heroLevel() >= l.heroLevel && S.questCount >= l.quests ? 'round_gold' : 'round_slate'}.png`, alt: '' })), h('td', {}, h('b', {}, l.name)),
         h('td', { class: 'muted' }, `Hero Lv ${l.heroLevel} · ${l.quests} quests`), h('td', { class: 'muted' }, `+${l.slots} party slot${l.slots > 1 ? 's' : ''}`)))),
       h('div', { class: 'muted' }, `Party size: ${partySize()} · Battles won: ${S.stats.wins} · Captures: ${S.stats.captures}`));
   };
@@ -285,14 +296,19 @@ export function heroMenu(refresh: () => void) {
 // ------------------------------------------------------------------ System
 export function systemMenu() {
   modal('System', (close) => h('div', { class: 'col' },
-    h('div', { class: 'row' }, h('label', { class: 'row' }, h('input', { type: 'checkbox', checked: S.settings.music, onChange: (e: Event) => { S.settings.music = (e.target as HTMLInputElement).checked; setAudio(S.settings.music, S.settings.sfx); save(); } }), 'Music'),
-      h('label', { class: 'row' }, h('input', { type: 'checkbox', checked: S.settings.sfx, onChange: (e: Event) => { S.settings.sfx = (e.target as HTMLInputElement).checked; setAudio(S.settings.music, S.settings.sfx); save(); } }), 'Sound effects')),
-    h('div', { class: 'row' }, h('span', {}, 'Battle speed'), ...[1, 2, 3].map((s) => h('button', { class: `btn small ${S.settings.speed === s ? 'gold' : ''}`, onClick: () => { S.settings.speed = s; save(); close(); systemMenu(); } }, `${s}x`))),
-    h('div', { class: 'row' }, h('button', { class: 'btn', onClick: () => { save(); toast('Game saved'); } }, '💾 Save now'),
+    // painted toggles: green when on
+    h('div', { class: 'row' }, ...(['music', 'sfx'] as const).map((k) => h('button', { class: `btn small ${S.settings[k] ? 'green' : ''}`, onClick: () => {
+      S.settings[k] = !S.settings[k]; setAudio(S.settings.music, S.settings.sfx); save(); close(); systemMenu();
+    } }, `${k === 'music' ? 'Music' : 'Sound effects'}: ${S.settings[k] ? 'On' : 'Off'}`))),
+    // the same painted speed control as the battle menu
+    h('div', { class: 'row' }, h('span', {}, 'Battle speed'), ...[1, 2, 3].map((s) => h('button', { class: `bt-speed ${S.settings.speed === s ? 'on' : ''}`, title: `${s}x`, onClick: () => { S.settings.speed = s; save(); close(); systemMenu(); } },
+      h('img', { src: `assets/ui/orig/bk/${['play', 'ff', 'fff'][s - 1]}.png`, alt: `${s}x` })))),
+    h('div', { class: 'row' }, h('button', { class: 'btn', onClick: () => { save(); toast('Game saved'); } }, 'Save now'),
       h('button', { class: 'btn', onClick: () => { navigator.clipboard?.writeText(exportSave()); toast('Save code copied to clipboard'); } }, 'Export save code'),
       h('button', { class: 'btn', onClick: () => { void promptBox('Import save', 'Paste your save code', '', 100000).then((c) => { if (c) { try { importSave(c); location.reload(); } catch { toast('Invalid save code'); } } }); } }, 'Import save')),
     h('p', { class: 'muted', style: { fontSize: '.85em' } }, 'Dragon Isle of Legends is a non-commercial fan rebuild of Dragon Island Blue. Monster art and data from the Dragon Island Blue Fandom wiki (CC BY-SA); original monster designs belong to their creators. Maps & backgrounds generated with Higgsfield.'),
-    h('button', { class: 'btn red', onClick: async () => { if (await confirmBox('Delete your save and start over?', 'Delete', true)) { localStorage.removeItem('dragon-isle-save-v1'); location.reload(); } } }, 'Delete save')), { width: '40em' });
+    h('div', { class: 'row', style: { justifyContent: 'flex-end' } },
+      h('button', { class: 'btn red', onClick: async () => { if (await confirmBox('Delete your save and start over?', 'Delete', true)) { localStorage.removeItem('dragon-isle-save-v1'); location.reload(); } } }, 'Delete save'))), { width: '40em' });
 }
 
 export { RANKS, speciesByName, townData };

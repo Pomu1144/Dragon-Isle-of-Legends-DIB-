@@ -164,9 +164,10 @@ export class RegionScene extends Phaser.Scene {
     const lead = S.party[0];
     const sp = species(lead.species);
     this.token = this.add.container(start.x, start.y).setDepth(10);
-    const halo = this.add.circle(0, 0, 26, 0xf6c453, 0.25).setStrokeStyle(2, 0xf6c453);
+    // the kit's painted magic ring, tinted gold and laid flat, pulses under the token
+    const halo = this.add.image(0, 0, 'bk_fx_ring').setTint(0xf6c453).setBlendMode('ADD').setScale(0.7, 0.42);
     this.token.add(halo);
-    this.tweens.add({ targets: halo, scale: 1.3, alpha: 0.1, duration: 1100, repeat: -1 });
+    this.tweens.add({ targets: halo, scaleX: 0.91, scaleY: 0.55, alpha: 0.2, duration: 1100, repeat: -1 });
     this.heroImg = undefined;
     loadSprites(this, [sp.sprite], () => {
       const img = this.add.image(0, -24, `spr_${sp.sprite}`);
@@ -178,7 +179,7 @@ export class RegionScene extends Phaser.Scene {
     cam.centerOn(start.x, start.y);
 
     // minimap: a second camera that sees the whole region, with the main view outlined on it
-    const mx = width - MINI_W - 14, my = 60;
+    const mx = width - MINI_W - 14, my = 70;
     // bronze-framed slate strip from the painted UI set, nine-sliced around the minimap
     const frame = this.add.nineslice(mx + MINI_W / 2, my + MINI_H / 2, 'btn_strip_slate', undefined, MINI_W + 22, MINI_H + 22, 26, 26, 20, 20)
       .setScrollFactor(0).setDepth(80);
@@ -221,7 +222,7 @@ export class RegionScene extends Phaser.Scene {
     this.ready = true;
     this.near = this.landmarkNear(start);
     this.ui();
-    if (questSpots.size) toast('⚔ marks a quest target in this region.');
+    if (questSpots.size) toast('Red medallions mark quest targets in this region.');
     else if (!(e.trail ?? []).length) {
       toast(r.id === 'southern_alvalon'
         ? 'Tap the ground (or use the arrow keys) to walk. Wild monsters hide in the woods and meadows — the forest west of Corova is a good place to train.'
@@ -252,7 +253,8 @@ export class RegionScene extends Phaser.Scene {
       } else this.place(this.token.x + (dx / d) * s, this.token.y + (dy / d) * s);
     } else if (this.walking && !busy) this.stopped();
     const v = cam.worldView;
-    this.view?.clear().lineStyle((this.WW / MINI_W) * 2, 0xffffff, 0.95).strokeRect(v.x, v.y, v.width, v.height);
+    const w = this.WW / MINI_W;
+    this.view?.clear().lineStyle(w * 2.2, 0x3a2410, 0.9).strokeRect(v.x, v.y, v.width, v.height).lineStyle(w * 1.2, 0xd9a441, 1).strokeRect(v.x, v.y, v.width, v.height);
   }
 
   // ---------------------------------------------------------------- walking
@@ -422,7 +424,7 @@ export class RegionScene extends Phaser.Scene {
       S.silver += silver;
       S.items.golden += 1;
       sfx('magic');
-      toast(`🗺 ${r.name} fully explored! +${silver} Silver and a Golden Egg`);
+      toast(`${r.name} fully explored! +${silver} Silver and a Golden Egg`, 'assets/ui/orig/bk/btn_scroll.png');
     }
     save();
     this.ui();
@@ -468,7 +470,7 @@ export class RegionScene extends Phaser.Scene {
       this.tweens.add({ targets: q, y: -48, duration: 600, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
     }
     if (!field) {
-      const label = s.kind === 'exit' ? `→ ${region(s.ref!).name}` : s.kind === 'dock' ? `⛵ ${region(s.ref!).name}`
+      const label = s.kind === 'exit' ? `→ ${region(s.ref!).name}` : s.kind === 'dock' ? region(s.ref!).name
         : DISCOVERY.has(s.kind) ? `${st.label}${done ? ' ✔' : ''}` : s.ref!;
       c.add(this.add.text(0, 28, label, { fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold', fontSize: '15px', color: done ? '#cfd6dd' : '#fff', stroke: '#000', strokeThickness: 4 }).setOrigin(0.5, 0));
     }
@@ -490,21 +492,21 @@ export class RegionScene extends Phaser.Scene {
     const total = m.spots.filter((s) => DISCOVERY.has(s.kind)).length;
     const p = this.here();
     const wild = !this.nearTown(p);
-    hud((k) => openMenu(k, refresh), [h('button', { class: 'btn small gold', onClick: () => toWorld() }, '🗺 World')]);
+    hud((k) => openMenu(k, refresh), [h('button', { class: 'btn small', onClick: () => toWorld() }, h('img', { src: 'assets/ui/orig/bk/btn_scroll.png', alt: '' }), 'World')]);
     const pool = r.monsters.slice(0, 14).map((n) => speciesByName(n)).filter(Boolean);
     layer('scene', h('div', {},
-      h('div', { class: 'region-title' }, h('h2', {}, r.name), h('div', {}, `Wild monsters Lv ${r.levels[0]}–${r.levels[1]}`),
+      h('div', { class: 'region-title' }, h('h2', {}, r.name), h('div', { class: 'region-sub' }, `Wild monsters Lv ${r.levels[0]}–${r.levels[1]}`),
         h('div', { class: 'explore-bar' }, h('i', { style: { width: `${pct}%` } }), h('span', {}, `Explored ${pct}% · Discoveries ${found}/${total}`)),
-        h('div', { class: 'region-here' }, `📍 ${this.areaLabel(p)}`)),
+        h('div', { class: 'region-here' }, this.areaLabel(p))),
       h('div', { class: 'region-actions' },
         spot?.kind === 'town' ? h('button', { class: 'btn gold', onClick: () => this.arrive(spot, true) }, `Enter ${spot.ref}`) : null,
         spot?.kind === 'dungeon' ? h('button', { class: 'btn red', onClick: () => this.enterDungeon(spot.ref!) }, `Enter ${spot.ref}`) : null,
         spot?.kind === 'overlord' && !S.overlords.includes(spot.ref!) ? h('button', { class: 'btn red', onClick: () => this.challengeOverlord(spot.ref!) }, `Challenge ${spot.ref}`) : null,
-        spot?.kind === 'dock' ? h('button', { class: 'btn gold', onClick: () => this.sail(spot.ref!) }, `⛵ Sail to ${region(spot.ref!).name}`) : null,
-        spot?.kind === 'exit' ? h('button', { class: 'btn gold', onClick: () => this.arrive(spot, true) }, `→ ${region(spot.ref!).name}`) : null,
-        spot && DISCOVERY.has(spot.kind) && !this.isDone(spot) ? h('button', { class: 'btn gold', onClick: () => this.discover(spot) }, `✦ ${KIND_STYLE[spot.kind].label}`) : null,
-        wild ? h('button', { class: 'btn green', onClick: () => { this.halt(); this.hunt(); } }, '⚔ Look for monsters') : null,
-        h('button', { class: 'btn icon gold', title: 'Centre on me', 'aria-label': 'Centre on me', onClick: () => this.recenter() }, '◎'),
+        spot?.kind === 'dock' ? h('button', { class: 'btn gold', onClick: () => this.sail(spot.ref!) }, h('img', { src: 'assets/ui/orig/town/dock.png', alt: '' }), `Sail to ${region(spot.ref!).name}`) : null,
+        spot?.kind === 'exit' ? h('button', { class: 'btn gold', onClick: () => this.arrive(spot, true) }, h('img', { src: 'assets/ui/orig/bk/arrow.png', alt: '' }), region(spot.ref!).name) : null,
+        spot && DISCOVERY.has(spot.kind) && !this.isDone(spot) ? h('button', { class: 'btn gold', onClick: () => this.discover(spot) }, KIND_STYLE[spot.kind].label) : null,
+        wild ? h('button', { class: 'btn green', onClick: () => { this.halt(); this.hunt(); } }, 'Look for monsters') : null,
+        h('button', { class: 'btn icon', title: 'Centre on me', 'aria-label': 'Centre on me', onClick: () => this.recenter() }, h('img', { src: 'assets/ui/orig/bk/fx_target.png', alt: '' })),
         h('span', { class: 'chip panel' }, 'Tap the ground to walk · arrow keys / WASD · drag to look around')),
       h('div', { class: 'region-info panel' },
         h('b', {}, 'Monsters sighted'),
@@ -604,7 +606,7 @@ export class RegionScene extends Phaser.Scene {
         this.claim(s);
         sfx('magic');
         this.cameras.main.flash(200, 255, 230, 140);
-        toast(`🧰 You opened a treasure chest: ${prize}!`);
+        toast(`You opened a treasure chest: ${prize}!`, 'assets/ui/orig/disc/chest.png');
         this.refreshMarker(s);
         this.ui();
         break;
@@ -624,7 +626,7 @@ export class RegionScene extends Phaser.Scene {
         this.frozen = true;
         await dialogue([{ who: name, text: `A traveller out here? I raise monsters in the wilds of ${r.name}. Beat my team and I'll give you an egg from my camp!` }]);
         fight(breederEncounter(r.id, name, seed), (res) => {
-          if (res.outcome === 0) { this.claim(s); S.items.egg += 1; save(); toast(`${name} hands you a Monster Egg 🥚`); }
+          if (res.outcome === 0) { this.claim(s); S.items.egg += 1; save(); toast(`${name} hands you a Monster Egg`, 'assets/ui/orig/disc/tent.png'); }
           toRegion();
         });
         break;
@@ -639,7 +641,7 @@ export class RegionScene extends Phaser.Scene {
         const dist = (x: Spot) => { const q = this.P(x); return Math.hypot(q.x - me.x, q.y - me.y); };
         const order = [...m.spots].sort((a, b) => dist(a) - dist(b));
         order.forEach((x, i) => this.time.delayedCall(60 * i, () => this.explore([x.id])));
-        toast(`🔭 All of ${r.name} is now on your map.`);
+        toast(`All of ${r.name} is now on your map.`, 'assets/ui/orig/disc/tower.png');
         break;
       }
       default: break;
@@ -671,7 +673,7 @@ export class RegionScene extends Phaser.Scene {
     this.cameras.main.stopFollow();
     this.tweens.add({ targets: boat, x: boat.x + (to === 'underworld' ? 700 : -700), y: boat.y + 60, duration: 1400, ease: 'Sine.in' });
     this.cameras.main.fadeOut(1400, 8, 20, 30);
-    this.cameras.main.once('camerafadeoutcomplete', () => { toast(`⛵ Arrived in ${dest.name}`); toRegion(); });
+    this.cameras.main.once('camerafadeoutcomplete', () => { toast(`Arrived in ${dest.name}`, 'assets/ui/orig/town/dock.png'); toRegion(); });
   }
 
   hunt() {
@@ -704,7 +706,7 @@ export class RegionScene extends Phaser.Scene {
       if (res.outcome === 0 && !S.overlords.includes(name)) {
         S.overlords.push(name);
         save();
-        toast(`🐲 ${name} has been defeated! (${S.overlords.length}/${data().overlords.length})`);
+        toast(`${name} has been defeated! (${S.overlords.length}/${data().overlords.length})`, 'assets/ui/orig/town/warp_emblem.png');
       }
       toRegion();
     });

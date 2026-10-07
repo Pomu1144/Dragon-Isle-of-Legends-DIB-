@@ -88,6 +88,9 @@ export class BattleScene extends Phaser.Scene {
   private cardType: 'card' | 'silver' | 'gold' = 'card';
   private paused = false;
   private panelImg!: Phaser.GameObjects.Image;
+  private autoBtn: Phaser.GameObjects.Image | null = null;
+  private autoGlow: Phaser.GameObjects.Image | null = null;
+  private scrollBtn: Phaser.GameObjects.Image | null = null;
 
   init(req: BattleReq) {
     this.req = req;
@@ -123,8 +126,14 @@ export class BattleScene extends Phaser.Scene {
       .forEach(([key, x, fn]) => {
         const p = T(x, 408);
         const b = this.add.image(p.x, p.y, key).setDisplaySize(62 * K, 62 * K).setDepth(39).setInteractive({ useHandCursor: true });
-        b.on('pointerover', () => b.setTint(0xfff0c0)).on('pointerout', () => b.clearTint()).on('pointerdown', () => { sfx('select'); fn(); });
+        b.on('pointerover', () => b.setTint(0xfff0c0)).on('pointerout', () => this.btnTints()).on('pointerdown', () => { sfx('select'); fn(); });
+        if (key === 'bk_btn_monsters') this.autoBtn = b;
+        if (key === 'bk_btn_scroll') this.scrollBtn = b;
       });
+    // auto running: green-tinted monsters medallion with a pulsing glow behind it
+    this.autoGlow = this.add.image(this.autoBtn!.x, this.autoBtn!.y, 'glow').setTint(0x9cff9c).setBlendMode('ADD').setScale(3).setDepth(38);
+    this.tweens.add({ targets: this.autoGlow, alpha: 0.35, scale: 2.4, duration: 600, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
+    this.btnTints();
     const c = T(928, 32);
     this.add.image(c.x, c.y, 'bk_coin').setDisplaySize(50 * K, 52 * K).setDepth(40);
     this.coinText = this.add.text(c.x, c.y, '0', { ...FONT, fontSize: `${30 * K}px`, color: '#ffffff', stroke: '#000', strokeThickness: 5 }).setOrigin(0.5).setDepth(41);
@@ -332,7 +341,7 @@ export class BattleScene extends Phaser.Scene {
       const tu = Math.max(0, Math.round(((c.time - now) * c.stats.spd) / this.b.refSpd));
       const frame = this.add.image(0, 0, 'ui_qframe').setOrigin(0, 0).setDisplaySize(52 * K, 38 * K);
       const icon = this.add.image(26 * K, 19 * K, `spr_${c.sp.sprite}`);
-      icon.setScale(Math.min((44 * K) / icon.width, (32 * K) / icon.height)).setFlipX(c.side === 0);
+      icon.setScale(Math.min((40 * K) / icon.width, (28 * K) / icon.height)).setFlipX(c.side === 0);
       const color = i === 0 ? '#ff2a1f' : c.side === 0 ? '#3cdc4a' : tu < 60 ? '#ffffff' : '#8f8dff';
       const num = this.add.text(76 * K, 19 * K, `${tu}`, { ...FONT, fontSize: `${21 * K}px`, color, stroke: '#000', strokeThickness: 5 }).setOrigin(0.5);
       const pct = c.pool.hp / c.pool.max;
@@ -583,7 +592,21 @@ export class BattleScene extends Phaser.Scene {
     save();
     toast(S.settings.auto ? 'Auto battle on' : 'Auto battle off');
     if (S.settings.auto && this.choose && this.actor) this.choose(this.b.choose(this.actor));
+    this.btnTints();
     this.ui();
+  }
+
+  /** Round scene buttons show state: monsters glows green while auto runs, scroll lights up while its menu is open. */
+  private btnTints() {
+    const auto = !!S.settings.auto;
+    this.autoGlow?.setVisible(auto);
+    if (auto) this.autoBtn?.setTint(0x9cff9c); else this.autoBtn?.clearTint();
+    if (document.querySelector('.bt-menu')) this.scrollBtn?.setTint(0xffe9a8); else this.scrollBtn?.clearTint();
+  }
+
+  private closeMenu() {
+    clearLayer('battlemenu');
+    this.btnTints();
   }
 
   // ---------------------------------------------------------------- player's turn: actor box + ability cards
@@ -604,8 +627,9 @@ export class BattleScene extends Phaser.Scene {
     sp.setScale(Math.min((bw * 0.82) / sp.width, (bh * 0.6) / sp.height, 1.8));
     const name = this.add.text(bw / 2, bh * 0.73, displayName(actor.inst), { ...FONT, fontSize: `${17 * K}px`, color: '#fff', stroke: '#000', strokeThickness: 5 }).setOrigin(0.5);
     const pct = actor.pool.hp / actor.pool.max;
-    const barX = bw * 0.085, barW = bw * 0.84, barY = bh * 0.825, barH = bh * 0.11;
-    const lost = this.add.graphics().fillStyle(0x1b1b1b, 0.95).fillRect(barX + barW * pct, barY, barW * (1 - pct), barH);
+    // missing HP darkens only the bar's red channel (x 31-219 of actor_box.png's 252px), not the bronze end caps
+    const barX = bw * 0.123, barW = bw * 0.746, barY = bh * 0.825, barH = bh * 0.11;
+    const lost = this.add.graphics().fillStyle(0x1b1b1b, 0.95).fillRect(barX + barW * pct, barY + barH * 0.15, barW * (1 - pct), barH * 0.7);
     const hp = this.add.text(bw / 2, barY + barH / 2, `${actor.pool.hp}/${actor.pool.max}`, { ...FONT, fontSize: `${14 * K}px`, color: '#fff', stroke: '#000', strokeThickness: 4 }).setOrigin(0.5);
     this.actorBox = this.add.container(bx.x, bx.y, [box, sp, name, lost, hp]).setDepth(47);
     void v;
@@ -687,10 +711,10 @@ export class BattleScene extends Phaser.Scene {
 
   /** Scroll button: capture card type + battle speed, in the original blue panel. */
   private battleMenu() {
-    if (document.querySelector('.bt-menu')) { clearLayer('battlemenu'); return; }
+    if (document.querySelector('.bt-menu')) { this.closeMenu(); return; }
     const pick = (t: 'card' | 'silver' | 'gold', n: number, label: string) => h('button', {
       class: `bt-mi ${this.cardType === t ? 'on' : ''}`, disabled: !n,
-      onClick: () => { this.cardType = t; clearLayer('battlemenu'); toast(`${label} selected — tap the small card beside a monster's name to throw it.`); },
+      onClick: () => { this.cardType = t; this.closeMenu(); toast(`${label} selected — tap the small card beside a monster's name to throw it.`); },
     }, `${label} ×${n}`);
     const speedBtn = (img: string, sp: number | 'pause', label: string) => h('button', {
       class: `bt-speed ${(sp === 'pause' ? this.paused : !this.paused && S.settings.speed === sp) ? 'on' : ''}`, title: label,
@@ -706,7 +730,9 @@ export class BattleScene extends Phaser.Scene {
       pick('card', S.items.card, 'Card'), pick('silver', S.items.silver, 'Silver Card'), pick('gold', S.items.gold, 'Gold Card'),
       h('div', { class: 'bt-mh' }, 'Speed'),
       h('div', { class: 'row' }, speedBtn('pause', 'pause', 'Pause'), speedBtn('play', 1, '1x'), speedBtn('ff', 2, '2x'), speedBtn('fff', 3, '3x')),
-      h('button', { class: 'bt-mi', onClick: () => { clearLayer('battlemenu'); this.toggleAuto(); } }, `Auto: ${S.settings.auto ? 'ON' : 'OFF'}`)));
+      h('button', { class: `bt-mi bt-auto ${S.settings.auto ? 'on' : ''}`, onClick: () => { this.closeMenu(); this.toggleAuto(); } },
+        h('img', { src: `assets/ui/btn/${S.settings.auto ? 'round_green' : 'round_slate'}.png`, alt: '' }), `Auto ${S.settings.auto ? 'ON' : 'OFF'}`)));
+    this.btnTints();
   }
 
   private ui() {
@@ -764,7 +790,7 @@ export class BattleScene extends Phaser.Scene {
     this.tweens.add({ targets: t, scale: 1, alpha: 1, duration: 500, ease: 'Back.out' });
     this.hideTurn();
     clearLayer('battle');
-    clearLayer('battlemenu');
+    this.closeMenu();
     this.time.delayedCall(700, () => {
       const rows = reports.map((r) => {
         const m = S.party.find((x) => x.uid === r.uid) ?? null;

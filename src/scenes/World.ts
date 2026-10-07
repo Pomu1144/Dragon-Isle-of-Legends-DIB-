@@ -51,7 +51,7 @@ export class WorldScene extends Phaser.Scene {
 
     // minimap of the whole world, with the current view outlined
     const MINI_H = Math.round((MINI_W * this.H) / this.W);
-    const mx = width - MINI_W - 14, my = 60;
+    const mx = width - MINI_W - 14, my = 70;
     // bronze-framed slate strip from the painted UI set, nine-sliced around the minimap
     const frame = this.add.nineslice(mx + MINI_W / 2, my + MINI_H / 2, 'btn_strip_slate', undefined, MINI_W + 22, MINI_H + 22, 26, 26, 20, 20)
       .setScrollFactor(0).setDepth(80);
@@ -66,12 +66,11 @@ export class WorldScene extends Phaser.Scene {
     mini.ignore([frame, ...this.pins]);
     cam.ignore(view);
     this.view = view;
-    // tiny dots on the minimap mark each region; the current one is gold
-    const dots = this.add.graphics().setDepth(91);
-    for (const r of data().regions) {
-      const p = P(r);
-      dots.fillStyle(r.id === cur.id ? 0xffd54f : S.visited.includes(r.id) ? 0xffffff : 0x8899aa, 1).fillCircle(p.x, p.y, r.id === cur.id ? 70 : 42);
-    }
+    // tiny painted medallions on the minimap mark each region, coloured like the pins
+    const dots = data().regions.map((r) => {
+      const p = P(r), size = r.id === cur.id ? 260 : 170;
+      return this.add.image(p.x, p.y, r.id === cur.id ? 'btn_round_gold' : S.visited.includes(r.id) ? 'btn_round_ivory' : 'btn_round_slate').setDisplaySize(size, size).setDepth(91);
+    });
     cam.ignore(dots);
     ui.ignore(this.children.list.filter((o) => o !== frame));
 
@@ -95,16 +94,16 @@ export class WorldScene extends Phaser.Scene {
     this.keys = this.input.keyboard?.createCursorKeys();
     this.fitPins();
 
-    const refresh = () => hud((k) => openMenu(k, refresh), [h('button', { class: 'btn small gold', onClick: () => toRegion() }, '⬅ Back to region')]);
+    const refresh = () => hud((k) => openMenu(k, refresh), [h('button', { class: 'btn small', onClick: () => toRegion() }, h('img', { class: 'flip', src: 'assets/ui/orig/bk/arrow.png', alt: '' }), 'Back to region')]);
     refresh();
     layer('scene', h('div', {},
       h('div', { class: 'region-actions' },
-        h('button', { class: 'btn icon', title: 'Zoom in', 'aria-label': 'Zoom in', onClick: () => zoomBy(1.3) }, '＋'),
-        h('button', { class: 'btn icon', title: 'Zoom out', 'aria-label': 'Zoom out', onClick: () => zoomBy(1 / 1.3) }, '－'),
-        h('button', { class: 'btn icon gold', title: 'Centre on me', 'aria-label': 'Centre on me', onClick: () => cam.pan(here.x, here.y, 500, 'Sine.easeInOut') }, '◎'),
-        h('span', { class: 'chip panel' }, 'Drag to explore the world · scroll or ＋/－ to zoom · tap a region to travel')),
-      h('div', { class: 'region-info panel', style: { width: '20em' } }, h('b', {}, 'The World'),
-        h('div', { class: 'muted' }, `${S.visited.length} of ${data().regions.length} regions discovered. The Dragon Isle lies in the south-west; boats from its docks reach the Underworld and the Frontier lands to the north and east.`))));
+        h('button', { class: 'btn icon', title: 'Zoom in', 'aria-label': 'Zoom in', onClick: () => zoomBy(1.3) }, '+'),
+        h('button', { class: 'btn icon', title: 'Zoom out', 'aria-label': 'Zoom out', onClick: () => zoomBy(1 / 1.3) }, '−'),
+        h('button', { class: 'btn icon', title: 'Centre on me', 'aria-label': 'Centre on me', onClick: () => cam.pan(here.x, here.y, 500, 'Sine.easeInOut') }, h('img', { src: 'assets/ui/orig/bk/fx_target.png', alt: '' })),
+        h('span', { class: 'chip panel' }, 'Drag to explore the world · scroll or +/− to zoom · tap a region to travel')),
+      h('div', { class: 'region-info panel', style: { width: 'auto' } }, h('b', {}, 'The World'),
+        h('div', { class: 'muted' }, `${S.visited.length} of ${data().regions.length} regions discovered`))));
   }
 
   update() {
@@ -115,7 +114,8 @@ export class WorldScene extends Phaser.Scene {
       if (vx || vy) cam.setScroll(cam.scrollX + (vx * 16) / cam.zoom, cam.scrollY + (vy * 16) / cam.zoom);
     }
     const v = cam.worldView;
-    this.view?.clear().lineStyle((this.W / MINI_W) * 2, 0xffffff, 0.95).strokeRect(v.x, v.y, v.width, v.height);
+    const w = this.W / MINI_W;
+    this.view?.clear().lineStyle(w * 2.2, 0x3a2410, 0.9).strokeRect(v.x, v.y, v.width, v.height).lineStyle(w * 1.2, 0xd9a441, 1).strokeRect(v.x, v.y, v.width, v.height);
   }
 
   /** Pins keep a constant on-screen size whatever the zoom. */
@@ -133,9 +133,10 @@ export class WorldScene extends Phaser.Scene {
     // pins are painted bronze medallions: gold where you are, ivory once visited, slate while undiscovered
     const ring = this.add.image(0, 0, here ? 'btn_round_gold' : visited ? 'btn_round_ivory' : 'btn_round_slate').setDisplaySize(30, 30);
     if (here) {
-      const halo = this.add.circle(0, 0, 22, 0xffd54f, 0.35).setStrokeStyle(2, 0xffd54f);
+      // the kit's painted magic ring, tinted gold and laid flat, pulses under where you are
+      const halo = this.add.image(0, 8, 'bk_fx_ring').setTint(0xffd54f).setBlendMode('ADD').setScale(0.5, 0.3);
       c.add(halo);
-      this.tweens.add({ targets: halo, scale: 1.6, alpha: 0, duration: 1200, repeat: -1 });
+      this.tweens.add({ targets: halo, scaleX: 0.8, scaleY: 0.48, alpha: 0, duration: 1200, repeat: -1 });
     }
     c.add(ring);
     const name = visited || adjacent || here ? r.name : '???';
@@ -143,7 +144,12 @@ export class WorldScene extends Phaser.Scene {
     const sub = [`Lv ${r.levels[0]}–${r.levels[1]}`, ...r.towns].join(' · ');
     const info = this.add.text(0, 18, visited || here ? sub : `Lv ${r.levels[0]}–${r.levels[1]}`, { fontFamily: 'Arial, Helvetica, sans-serif', fontSize: '12px', color: '#e8f4ff', stroke: '#000', strokeThickness: 4 }).setOrigin(0.5, 0);
     c.add([label, info]);
-    if (r.overlords.length) c.add(this.add.text(16, -8, r.overlords.every((o) => S.overlords.includes(o)) ? '🐲✔' : '🐲', { fontSize: '16px' }).setOrigin(0, 0.5));
+    if (r.overlords.length) {
+      // the overlord emblem from the region maps, greyed out once every overlord here is beaten
+      const ol = this.add.image(18, -8, 'town_warp_emblem').setDisplaySize(22, 17);
+      if (r.overlords.every((o) => S.overlords.includes(o))) ol.setTint(0x888888).setAlpha(0.5);
+      c.add(ol);
+    }
     ring.setInteractive({ useHandCursor: true });
     ring.on('pointerover', () => c.setScale(c.scale * 1.12)).on('pointerout', () => this.fitPins());
     ring.on('pointerup', () => {

@@ -25,10 +25,11 @@ export function layer(name: string, el: HTMLElement) {
   return el;
 }
 
-export function toast(msg: string) {
+/** A toast message, optionally led by a painted icon (an image URL). */
+export function toast(msg: string, icon?: string) {
   let wrap = document.querySelector('.toast-wrap') as HTMLElement;
   if (!wrap) ui().append((wrap = h('div', { class: 'toast-wrap' })));
-  const t = h('div', { class: 'toast' }, msg);
+  const t = h('div', { class: 'toast' }, icon ? h('img', { class: 'toast-ic', src: icon, alt: '' }) : null, msg);
   wrap.append(t);
   setTimeout(() => t.remove(), 2900);
 }

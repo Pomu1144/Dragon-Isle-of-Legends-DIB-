@@ -28,7 +28,7 @@ export class TownScene extends Phaser.Scene {
     loadMap(this, reg.id, () => this.drawTown(reg.id, spot ? { x: spot.x, y: spot.y } : { x: 0.5, y: 0.5 }));
     this.render();
     const ready = S.quests.filter(questDone).filter((q) => q.town === this.name);
-    if (ready.length) toast(`📜 ${ready.length} quest(s) ready to turn in at the Guild!`);
+    if (ready.length) toast(`${ready.length} quest(s) ready to turn in at the Guild!`, 'assets/ui/orig/bk/btn_scroll.png');
   }
 
   /**
@@ -48,7 +48,7 @@ export class TownScene extends Phaser.Scene {
     const t = townData(this.name)!;
     const put = (key: string, x: number, y: number, fn?: () => void, label?: string, depth = 10) => {
       const img = this.add.image(OX + x * K, y * K, `town_${key}`).setScale(PIECE).setDepth(depth + y / 100);
-      if (label) this.add.text(img.x, img.y + img.displayHeight * 0.38, label, { fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold', fontSize: `${8.5 * K}px`, color: '#ffffff', stroke: '#000', strokeThickness: 4 }).setOrigin(0.5).setDepth(img.depth + 0.01);
+      if (label) this.add.text(img.x, img.y + img.displayHeight * 0.38, label, { fontFamily: 'Arial, Helvetica, sans-serif', fontStyle: 'bold', fontSize: `${6.6 * K}px`, color: '#ffffff', stroke: '#000', strokeThickness: 3 }).setOrigin(0.5).setDepth(img.depth + 0.01);
       if (fn) {
         img.setInteractive({ useHandCursor: true, pixelPerfect: true, alphaTolerance: 40 });
         img.on('pointerover', () => img.setTint(0xfff2c8)).on('pointerout', () => img.clearTint());
@@ -66,7 +66,10 @@ export class TownScene extends Phaser.Scene {
     put('shop', 140, 152, () => this.shop());
     put('leave', 55, 190, () => toRegion());
     put('warp_house', 255, 203, () => this.warp());
-    put('warp_emblem', 252, 160, () => this.warp(), undefined, 11);
+    // the emblem art is cropped flat at the bottom: it sits behind the roof, and a mask rounds off the corners the roof misses
+    const em = put('warp_emblem', 252, 166, () => this.warp(), undefined, 9);
+    const es = em.scaleX, ex = em.x - em.displayWidth / 2, ey = em.y - em.displayHeight / 2;
+    em.setMask(this.make.graphics({}, false).fillStyle(0xffffff).fillRect(ex, ey, 124 * es, 62 * es).fillEllipse(ex + 62 * es, ey + 62 * es, 124 * es, 62 * es).createGeometryMask());
     put('monsterpedia', 180, 242, () => openMenu('pedia', () => this.render()));
     put('monsters', 245, 300, () => openMenu('team', () => this.render()));
     put('house_a', 332, 116, () => this.guild(), 'Guild');
@@ -81,7 +84,7 @@ export class TownScene extends Phaser.Scene {
     hud((k) => openMenu(k, refresh));
     const ready = S.quests.filter((q) => q.town === this.name && questDone(q)).length;
     layer('scene', h('div', {},
-      h('div', { class: 'town-name' }, this.name, ready ? h('span', { class: 'chip gold', style: { marginLeft: '.5em' } }, `📜 ${ready} ready at the Guild`) : null),
+      h('div', { class: 'town-name' }, this.name, ready ? h('span', { class: 'chip gold', style: { marginLeft: '.5em' } }, h('img', { class: 'chip-ic', src: 'assets/ui/orig/bk/btn_scroll.png', alt: '' }), `${ready} ready at the Guild`) : null),
       h('div', { class: 'town-sub' }, t.region)));
   }
 
@@ -149,21 +152,22 @@ export class TownScene extends Phaser.Scene {
         else if (/golden egg/i.test(it.item)) act = () => (S.items.golden += 1);
         else if (/egg/i.test(it.item)) act = () => (S.items.egg += 1);
         else return null;
-        return h('tr', {}, h('td', {}, h('b', {}, it.item)), h('td', { class: 'muted' }, it.desc),
-          h('td', {}, `${it.price.toLocaleString()} ${it.currency}`),
-          h('td', {}, h('button', { class: 'btn small gold', onClick: () => buy(it.price, it.currency, act) }, 'Buy')),
-          /card$/i.test(it.item) ? h('td', {}, h('button', { class: 'btn small', onClick: () => buy(it.price * 10, it.currency, () => { for (let i = 0; i < 10; i++) act(); }) }, '×10')) : h('td', {}));
+        // non-breaking hyphens: names wrap only at spaces
+        return h('tr', {}, h('td', {}, h('b', {}, it.item.replace(/-/g, '\u2011'))), h('td', { class: 'muted' }, it.desc),
+          h('td', { style: { whiteSpace: 'nowrap' } }, `${it.price.toLocaleString()} ${it.currency}`),
+          h('td', {}, h('button', { class: 'btn small gold', disabled: S[it.currency] < it.price, onClick: () => buy(it.price, it.currency, act) }, 'Buy')),
+          /card$/i.test(it.item) ? h('td', {}, h('button', { class: 'btn small gold', disabled: S[it.currency] < it.price * 10, onClick: () => buy(it.price * 10, it.currency, () => { for (let i = 0; i < 10; i++) act(); }) }, '×10')) : h('td', {}));
       }).filter(Boolean) as HTMLElement[];
       const eggRow = (n: string, price: number, fn: () => void) => h('tr', {}, h('td', {}, h('b', {}, n)), h('td', { class: 'muted' }, n === 'Egg' ? 'Spin the wheel for monsters and items.' : 'Rare monsters you have not caught yet, including hatchlings.'),
-        h('td', {}, `${price} gold`), h('td', {}, h('button', { class: 'btn small gold', onClick: () => buy(price, 'gold', fn) }, 'Buy')), h('td', {}));
+        h('td', { style: { whiteSpace: 'nowrap' } }, `${price} gold`), h('td', {}, h('button', { class: 'btn small gold', disabled: S.gold < price, onClick: () => buy(price, 'gold', fn) }, 'Buy')), h('td', {}));
       fill(root, 
         h('div', { class: 'row' }, h('span', { class: 'coin' }), h('b', {}, S.silver.toLocaleString()), h('span', { class: 'coin g' }), h('b', {}, S.gold.toLocaleString()),
           h('span', { class: 'grow' }), h('span', { class: 'muted' }, `Cards: ${S.items.card} · Silver ${S.items.silver} · Gold ${S.items.gold} · Eggs ${S.items.egg}/${S.items.golden}`)),
-        h('table', { class: 'list' }, ...items,
+        h('table', { class: 'list', style: '--cols: minmax(7em, 1.3fr) 3fr auto auto 3.6em' }, ...items,
           data().shop.some((x) => /egg/i.test(x.item)) ? null : eggRow('Egg', 30, () => (S.items.egg += 1)),
           data().shop.some((x) => /golden egg/i.test(x.item)) ? null : eggRow('Golden Egg', 100, () => (S.items.golden += 1)),
-          h('tr', {}, h('td', {}, h('b', {}, 'Exchange')), h('td', { class: 'muted' }, 'Trade 1,000 silver for 5 gold.'), h('td', {}, '1,000 silver'),
-            h('td', {}, h('button', { class: 'btn small', onClick: () => buy(1000, 'silver', () => (S.gold += 5)) }, 'Trade')), h('td', {}))),
+          h('tr', {}, h('td', {}, h('b', {}, 'Exchange')), h('td', { class: 'muted' }, 'Trade 1,000 silver for 5 gold.'), h('td', { style: { whiteSpace: 'nowrap' } }, '1,000 silver'),
+            h('td', {}, h('button', { class: 'btn small gold', disabled: S.silver < 1000, onClick: () => buy(1000, 'silver', () => (S.gold += 5)) }, 'Trade')), h('td', {}))),
         h('div', { class: 'row' }, S.items.egg ? h('button', { class: 'btn gold', onClick: () => openEgg('egg', render) }, `Open Egg (${S.items.egg})`) : null,
           S.items.golden ? h('button', { class: 'btn gold', onClick: () => openEgg('golden', render) }, `Open Golden Egg (${S.items.golden})`) : null));
     };
@@ -190,7 +194,7 @@ export class TownScene extends Phaser.Scene {
               if (!(await confirmBox(`Fuse ${displayName(pa)} (Lv ${pa.level}) and ${displayName(pb!)} (Lv ${pb!.level}) into ${r.result}?`, 'Fuse'))) return;
               if (S.party.length <= 2 && S.party.includes(pa) && S.party.includes(pb!) && allMonsters().length <= 2) return toast('You need at least one other monster.');
               const m = fuse(pa.uid, pb!.uid, r.result);
-              if (m) { sfx('evolve'); toast(`✨ ${r.result} was born!`); save(); render(); }
+              if (m) { sfx('evolve'); toast(`${r.result} was born!`); save(); render(); }
             } }, pa && pb ? 'Fuse' : 'Need both'));
         }));
     };
@@ -227,10 +231,10 @@ export class TownScene extends Phaser.Scene {
         h('button', { class: 'btn gold', disabled: heroLevel() < lic.heroLevel || S.questCount < lic.quests, onClick: async () => {
           await dialogue([{ who: next % 2 ? 'Arena Master May' : 'Arena Master Herald', text: `So you seek the ${lic.name} license? Show me your bond with your monsters!` }]);
           fight(arenaEncounter(next), (r) => {
-            if (r.outcome === 0) { S.license = next; save(); toast(`🏅 ${lic.name} License earned! Party size is now ${partySize()}.`); }
+            if (r.outcome === 0) { S.license = next; save(); toast(`${lic.name} License earned! Party size is now ${partySize()}.`); }
             toTown(this.name);
           });
-        } }, 'Take the test')) : h('p', {}, '🏆 You hold the highest license — Grandmaster!'));
+        } }, 'Take the test')) : h('p', {}, 'You hold the highest license — Grandmaster!'));
     modal('Arena', body, { width: '40em' });
   }
 
@@ -251,7 +255,7 @@ export class TownScene extends Phaser.Scene {
           if (r.outcome === 0) { S2.tourney = cls + 1; save(); toast(`${CLASSES[cls]} class cleared!`); }
           toTown(this.name);
         });
-      } }, `Fight the ${CLASSES[cls]} class`) : h('p', {}, '👑 Tournament champion!'));
+      } }, `Fight the ${CLASSES[cls]} class`) : h('p', {}, 'Tournament champion!'));
     modal('Tournament', body, { width: '40em' });
     void region; void findMon; void monCard;
   }
