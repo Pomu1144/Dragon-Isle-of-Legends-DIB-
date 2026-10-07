@@ -88,7 +88,7 @@ export function dialogue(lines: { who?: string; text: string }[]): Promise<void>
     const show = () => {
       if (i >= lines.length) { box.remove(); res(); return; }
       const l = lines[i++];
-      box.replaceChildren(l.who ? h('div', { class: 'who' }, l.who) : '', h('div', {}, l.text), h('div', { class: 'muted', style: { textAlign: 'right', fontSize: '.8em' } }, '▼ tap'));
+      box.replaceChildren(l.who ? h('div', { class: 'who' }, l.who) : '', h('div', {}, l.text), h('img', { class: 'dlg-next', src: 'assets/ui/orig/bk/arrow.png', alt: '' }));
     };
     box.addEventListener('click', () => { sfx('select'); show(); });
     layer('dialogue', box);
@@ -97,11 +97,11 @@ export function dialogue(lines: { who?: string; text: string }[]): Promise<void>
 }
 
 export const starsHtml = (n: number) => (n > 5 ? `★ ${n}` : '★'.repeat(Math.floor(n)) + (n % 1 ? '½' : ''));
-/** Star rating drawn with the painted star icons (text form kept in the title for tooltips). */
+/** Star rating drawn with the painted star icons, every star shown (smaller above 5, like the Monsterpedia). */
 export function stars(n: number) {
   const star = (half = false) => h('img', { src: `assets/ui/${half ? 'halfstaricon' : 'staricon'}.png`, alt: '' });
-  const kids = n > 5 ? [star(), `${n}`] : [...Array.from({ length: Math.floor(n) }, () => star()), ...(n % 1 ? [star(true)] : [])];
-  return h('span', { class: 'stars', title: `${n} stars` }, ...kids);
+  const kids = [...Array.from({ length: Math.floor(n) }, () => star()), ...(n % 1 ? [star(true)] : [])];
+  return h('span', { class: `stars ${n > 5 ? 'many' : ''}`, title: `${n} stars` }, ...kids);
 }
 
 /** replaceChildren that tolerates null/false entries. */
