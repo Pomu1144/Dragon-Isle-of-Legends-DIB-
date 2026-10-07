@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { coverBg, ambient, vignette } from './fx';
 import { h, layer, clearLayer, modal, dialogue, toast } from '../ui/dom';
 import { hasSave, load, newGame, S, STARTERS } from '../core/state';
-import { data, speciesByName, spriteUrl } from '../core/data';
+import { data, speciesByName, spriteUrl, town } from '../core/data';
 import { music, sfx, setAudio, unlockAudio } from '../audio';
 import { toRegion, toTown } from '../nav';
 import { elChip } from '../ui/menus';
@@ -19,7 +19,14 @@ export class TitleScene extends Phaser.Scene {
     layer('title', h('div', { class: 'title-screen' },
       h('div', { class: 'logo' }, h('h1', {}, 'Dragon Isle of Legends'), h('div', { class: 'sub' }, 'A DRAGON ISLAND BLUE REBUILD')),
       h('div', { class: 'row' },
-        cont ? h('button', { class: 'btn gold big', onClick: () => { start(); if (load()) { setAudio(S.settings.music, S.settings.sfx); toRegion(); } } }, 'Continue') : null,
+        cont ? h('button', { class: 'btn gold big', onClick: () => {
+          start();
+          if (!load()) return;
+          setAudio(S.settings.music, S.settings.sfx);
+          // saved inside a town: resume there, not outside its gate
+          const t = S.location.town;
+          if (t && town(t)) toTown(t); else toRegion();
+        } }, 'Continue') : null,
         h('button', { class: `btn big ${cont ? '' : 'gold'}`, onClick: () => { start(); this.newGameDialog(); } }, 'New Game')),
       h('div', { class: 'muted', style: { textShadow: '0 1px 4px #000' } }, `${data().monsters.length} monsters · ${data().regions.length} regions · ${data().dungeons.length} dungeons · ${data().overlords.length} Dragon Overlords`)));
   }

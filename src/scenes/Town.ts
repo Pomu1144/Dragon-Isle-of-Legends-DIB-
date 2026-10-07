@@ -90,7 +90,8 @@ export class TownScene extends Phaser.Scene {
     const t = townData(this.name)!;
     const reg = regionByName(t.region)!;
     const spot = maps()[reg.id].spots.find((s) => s.kind === 'town' && s.ref === this.name);
-    if (spot) { S.location = { region: reg.id, spot: spot.id }; S.lastTown = { ...S.location }; }
+    // remembered so that Continue after a reload puts the hero back inside the town
+    if (spot) { S.location = { region: reg.id, spot: spot.id, town: this.name }; S.lastTown = { region: reg.id, spot: spot.id }; }
     questEvent('visit', this.name);
     save();
     this.cameras.main.setBackgroundColor('#0b1420');

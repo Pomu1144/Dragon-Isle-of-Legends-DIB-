@@ -218,6 +218,7 @@ export class RegionScene extends Phaser.Scene {
     this.keys = this.input.keyboard?.addKeys({ up: 'UP', down: 'DOWN', left: 'LEFT', right: 'RIGHT', w: 'W', a: 'A', s: 'S', d: 'D' }, false) as RegionScene['keys'];
 
     if (!S.visited.includes(r.id)) S.visited.push(r.id);
+    delete S.location.town; // out on the map now
     save();
     this.ready = true;
     this.near = this.landmarkNear(start);

@@ -34,8 +34,8 @@ export interface SaveData {
   questCount: number;
   overlords: string[];
   dungeons: Record<string, { best: number; cleared: boolean }>;
-  /** where the hero stands: the nearest map spot, plus the exact free-roam position (0..1) when known */
-  location: { region: string; spot: number; x?: number; y?: number };
+  /** where the hero stands: the nearest map spot, plus the exact free-roam position (0..1) when known, or the town he is walking around in */
+  location: { region: string; spot: number; x?: number; y?: number; town?: string };
   lastTown: { region: string; spot: number };
   visited: string[];
   stats: { battles: number; wins: number; captures: number; defeated: number };
