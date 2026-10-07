@@ -287,9 +287,18 @@ export function planTown(t: TownInfo, plate: PlateId, A: TownArt): TownPlan {
     free.delete(id);
   }
 
+  // spots for townsfolk, the notice board and props must stand clear of the buildings (and of each other)
+  const solid = items.filter((i) => i.kind === 'building' || i.kind === 'gate');
+  // the crates and trees already standing (by the stall, in empty slots) count as taken ground too
+  const taken: Pt[] = items.filter((i) => i.kind === 'prop' || i.kind === 'tree').map((i) => ({ x: i.x, y: i.y }));
+  const clear = (x: number, y: number, r = 70) => !solid.some((b) => x > b.x - b.ox * b.w - 30 && x < b.x + (1 - b.ox) * b.w + 30 && y > b.y - b.oy * b.h && y < b.y + 50)
+    && !taken.some((p) => Math.hypot(p.x - x, p.y - y) < r);
+
   // the tournament's notice board
-  if (t.tournament && lay.board.length) {
-    const [x, y] = rng.pick(lay.board);
+  const boards = lay.board.filter(([x, y]) => clear(x, y));
+  if (t.tournament && boards.length) {
+    const [x, y] = rng.pick(boards);
+    taken.push({ x, y });
     const b = place(A, lay, 'props_cafe-chalkboard_blank-01', 'prop', x, y);
     b.service = 'board';
     b.label = 'Notice Board';
@@ -299,13 +308,14 @@ export function planTown(t: TownInfo, plate: PlateId, A: TownArt): TownPlan {
   }
 
   // townsfolk: the Scholar (Monsterpedia) and two to four neighbours with a word of advice
-  const spots = shuffle(rng, lay.npcs.slice());
+  const spots = shuffle(rng, lay.npcs.filter(([x, y]) => clear(x, y)));
   const hints = shuffle(rng, HINTS.slice());
-  const folk = shuffle(rng, FOLK.slice());
+  const folk = shuffle(rng, FOLK.filter((f) => f !== 'npcs_apothecary_idle-south-01'));
   const count = Math.min(spots.length, 3 + rng.int(0, 2));
   for (let i = 0; i < count; i++) {
     const [x, y] = spots[i];
-    const piece = i === 0 ? 'npcs_apothecary_idle-south-01' : folk[i % folk.length];
+    const piece = i === 0 ? 'npcs_apothecary_idle-south-01' : folk[(i - 1) % folk.length];
+    taken.push({ x, y });
     const n = place(A, lay, piece, 'npc', x, y, { flip: rng.chance(0.4) });
     n.service = i === 0 ? 'pedia' : 'npc';
     n.who = i === 0 ? 'Scholar' : FOLK_NAME[piece];
@@ -319,6 +329,8 @@ export function planTown(t: TownInfo, plate: PlateId, A: TownArt): TownPlan {
   // trees, lamps, planters, benches… at the plate's prop spots
   for (const sp of lay.props) {
     if (sp.p != null && !rng.chance(sp.p)) continue;
+    if (!clear(sp.x, sp.y, 110)) continue;
+    taken.push({ x: sp.x, y: sp.y });
     const list = PROPS[sp.kind] ?? [sp.kind];
     const piece = rng.pick(list);
     if (!has(piece, A)) continue;

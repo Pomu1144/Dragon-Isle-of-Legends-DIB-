@@ -1,0 +1,13 @@
+/* Walkable towns (src/scenes/Town.ts): the bottom action bar. Buttons and chips are the painted .btn / .chip skins. */
+.town-actions { position: absolute; left: 50%; bottom: .8em; transform: translateX(-50%); display: flex; align-items: center; gap: .5em;
+  max-width: calc(100% - 1.2em); flex-wrap: wrap; justify-content: center; pointer-events: none; }
+.town-actions > * { pointer-events: auto; }
+.town-actions .btn { font-size: 1.12em; padding: .15em 1.1em; animation: town-act-in .22s ease-out; }
+.town-actions .chip.panel { font-size: .82em; white-space: nowrap; }
+.town-actions .town-what { font-size: .78em; }
+@keyframes town-act-in { from { transform: translateY(.4em) scale(.94); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (max-width: 520px) {
+  .town-actions { bottom: .6em; }
+  .town-actions .btn { font-size: 1em; }
+  .town-actions .chip.panel { font-size: .7em; }
+}
