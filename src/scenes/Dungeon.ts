@@ -360,13 +360,19 @@ export class DungeonScene extends Phaser.Scene {
 
   enter(r: Room) {
     sfx('step');
+    const from = visit!.at;
     visit!.at = r.id;
     if (r.done) { this.refresh(); if (r.kind === 'stairs') this.descend(); return; }
     switch (r.kind) {
       case 'battle': {
         const enc = dungeonEncounter(this.name, this.floor);
         enc.team[0].species = this.monsterOf(r).id; // the monster you saw in the room leads the pack
-        fight(enc, () => { r.done = true; toDungeon(this.name, this.floor); });
+        fight(enc, (res) => {
+          // only a won fight clears the room: running away leaves the monster there and the hero back where he came from
+          if (res.outcome === 0) r.done = true;
+          else if (visit && visit.key === `${this.name}:${this.floor}`) visit.at = from;
+          toDungeon(this.name, this.floor);
+        });
         break;
       }
       case 'chest': {
@@ -401,7 +407,7 @@ export class DungeonScene extends Phaser.Scene {
             const d = dungeonData(this.name)!;
             if (this.name === 'Sanctuary' && this.floor === FINALE.length && !S.ending) return this.ending();
             if (this.floor >= d.floors) { S.dungeons[this.name].cleared = true; save(); toast(`🏆 ${this.name} cleared!`); }
-          }
+          } else if (visit && visit.key === `${this.name}:${this.floor}`) visit.at = from;
           toDungeon(this.name, this.floor);
         }));
         break;
