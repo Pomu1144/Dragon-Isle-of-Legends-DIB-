@@ -1,127 +1,94 @@
 # Dragon Isle of Legends
 
-A from-scratch browser rebuild of the 2012 mobile monster-taming RPG **Dragon Island Blue**.
-The game data and monster art come from a scrape of the [Dragon Island Blue Fandom wiki](https://dragonislandblue.fandom.com).
-The world map and the 16 region maps were painted with **Higgsfield** (FLUX 3), using the original game's town screen (`tools/ref_ui/map_style_reference.jpg`) as the style reference. Battle backdrops and title art were also made with Higgsfield (FLUX.2).
+A from-scratch browser rebuild of the 2012 mobile monster-taming RPG **Dragon Island Blue**, in TypeScript with Phaser 3 and Vite.
+Game data and monster art come from a scrape of the [Dragon Island Blue Fandom wiki](https://dragonislandblue.fandom.com); the screens are rebuilt after the original game's UI kits and screenshots (`tools/ref_ui/`).
 
 ![stack](https://img.shields.io/badge/Phaser-3.90-blue) ![ts](https://img.shields.io/badge/TypeScript-strict-3178c6) ![vite](https://img.shields.io/badge/Vite-8-646cff)
 
-## Play
+## Run, build, test
 
 ```bash
 npm install
-npm run dev        # http://localhost:5173
-npm run build      # static build in dist/ (deployable anywhere, e.g. GitHub Pages)
-npm test           # headless battle-engine + balance tests (vitest)
+npm run dev         # http://localhost:5173
+npm run typecheck   # tsc --noEmit
+npm test            # vitest: battle engine, balance, dungeon save points, town layouts, walk grid
+npm run build       # typecheck + static build in dist/ (relative asset paths, deployable anywhere)
+node tools/ui_shots.mjs OUT_DIR   # with the dev server running: screenshots every screen (Playwright)
 ```
 
-## What's in the game
+**GitHub Pages.** `.github/workflows/pages.yml` tests, builds and deploys `dist/` on every push to `main` (CI on other branches and PRs runs typecheck, tests and build). For the deploy to work, the repository's **Settings → Pages → Source** must be set to **"GitHub Actions"**.
 
-| System | Details |
+## The game
+
+| | |
 | --- | --- |
-| **Monsters** | All **224** wiki monsters: sprites, element, stars, base stats, abilities and evolution chains (Hatchling → Dragonling → Dragon → Wyrm…). Plus 3 original evolutions: **Moonreaver** (Dark Panther, Lv 75), and **Seraph** (Archangel, Lv 70) → **Empyrean** (Lv 100) |
-| **Battles** | Time-unit (CTB) combat as in the original. Up to 3 monsters per side are on the field with reserves behind them. Every wiki ability is modelled: physical/magical damage, the 7-element wheel, buffs/debuffs, stun, sleep, paralyze, confuse, doom, poison, taunt, disguise, no-guard, immunity, life-drain, recoil, reflect, per-kill and per-TU scaling, clones with shared HP, sacrifices, random summons and escape. Includes a turn-order timeline, auto-battle and 1–3× speed |
-| **Capturing** | Card, Silver Card and Gold Card. Lower HP and status effects raise the odds. One attempt per monster, as in the original |
-| **World** | 16 regions on the original 4×4 island layout, plus the **Underworld** across the sea (reached by boat from the Saintspring dock, or through the Unknown Relic as in the original), each a Higgsfield-painted map, upscaled to 4K and shown as a scrolling world three screens wide (drag, arrow keys, or tap the minimap). Maps are streamed in per region rather than loaded at boot. Each region has 60 walkable spots placed on land from the painting's land mask, with roads between neighbouring regions. Unexplored land is hidden under fog of war, which lifts as you walk. Every region also hides 15 discoveries: 7 treasure chests, 3 monster lairs (rare, strong, capturable monsters), 3 breeder camps (battle for an egg) and 2 lookout towers that reveal the whole map. Exploring 100% of a region pays silver and a Golden Egg |
-| **World map** | One huge painted world you can drag and zoom, with a minimap. It is made of six Higgsfield panels in a detailed fantasy-atlas style: the Dragon Isle, the frozen isles, the ash and infernal crescent, the Hellmouth, the Underworld reefs, and the forest and graveyard continent. `tools/stitch_world.py` cross-fades them into one 7568×2752 map, matches the sea colour between panels, and cuts it into GPU-safe tiles. `place_spots.py` pins each region onto its own stretch of land |
-| **The Frontier** | An expansion continent across the sea (`tools/custom/expansion.json`), with its own world-map page. It has 10 regions on a 5×2 grid: Frostfang Coast, Glacier Expanse, Rimeheart Peaks, Ashen Wastes, Infernal Rift, Elderwood, Titanroot Forest, Gravemoor, Hollow Necropolis and the Hellmouth (Lv 28–138). It adds 20 new villages with Guild quests and 5 new dungeons (Frozen Labyrinth, Elder Hollow, Crypt of Kings, Ashen Catacombs, Inferno Depths). Boats from the Forest of Mangal and Endergate docks sail there. Every map and the new glacier, hell, graveyard and giant-forest battle backdrops were painted with Higgsfield |
-| **Towns** | 8 towns (Corova, Westguard, Wesing, Longdale, Lorensia, Dundean, Ilios, Olympia). Each has a Guild with the town's real wiki quests, a Shop with wiki prices, a Recipe Lab, a Warp Gate, and an Arena (license tests) or Tournament where the original had one |
-| **Dungeons** | 13 dungeons (No Man's Castle, Lighthouse, Pirate's Cave, Sanctuary, the endless Abyss…). Procedural floors with battles, treasure, stairs, waypoints (floors 1, 6, 11, …) and spirit guardians. The endless Abyss is the experience farm: as in the original, none of its monsters can be captured, its battles pay 50% bonus experience, Fafnir guards every 10th floor from floor 50, and there is a teleport save point every 10 floors (the dungeon shows "Next bonus at floor: N", and the entrance sends you to your deepest save point) |
-| **Dragon Overlords** | 12 boss fights (Arashi, Apalala, Ladon…), each using the monster form the wiki names |
-| **Progression** | Hero level grows by raising each species to new levels, as on the wiki. Skill points, gem slots (Oval/Square/Tear/Star), 6 breeder licenses that add party slots, soul stones from destroyed monsters, 23 fusion recipes, Eggs and Golden Eggs with a stop-the-wheel minigame |
-| **Story** | Start in Corova with one of 4 hatchlings. The finale is the Sanctuary *Final Battle* against Cornelius, Xin, Raiden, Enya, Beatrice and Caius with their wiki teams |
-| **Audio** | Procedural WebAudio music (title/world/town/battle/boss/dungeon) and sound effects, with no audio files |
-| **Saves** | Autosave to localStorage, plus a copy-paste save code for export and import |
+| **Loading screen** | Rebuilt like the original's: the Dragon Isle cropped from the painted world map, the cracked title plaque and HD monsters around it, as plain HTML in `index.html` so it shows before any script loads |
+| **Monsters** | All 224 wiki monsters (sprites, element, stars, stats, abilities, evolution chains) plus 3 original evolutions: Moonreaver, Seraph and Empyrean (`tools/custom/`). Sprites are upscaled to HD (see below) |
+| **Battles** | The original's time-unit combat, up to 3 monsters per side with reserves. Every wiki ability is modelled (7-element wheel, buffs/debuffs, stun, sleep, poison, doom, taunt, reflect, clones, summons…). Turn queue, auto-battle, 1–3× speed. Capture with Card, Silver Card or Gold Card |
+| **World map** | One painted world (six panels stitched by `tools/stitch_world.py`) you can drag and zoom, with a minimap; each of the 27 regions is a pin on its own stretch of land. Travel overland to neighbouring regions, by boat from docks, or fast-travel to visited ones |
+| **Regions** | Free-roam painted maps: tap the ground or use arrow keys / WASD to walk (the walk grid is read from the painting). Fog of war lifts as you explore. Wild monsters attack at random as you cross open country (more often in forest, less on roads), never close to a town, and they grow from the region's lowest level at the town edge to its highest far out in the wilds. Each region hides treasure chests, monster lairs, breeder camps and lookout towers; Dragon Overlords wait far from town |
+| **Towns** | 28 walkable towns (the 8 originals and 20 Frontier villages) in the style of the user's **Azurelake** kit: one of three painted grounds (canal plaza, harbour quay, garden green) with the kit's buildings, trees, lamps and townsfolk placed by a planner seeded by the town's name (`src/core/townplan.ts`, hand-authored slots in `public/assets/town/layouts.json`). Walk in to use the Guild Hall (wiki quests), Market, Recipe Lab, Warp Shrine, Monster Keep, Hero's House, the Scholar (Monsterpedia), and the Grand Arena and tournament board where the original had them |
+| **Dungeons** | 18 dungeons (13 originals, 5 in the Frontier) as the original's stone chambers on black, with battles, chests, stairs and, in some, a spirit guardian on the last floor. Save points let you resume deep runs: floors 6, 11, 16… in ordinary dungeons, every 10th floor in **the Abyss**, which also shows "Next bonus at floor: N". In the Abyss nothing can be captured, battles pay 50% bonus experience and Fafnir guards every 10th floor from 50 |
+| **Team screen** | The original's team selector: party and storage as two cover-flow rows of painted cards in the barn (a stone cellar inside dungeons). Drag monsters up/down to change the party; insert or make soul stones, evolve, rename, view info |
+| **Progression** | Hero level from raising species, skill points, gem slots, 6 breeder licenses (more party slots), 23 fusion recipes, Eggs and Golden Eggs with the stop-the-wheel minigame, 12 Dragon Overlords, and the Sanctuary finale against Cornelius, Xin, Raiden, Enya, Beatrice and Caius |
+| **The Frontier** | An expansion continent across the sea (`tools/custom/expansion.json`): 10 regions (Lv 28–138), 20 villages and 5 dungeons |
+| **Audio / saves** | Procedural WebAudio music and effects (no audio files). Autosave to localStorage plus a copy-paste save code; Continue resumes inside the town you were in |
 
-## Rebuilding the data from the wiki
+### Balance
+
+The opening is tuned with a headless "sensible player" simulation (`tests/sim.ts`), locked in by `tests/balance.test.ts`:
+
+- Experience: `xpYield` has a flat 40 + 8 per level part, so a Lv 5 starter gains about 5 levels in 15–25 wild battles near Corova; at Lv 50+ the level term dominates.
+- Overlord HP and stat multipliers ramp up over the first tiers (`overlordMults`): Arashi, the first, is beatable about a third to half of the time by a Lv 10–12 starter with a catch or two, and never by an untrained one.
+- A fresh starter usually beats the wild packs in Southern Alvalon, but not trivially.
+
+## Painted UI
+
+Every control uses painted art; there are no plain CSS gradients, flat pills or browser dialogs. Buttons (blue neutral, gold primary, green go, red danger), round bronze medallions, bronze-framed parchment/slate/teal strips, the blue enamel panel and the stone dungeon rooms come from the original UI kits (`tools/ref_ui/kit.png`, `battle_kit.png`, `town_battle_sheet.jpg`) and from art painted with Higgsfield using the kits as the style reference. The "Painted UI skin" section of `src/style.css` applies them as `border-image` 9-slices. Selected tabs light up turquoise (`tab_on.png`) so gold stays reserved for primary buttons.
+
+The art tools in `tools/ref_ui/` (each script's docstring has its usage):
+
+| Script | Makes |
+| --- | --- |
+| `slice_kit.py`, `extract.py` | the Monsterpedia book (cards, tabs, plank, parchment page) from `kit.png` and `reference.jpg` |
+| `dechecker.py`, `slice_town_battle.py` | town/battle pieces from the sprite sheet whose checkerboard was baked in |
+| `dewhite.py`, `slice_battle_kit.py` | the battle kit (panels, cards, bars, effects) |
+| `slice_buttons.py` | the painted button set in `public/assets/ui/btn/` |
+| `tile_fills.py` | tileable versions of small kit panels |
+| `hud_icons.py` | minted silver/gold coins and the hero medallion |
+| `tab_skin.py` | the lit selected-tab skin |
+| `zoom_icons.py` | the world map's plus/minus glyphs, lifted from the original hero-stats screen |
+| `slice_loading.py` | the loading-screen plaque and backdrop |
+| `slice_dungeon_team.py`, `slice_lv_tab.py` | dungeon rooms, corridors, props, the team screen and the "Lv" tab |
+| `discoveries.py` | region markers (chest, tent, tower, lair) |
+
+Town art lives in `tools/town/`: `prep_kit.py` turns the Azurelake kit into runtime WebPs plus `kit.json`, `prep_town_art.py` builds the painted grounds and the extra buildings, and `prep_walk.py` writes the walk masks and building ground lines that the game and `tests/town.test.ts` share.
+
+## Data and HD sprites
 
 ```bash
-python3 tools/scrape_wiki.py .cache/wiki                                   # 490 pages + 707 image URLs via the MediaWiki API
+python3 tools/scrape_wiki.py .cache/wiki                                   # wiki pages + image URLs (MediaWiki API)
 python3 tools/download_images.py .cache/wiki/images.json .cache/wiki/img   # monster sprites
 npm run data                                                               # -> public/assets/data/{gamedata,maps}.json + sprites
 ```
 
-`tools/build_data.py` parses the wiki tables (Monster List, stat tables, ability tables, recipes, towns, dungeons, overlords, shop, licenses, eggs, soul stones). It also normalises two kinds of stats into one level curve: pages that list level-1 stats and pages that list S+ rank stats. Ability damage and buff numbers become coefficients of the caster's stats, so every move scales with level. `tools/place_spots.py` finds land in each Higgsfield region painting and places the walkable spots and roads on it.
-
-## Adding your own monsters
-
-Original monsters live in `tools/custom/monsters.json`, with their art in `tools/custom/sprites/`. `npm run data` merges them into the roster and links them to their pre-evolution with `evolvesFrom` and `evolveLevel`. To cut art out of a flat black background:
-
-```bash
-python3 tools/cutout_black.py my_art.jpg tools/custom/sprites/my_monster.png
-```
-
-## Monsterpedia UI kit
-
-The Monsterpedia and My Monsters book is built from the Dragon Island Blue UI kit, `tools/ref_ui/kit.png`. That sheet holds the empty cards, the six tabs, the "My Monsters" plank and the back button, on a transparent background.
-
-- **`tools/ref_ui/slice_kit.py`** cuts the sheet into `public/assets/ui/kit/`. It erases the placeholder silhouette in the element socket and the plank's baked-in label, and writes `layout.json` with every position.
-- **The parchment page** comes from a screenshot of the original game. `tools/ref_ui/extract.py` removes the cards, counter and labels from `reference.jpg`; that step needs `pip install opencv-python-headless scipy`.
-- **`src/ui/book.ts`** lays everything out in the kit's 1536×1024 space. It writes the names, sprites, stars, the level on the crown, the element icon in the socket and the number in the number box.
-
-```bash
-python3 tools/ref_ui/extract.py tools/ref_ui/reference.jpg public/assets/ui/dib
-python3 tools/ref_ui/slice_kit.py tools/ref_ui/kit.png public/assets/ui/dib/page.jpg public/assets/ui/kit
-```
-
-## Town and battle screens from the original sprite sheet
-
-The town and battle screens follow the original game's layout, using art from `tools/ref_ui/town_battle_sheet.jpg`. In that sheet the transparency checkerboard was flattened into the image, so it takes two steps to cut the pieces out:
-
-```bash
-python3 tools/ref_ui/dechecker.py tools/ref_ui/town_battle_sheet.jpg .cache/sheet_rgba.png   # fits the checker grid -> alpha
-python3 tools/ref_ui/slice_town_battle.py .cache/sheet_rgba.png public/assets/ui/orig        # town buildings, HUD, battle panel
-```
-
-- **Town:** the region map is zoomed in on the town. The original buildings and emblems stand on it at the positions from the reference screen, `town_reference.jpg`: Shop, Hero, Warp Gate, Monsterpedia and Monsters, plus Leave Town, Guild, Recipe Lab, Arena and Tournament. The "M" button opens the menu.
-- **Battle:** this matches `battle_reference.jpg`:
-  - Enemies stand in the scene, with their names coloured by element and HP bars across the top. A coin shows how many enemies are still in reserve.
-  - The left column is the turn queue, giving the time units until each monster acts.
-  - The bottom panel has the ghost box (capture cards, auto, speed and escape), your monsters with "HP/max" bars, and the hero portrait (tap it to toggle auto).
-  - Magic attacks fire the original glowing orbs.
-
-### Battle UI kit
-
-`tools/ref_ui/battle_kit.png` has a white background. `dewhite.py` keys it out and `slice_battle_kit.py` cuts it into `public/assets/ui/orig/bk/`:
-
-```bash
-python3 tools/ref_ui/dewhite.py tools/ref_ui/battle_kit.png .cache/battle_kit_rgba.png
-python3 tools/ref_ui/slice_battle_kit.py .cache/battle_kit_rgba.png public/assets/ui/orig/bk
-```
-
-The discovery markers (chest, tent, tower, lair) were generated with Higgsfield on white and are keyed the same way: `python3 tools/ref_ui/discoveries.py` reads `tools/ref_ui/disc/*.png` and writes `public/assets/ui/orig/disc/`.
-
-**Painted controls.** No control in the game uses plain CSS gradients, flat pills or browser dialogs. Every button, tab, chip, toggle, list row, progress bar and map marker uses art painted with Higgsfield, with the two UI kits (`kit.png`, `battle_kit.png`) as the style reference. That art is:
-
-- bronze riveted buttons in blue (neutral), gold (primary), green (go) and red (danger)
-- round bronze medallions for icon buttons, toggles and map pins
-- thin bronze-framed parchment, slate and teal strips for labels, the HUD and toasts
-- stone tiles for dungeon rooms
-
-A three-judge panel (style fidelity, 9-slice behaviour, legibility) chose between two candidate button sets. `python3 tools/ref_ui/slice_buttons.py` keys the sheets in `tools/ref_ui/buttons/` and cuts them into `public/assets/ui/btn/`. The "Painted UI skin" section of `src/style.css` applies them as `border-image` 9-slices, and Phaser uses `nineslice` for the minimap frames. `node tools/ui_shots.mjs OUT_DIR` (with `npm run dev` running) screenshots every screen for visual review.
-
-The battle matches `battle_reference2.png`:
-
-- **Your turn:** the left box shows the acting monster with its name and HP. The middle panel turns into its ability cards, each with TU and an ⓘ button that opens a parchment popup. Card art shows the kind of move: arrow for a quick physical hit, double arrow for a heavy or support move, flame for magic, and "???" for an empty slot.
-- **Targeting and capture:** tapping a card that needs a target puts the compass marker on each target. The small card beside each enemy's name throws a capture card at it.
-- **Scene buttons:** the round buttons flee, toggle auto battle, and open the scroll menu (card type and pause / 1× / 2× / 3×).
-- **Bars and effects:**
-  - HP bars are red above half health and orange below.
-  - Magic hits play element effects: tornado, water ring, red, green and web vortexes, and a sparkle.
-  - Dungeon battles get flickering candles.
+- `tools/build_data.py` parses the wiki tables into `gamedata.json`, normalises stats onto one level curve, and turns ability numbers into coefficients of the caster's stats. It merges `tools/custom/` (original monsters, the Frontier) and prefers an HD `NNN.webp` sprite next to each `NNN.png`.
+- `tools/upscale_sprites.py MODEL.pth SRC_DIR DST_DIR` upscales the small wiki sprites 4× with Real-ESRGAN (x4plus anime 6B, keeping transparency) to WebPs of at most 512 px. It needs torch, numpy and opencv, so run it from a virtualenv.
+- `tools/place_spots.py` finds land in each region painting and places spots and roads; `tools/stitch_world.py` builds the world map tiles.
+- `tools/cutout_black.py IN OUT` cuts custom monster art out of a black background.
 
 ## Project layout
 
 ```
-src/core/      battle engine, monster model, encounters, save/state (pure TS, unit-tested)
-src/scenes/    Phaser scenes: Boot, Title, World, Region, Battle, Town, Dungeon
-src/ui/        DOM UI: HUD, menus, Monsterpedia, egg wheel, dialogs
-tools/         wiki scraper + data builder + map spot placer (Python)
-public/assets/ maps/ & bg/ (Higgsfield), sprites/ (wiki), data/ (generated)
+src/core/      battle engine, monsters, encounters, save state, town planner, walk grid (pure TS, unit-tested)
+src/scenes/    Phaser scenes: Boot, Title, World, Region, Town, Dungeon, Battle
+src/ui/        DOM UI: HUD, menus, Monsterpedia book, team screen, dialogs, loading screen
+tests/         vitest suites and the balance simulation
+tools/         data, map and art pipelines (Python), screenshot harness
+public/assets/ data/ (generated), sprites/, maps/, bg/, town/, dungeon/, team/, loading/, ui/
 ```
 
-## Credits & legal
+## Credits and legal
 
 This is a **non-commercial fan project**. Dragon Island Blue and its monster designs belong to their original creators.
-Monster sprites, names, stats and quest text come from the Dragon Island Blue Fandom wiki. Fandom text is licensed [CC BY-SA 3.0](https://www.fandom.com/licensing); the sprite images are the original game's art, used here for this fan project.
-Maps, backgrounds and title art were generated with Higgsfield for this project. All code is original.
+Monster sprites, names, stats and quest text come from the Dragon Island Blue Fandom wiki (text under [CC BY-SA 3.0](https://www.fandom.com/licensing); sprites are the original game's art). UI kit pieces come from the original game. The town kit is the user's Azurelake art; maps, backgrounds, title and extra UI art were generated with Higgsfield for this project. All code is original.

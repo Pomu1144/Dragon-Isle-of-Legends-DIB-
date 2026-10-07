@@ -37,9 +37,18 @@ export class WorldScene extends Phaser.Scene {
     this.H = lay.height;
     for (const t of lay.tiles) this.add.image(t.x, 0, `wt_${t.file}`).setOrigin(0);
     const cam = this.cameras.main;
-    cam.setBounds(0, 0, this.W, this.H);
-    const minZoom = Math.max(width / this.W, height / this.H);
+    // the HUD row covers the top of the screen and the zoom buttons / info panel the bottom, so the map may scroll a
+    // little past its top and bottom edges; the painted sea fades into its own colour out there
+    const SEA = 0x2f4a4c, PAD_T = 70, PAD_B = 110, FADE = 160, MAXPAD = 600;
+    cam.setBackgroundColor(SEA);
+    const fade = this.add.graphics().setDepth(1)
+      .fillGradientStyle(SEA, SEA, SEA, SEA, 0, 0, 1, 1).fillRect(0, this.H - FADE, this.W, FADE)
+      .fillGradientStyle(SEA, SEA, SEA, SEA, 1, 1, 0, 0).fillRect(0, 0, this.W, FADE)
+      .fillStyle(SEA, 1).fillRect(0, this.H, this.W, MAXPAD).fillRect(0, -MAXPAD, this.W, MAXPAD);
+    const fitBounds = () => cam.setBounds(0, -PAD_T / cam.zoom, this.W, this.H + (PAD_T + PAD_B) / cam.zoom);
+    const minZoom = Math.max(width / this.W, (height - PAD_T - PAD_B) / this.H);
     cam.setZoom(0.55);
+    fitBounds();
     cam.fadeIn(400);
 
     const wm = (maps() as any)._worldmap as { pos: Record<string, [number, number]> } | undefined;
@@ -63,7 +72,7 @@ export class WorldScene extends Phaser.Scene {
     const mini = this.cameras.add(mx, my, MINI_W, MINI_H).setZoom(MINI_W / this.W).setBounds(0, 0, this.W, this.H);
     mini.centerOn(this.W / 2, this.H / 2);
     mini.inputEnabled = false;
-    mini.ignore([frame, ...this.pins]);
+    mini.ignore([frame, fade, ...this.pins]);
     cam.ignore(view);
     this.view = view;
     // tiny painted medallions on the minimap mark each region, coloured like the pins
@@ -89,7 +98,7 @@ export class WorldScene extends Phaser.Scene {
       cam.setScroll(this.drag.sx - dx / cam.zoom, this.drag.sy - dy / cam.zoom);
     });
     this.input.on('pointerup', () => { this.drag.on = false; });
-    const zoomBy = (f: number) => { cam.setZoom(Phaser.Math.Clamp(cam.zoom * f, minZoom, 1.2)); this.fitPins(); };
+    const zoomBy = (f: number) => { cam.setZoom(Phaser.Math.Clamp(cam.zoom * f, minZoom, 1.2)); fitBounds(); this.fitPins(); };
     this.input.on('wheel', (_p: unknown, _o: unknown, _dx: number, dy: number) => zoomBy(dy > 0 ? 0.88 : 1.14));
     this.keys = this.input.keyboard?.createCursorKeys();
     this.fitPins();
@@ -98,10 +107,10 @@ export class WorldScene extends Phaser.Scene {
     refresh();
     layer('scene', h('div', {},
       h('div', { class: 'region-actions' },
-        h('button', { class: 'btn icon', title: 'Zoom in', 'aria-label': 'Zoom in', onClick: () => zoomBy(1.3) }, '+'),
-        h('button', { class: 'btn icon', title: 'Zoom out', 'aria-label': 'Zoom out', onClick: () => zoomBy(1 / 1.3) }, '−'),
+        h('button', { class: 'btn icon', title: 'Zoom in', 'aria-label': 'Zoom in', onClick: () => zoomBy(1.3) }, h('img', { class: 'glyph', src: 'assets/ui/btn/icon_plus.png', alt: '' })),
+        h('button', { class: 'btn icon', title: 'Zoom out', 'aria-label': 'Zoom out', onClick: () => zoomBy(1 / 1.3) }, h('img', { class: 'glyph', src: 'assets/ui/btn/icon_minus.png', alt: '' })),
         h('button', { class: 'btn icon', title: 'Centre on me', 'aria-label': 'Centre on me', onClick: () => cam.pan(here.x, here.y, 500, 'Sine.easeInOut') }, h('img', { src: 'assets/ui/orig/bk/fx_target.png', alt: '' })),
-        h('span', { class: 'chip panel' }, 'Drag to explore the world · scroll or +/− to zoom · tap a region to travel')),
+        h('span', { class: 'chip panel' }, 'Drag to explore the world · scroll or use the zoom buttons · tap a region to travel')),
       h('div', { class: 'region-info panel', style: { width: 'auto' } }, h('b', {}, 'The World'),
         h('div', { class: 'muted' }, `${S.visited.length} of ${data().regions.length} regions discovered`))));
   }

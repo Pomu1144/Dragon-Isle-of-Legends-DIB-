@@ -270,8 +270,8 @@ input.text { font: inherit; padding: .5em .8em; border-radius: .5em; border: 1px
 .btn > img { height: 1.25em; margin: -.2em 0; filter: drop-shadow(0 1px 1px #000); }
 .btn > img.flip { transform: rotate(180deg); }
 .btn.icon > img { width: 62%; height: 62%; margin: 0; object-fit: contain; }
-/* the map camera's zoom medallions carry the kit's heavy outlined Arial */
-.region-actions .btn.icon { font: 900 1.3em/1 Arial, Helvetica, sans-serif; color: #f6e2b0; text-shadow: var(--ink); }
+/* painted plus / minus glyphs (tools/ref_ui/zoom_icons.py) on the world map zoom medallions */
+.btn.icon > img.glyph { width: 44%; height: 44%; }
 /* labels, hints, HUD badge and toasts sit on thin bronze-framed strips */
 .chip { background: none; border-radius: 0; border-style: solid; border-color: transparent; border-width: .42em .5em;
   border-image: url(/assets/ui/btn/strip_slate.png) 20 26 fill stretch; padding: 0 .25em; font: 800 .8em/1.25 Arial, Helvetica, sans-serif;
@@ -288,11 +288,11 @@ input.text { font: inherit; padding: .5em .8em; border-radius: .5em; border: 1px
 .toast { background: none; border-radius: 0; border-style: solid; border-color: transparent; border-width: .55em .75em;
   border-image: url(/assets/ui/btn/strip_slate.png) 20 26 fill stretch; padding: .05em .4em; font: 800 1em Arial, Helvetica, sans-serif;
   color: #fff; text-shadow: var(--ink-soft); filter: drop-shadow(0 .2em .3em rgba(0,0,0,.6)); }
-/* tabs: blue buttons, the selected one turns gold */
+/* tabs: blue buttons; the selected one lights up turquoise (tools/ref_ui/tab_skin.py) - gold is kept for primary buttons */
 .tab { --skin: url(/assets/ui/btn/blue.png); background: none; border-radius: 0; border-style: solid; border-color: transparent;
   border-width: .4em .95em; border-image: var(--skin) 50 58 fill / .95em 1.1em stretch; padding: .1em 0; font: 900 .88em/1.15 Arial, Helvetica, sans-serif;
   color: #fff; text-shadow: var(--ink); filter: drop-shadow(0 .1em .14em rgba(0,0,0,.5)); }
-.tab.on { --skin: url(/assets/ui/btn/gold.png); color: #fff; background: none; }
+.tab.on { --skin: url(/assets/ui/btn/tab_on.png); color: #fff; background: none; text-shadow: var(--ink), 0 0 .5em rgba(170,255,250,.55); }
 .tab:hover { filter: brightness(1.12) drop-shadow(0 .1em .14em rgba(0,0,0,.5)); }
 /* panels and modals use the kit's bronze-framed blue panel */
 .panel { background: none; border-radius: 0; box-shadow: none; backdrop-filter: none; border: 14px solid transparent;
@@ -322,7 +322,7 @@ input.text { font: inherit; padding: .5em .8em; border-radius: .5em; border: 1px
 .bt-mi { background: none; border-radius: 0; border-style: solid; border-color: transparent; border-width: .42em .5em;
   border-image: url(/assets/ui/btn/strip_parch.png) 20 26 fill stretch; padding: .05em .3em; color: #2b1d0e; text-shadow: 0 1px 0 rgba(255,240,205,.6); }
 .bt-mi:hover:not([disabled]) { filter: brightness(1.08); }
-.bt-mi.on { background: none; border-image: url(/assets/ui/btn/gold.png) 50 58 fill / .95em 1.1em stretch; color: #fff; text-shadow: var(--ink); }
+.bt-mi.on { background: none; border-image: url(/assets/ui/btn/tab_on.png) 50 58 fill / .95em 1.1em stretch; color: #fff; text-shadow: var(--ink); }
 /* battle menu: chosen option keeps its parchment strip and takes the shared gold glow (as .mcard.sel); gold enamel stays the confirm role */
 .bt-menu .bt-mi.on { background: none; border-image: url(/assets/ui/btn/strip_parch.png) 20 26 fill stretch; color: #2b1d0e; text-shadow: 0 1px 0 rgba(255,240,205,.6);
   filter: brightness(1.1) drop-shadow(0 0 .3em rgba(255,214,107,.95)); }
